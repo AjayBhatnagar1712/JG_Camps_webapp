@@ -1,0 +1,316 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import React from "react";
+
+interface DestinationCard {
+  name: string;
+  image: string;
+  bestSeason: string;
+  famousPlaces: string[];
+  highlights: string;
+}
+
+const HIMALAYA_STATES: DestinationCard[] = [
+  {
+    name: "Himachal Pradesh",
+    image: "/images/himalaya/himachal.jpg",
+    bestSeason: "March – June, Oct",
+    famousPlaces: ["Shimla", "Manali", "Dharamshala", "Spiti Valley", "Kasol"],
+    highlights: "Snow-capped peaks, adventure sports, and charming hill towns.",
+  },
+  {
+    name: "Uttarakhand",
+    image: "/images/himalaya/uttarakhand.jpg",
+    bestSeason: "Mar – Jun, Sep – Nov",
+    famousPlaces: ["Nainital", "Mussoorie", "Rishikesh", "Auli", "Jim Corbett"],
+    highlights: "Yoga retreats, spiritual hubs, and thrilling treks.",
+  },
+  {
+    name: "Jammu & Kashmir",
+    image: "/images/himalaya/jammu.jpg",
+    bestSeason: "May – Sep",
+    famousPlaces: ["Srinagar", "Gulmarg", "Pahalgam", "Sonmarg", "Vaishno Devi"],
+    highlights: "Paradise on Earth with breathtaking valleys and shikara rides.",
+  },
+  {
+    name: "Ladakh",
+    image: "/images/himalaya/ladakh.jpg",
+    bestSeason: "Jun – Sep",
+    famousPlaces: ["Leh", "Pangong Lake", "Nubra Valley", "Turtuk", "Tso Moriri"],
+    highlights: "A biker's dream, home to monasteries and high-altitude passes.",
+  },
+  {
+    name: "Sikkim",
+    image: "/images/himalaya/sikkim.jpg",
+    bestSeason: "Mar – May, Oct – Dec",
+    famousPlaces: ["Gangtok", "Tsomgo Lake", "Yumthang Valley", "Pelling", "Nathula"],
+    highlights: "Gateway to Kanchenjunga with vibrant Buddhist culture.",
+  },
+  {
+    name: "Arunachal Pradesh",
+    image: "/images/himalaya/arunachal.jpg",
+    bestSeason: "Oct – Apr",
+    famousPlaces: ["Tawang", "Ziro Valley", "Bomdila", "Mechuka", "Sela Pass"],
+    highlights: "Pristine landscapes, monasteries, and unique tribal traditions.",
+  },
+];
+
+const cardVariants = {
+  offscreen: { opacity: 0, y: 18, scale: 0.995 },
+  onscreen: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.08, duration: 0.6 } },
+};
+
+export default function HimalayaPage() {
+  return (
+    <main className="bg-white text-slate-800">
+      {/* HERO */}
+      <section className="relative w-full h-[68vh] md:h-[72vh] overflow-hidden rounded-b-3xl shadow-lg">
+        {/* Video background */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videos/himalyan_hero.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster="/images/himalaya/himalaya-hero.jpg"
+        />
+
+        {/* soft gradient overlay for legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-transparent" />
+
+        {/* hero content */}
+        <div className="relative z-10 container mx-auto px-6 h-full flex items-center">
+          <div className="max-w-3xl text-white">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-md"
+            >
+              Explore the Mystical <span className="text-amber-300">Himalayas</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 text-lg sm:text-xl max-w-2xl text-emerald-100"
+            >
+              From alpine meadows to silent monasteries — tailor an unforgettable journey across India's
+              mountain crown. Adventure, wellness, culture, and luxury — blended into one.
+            </motion.p>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/himalaya/plan"
+                className="inline-flex items-center gap-3 bg-amber-400 text-black px-5 py-3 rounded-2xl font-semibold shadow-lg hover:brightness-95 transition"
+                aria-label="Build itinerary for Himalaya"
+              >
+                Build Itinerary
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" aria-hidden>
+                  <path d="M6 5l6 5-6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+
+              <button
+                onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
+                className="inline-flex items-center gap-3 border border-white/30 text-white px-5 py-3 rounded-2xl font-semibold hover:bg-white/10 transition"
+                aria-label="Contact travel expert"
+              >
+                Contact Travel Expert
+              </button>
+            </div>
+
+            {/* quick stats */}
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Stat label="Top Peaks" value="7,000+ m" />
+              <Stat label="Trekking Routes" value="200+" />
+              <Stat label="Best Months" value="Mar–Jun, Sep–Nov" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY / FEATURES */}
+      <section className="py-14 px-6 container mx-auto">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold">Why Choose the Himalayas?</h2>
+            <p className="mt-3 text-lg text-gray-600 max-w-prose">
+              The Himalayas are a tapestry of dramatic landscapes, sacred traditions, and exhilarating
+              experiences. We design trips to match your pace — whether you're after high-adrenaline treks,
+              restorative wellness stays, or curated cultural journeys.
+            </p>
+
+            <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Feature title="Guided Treks" text="Local guides, safety-first routes, and authentic village experiences." />
+              <Feature title="Wellness Retreats" text="Ayurveda, yoga and spa programs tucked in tranquil valleys." />
+              <Feature title="Luxury Stays" text="Boutique resorts & camps with curated local cuisine." />
+              <Feature title="Custom Logistics" text="Transport, permits, and acclimatization planning handled." />
+            </ul>
+          </div>
+
+          {/* decorative card / image */}
+          <div className="rounded-2xl overflow-hidden shadow-xl bg-gradient-to-tr from-white to-emerald-50 p-1">
+            <div className="relative rounded-xl overflow-hidden h-72 sm:h-80">
+              <Image
+                src="/images/himalaya/himalaya-hero.jpg"
+                alt="Himalayas overview"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DESTINATIONS GRID */}
+      <section className="py-16 px-6 bg-slate-50">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Top Himalayan Destinations</h2>
+
+          <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
+            {HIMALAYA_STATES.map((dest, i) => (
+              <motion.article
+                key={dest.name}
+                initial="offscreen"
+                whileInView="onscreen"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={cardVariants}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+              >
+                <div className="relative h-56">
+                  <Image
+                    src={dest.image}
+                    alt={dest.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  <div className="absolute top-3 left-3 bg-white/90 text-sm rounded-full px-3 py-1 font-semibold text-emerald-700 shadow">
+                    {dest.bestSeason}
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-2xl font-semibold text-emerald-800 mb-2">{dest.name}</h3>
+                  <p className="text-gray-700 mb-3">{dest.highlights}</p>
+                  <div className="text-sm text-gray-500 mb-4">
+                    <strong>Famous:</strong> {dest.famousPlaces.join(", ")}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <Link
+                      href={`/himalaya/${slugify(dest.name)}`}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:underline"
+                      aria-label={`View itineraries for ${dest.name}`}
+                    >
+                      View itineraries
+                      <span aria-hidden>→</span>
+                    </Link>
+
+                    <button
+                      onClick={() =>
+                        logLeadClient({
+                          channel: "destination-click",
+                          name: dest.name,
+                          page: "himalaya",
+                        })
+                      }
+                      className="text-sm rounded-full border py-2 px-3 text-emerald-700 hover:bg-emerald-50 transition"
+                    >
+                      Notify me
+                    </button>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-12 px-6">
+        <div className="container mx-auto rounded-3xl bg-gradient-to-r from-amber-50/80 to-amber-100 p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-bold text-emerald-800">Ready for a Himalayan Escape?</h3>
+            <p className="mt-2 text-gray-700 max-w-xl">
+              Share your dates and preferences — our experts will craft a tailored itinerary and confirm availability.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <Link
+              href="/contact"
+              className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
+            >
+              Get Free Travel Consultation
+            </Link>
+
+            <Link
+              href="/himalaya/plan"
+              className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800 font-semibold hover:bg-emerald-50 transition"
+            >
+              Build Itinerary
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+/* ---------- small helper components & utils ---------- */
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="inline-flex items-center gap-3 bg-white/5 rounded-full px-4 py-2">
+      <div className="text-sm text-amber-200 font-bold">{value}</div>
+      <div className="text-sm text-emerald-100">{label}</div>
+    </div>
+  );
+}
+
+function Feature({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="flex gap-4 items-start bg-white p-4 rounded-xl shadow-sm">
+      <div className="h-10 w-10 rounded-md bg-emerald-50 grid place-items-center text-emerald-700 font-bold">✓</div>
+      <div>
+        <div className="font-semibold text-emerald-800">{title}</div>
+        <div className="text-sm text-gray-600">{text}</div>
+      </div>
+    </div>
+  );
+}
+
+/** lightweight slug helper */
+function slugify(s: string) {
+  return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+}
+
+/** quick "fire-and-forget" client lead logger that uses the /api/leads endpoint.
+ *  It's intentionally minimal so it won't block UI.
+ */
+async function logLeadClient(payload: Record<string, any>) {
+  try {
+    // prefer the internal endpoint to avoid CORS
+    await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...payload,
+        page: "himalaya",
+        meta: { clientTs: new Date().toISOString() },
+      }),
+    });
+  } catch (e) {
+    // swallow — logging should not break the UI
+    // console.warn("lead log failed", e);
+  }
+}
