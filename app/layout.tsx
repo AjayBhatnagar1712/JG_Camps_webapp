@@ -8,6 +8,7 @@ import GlobalCTAs from "@/components/GlobalCTAs";
 import HeaderNav from "@/components/HeaderNav";
 import FooterLinks from "@/components/FooterLinks";
 import { Compass } from "lucide-react";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // ✅ Added for Vercel Speed Insights
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -20,7 +21,8 @@ export const metadata: Metadata = {
 // Update these numbers
 const WHATSAPP_NUMBER = "+919999999999";
 const SUPPORT_PHONE = "+91-98765-43210";
-const wa = (text: string) => `https://wa.me/${WHATSAPP_NUMBER.replace(/[^\d]/g, "")}?text=${encodeURIComponent(text)}`;
+const wa = (text: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER.replace(/[^\d]/g, "")}?text=${encodeURIComponent(text)}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -51,16 +53,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Compass className="h-5 w-5" /> JG Camps &amp; Resorts
               </div>
               <p className="text-sm text-emerald-100 mt-2 max-w-md">
-                Smart travel planning for India &amp; abroad. AI-assisted itineraries, curated spots, and hassle-free bookings.
+                Smart travel planning for India &amp; abroad. AI-assisted itineraries, curated spots, and
+                hassle-free bookings.
               </p>
             </div>
 
             <div>
               <h4 className="font-semibold mb-2">Explore</h4>
               <ul className="space-y-1 text-sm text-emerald-100">
-                <li><Link className="hover:text-yellow-300" href="/destinations">Destinations</Link></li>
-                <li><Link className="hover:text-yellow-300" href="/plan">Plan a Trip</Link></li>
-                <li><Link className="hover:text-yellow-300" href="/about">About</Link></li>
+                <li>
+                  <Link className="hover:text-yellow-300" href="/destinations">
+                    Destinations
+                  </Link>
+                </li>
+                <li>
+                  <Link className="hover:text-yellow-300" href="/plan">
+                    Plan a Trip
+                  </Link>
+                </li>
+                <li>
+                  <Link className="hover:text-yellow-300" href="/about">
+                    About
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -77,6 +92,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GlobalCTAs />
         {/* Global AI Chat Widget (client) */}
         <ChatWidget />
+
+        {/* ✅ Vercel Speed Insights */}
+        <SpeedInsights />
       </body>
     </html>
   );
