@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion"; // <-- Added Variants import
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
@@ -58,9 +58,19 @@ const HIMALAYA_STATES: DestinationCard[] = [
   },
 ];
 
-const cardVariants = {
+// ✅ Fixed: properly typed cardVariants
+const cardVariants: Variants = {
   offscreen: { opacity: 0, y: 18, scale: 0.995 },
-  onscreen: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.08, duration: 0.6 } },
+  onscreen: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring" as const, // literal type so TS knows it's valid
+      bounce: 0.08,
+      duration: 0.6,
+    },
+  },
 };
 
 export default function HimalayaPage() {
@@ -113,7 +123,7 @@ export default function HimalayaPage() {
               >
                 Build Itinerary
                 <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" aria-hidden>
-                  <path d="M6 5l6 5-6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 5l6 5-6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
 
@@ -294,12 +304,9 @@ function slugify(s: string) {
   return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
 }
 
-/** quick "fire-and-forget" client lead logger that uses the /api/leads endpoint.
- *  It's intentionally minimal so it won't block UI.
- */
+/** quick "fire-and-forget" client lead logger that uses the /api/leads endpoint. */
 async function logLeadClient(payload: Record<string, any>) {
   try {
-    // prefer the internal endpoint to avoid CORS
     await fetch("/api/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -311,6 +318,5 @@ async function logLeadClient(payload: Record<string, any>) {
     });
   } catch (e) {
     // swallow — logging should not break the UI
-    // console.warn("lead log failed", e);
   }
 }
