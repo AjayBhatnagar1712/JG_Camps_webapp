@@ -1,247 +1,197 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { MessageCircle, Send, ChevronDown, Sparkles, X, Loader2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 
-/**
- * Premium floating chat widget
- * - Glassmorphism panel, gradient header, elegant bubbles
- * - Calls /api/gemini with a short message history (App or Pages router supported)
- * - Debounces duplicate rapid sends; auto-scroll; suggestion chips
- * - Uses your Tailwind + token palette (primary, border, muted-foreground)
- */
-
-type Msg = { id: string; role: "user" | "assistant"; text: string; time?: string };
-
-function timeNow() {
-  const d = new Date();
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
-
-function normalize(s: string) {
-  return s.toLowerCase().replace(/\s+/g, " ").trim();
-}
+type Msg = { id: string; role: "user" | "assistant" | "system"; text: string };
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Msg[]>([
     {
-      id: "m0",
+      id: "sys",
+      role: "system",
+      text: `
+You are JG Camps & Resorts travel assistant.
+Rules:
+- NEVER mention hotel, resort, homestay or property names.
+- For any stay or booking requests, always say:
+  "For accommodation and personalized plans, please contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
+- Be short, helpful, and travel-focused.`,
+    },
+    {
+      id: "welcome",
       role: "assistant",
-      text: "Hi! I'm your travel assistant. How can I help you today?",
-      time: timeNow(),
+      text: "👋 Hi there! I’m your JG Camps & Resorts travel assistant. Ask me about itineraries, best times to visit, or adventure ideas.",
     },
   ]);
-  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const lastSentRef = useRef<string>(""); // prevents accidental duplicate sends
-
-  // Smooth autoscroll whenever messages change or panel opens
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, open]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, loading]);
 
-  // Helpful quick-start prompts (edit freely)
-  const suggestions = useMemo(
-    () => [
-      "3-day itinerary for Shimla",
-      "Best time to visit Manali",
-      "Budget trip to Goa",
-      "Family trip in Rajasthan",
-    ],
-    []
-  );
+  const pushMessage = (m: Msg) => setMessages((prev) => [...prev, m]);
 
-  async function sendMessage(text: string) {
-    const clean = text.trim();
-    if (!clean) return;
+  async function sendMessage() {
+    const text = input.trim();
+    if (!text) return;
 
-    // Basic de-dupe protection
-    if (normalize(clean) === normalize(lastSentRef.current)) return;
-    lastSentRef.current = clean;
-
-    const userMsg: Msg = { id: crypto.randomUUID(), role: "user", text: clean, time: timeNow() };
-    setMessages((m) => [...m, userMsg]);
+    const userMsg: Msg = { id: `u-${Date.now()}`, role: "user", text };
+    pushMessage(userMsg);
     setInput("");
     setLoading(true);
 
     try {
-      // Build a short history for context
-      const payload = {
-        messages: [
-          // keep the chat tight; last few turns are usually enough
-          ...messages.slice(-8).map((m) => ({ role: m.role, content: m.text })),
-          { role: "user", content: clean },
-        ],
-      };
+      const system = messages.find((m) => m.role === "system")?.text ?? "";
 
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: text },
+          ],
+        }),
       });
 
-      const data = await res.json();
-      const assistantText: string =
-        data?.reply || "Sorry — I couldn't generate a reply. Please try again.";
+      const json = await res.json();
+      const replyText =
+        (json?.reply ?? "Sorry — I couldn’t generate a reply.") +
+        "\n\n📩 *For stay bookings or packages, please contact JG Camps & Resorts — 8595167227 / 8076874150 or jgadven@gmail.com*";
 
-      const botMsg: Msg = {
-        id: crypto.randomUUID(),
+      pushMessage({ id: `a-${Date.now()}`, role: "assistant", text: replyText });
+    } catch (err) {
+      pushMessage({
+        id: `err-${Date.now()}`,
         role: "assistant",
-        text: assistantText,
-        time: timeNow(),
-      };
-      setMessages((m) => [...m, botMsg]);
-    } catch (e) {
-      const err: Msg = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        text: "Sorry — I couldn’t reach the server. Please try again.",
-        time: timeNow(),
-      };
-      setMessages((m) => [...m, err]);
+        text: "⚠️ Sorry — there was an issue connecting. Please try again in a moment.",
+      });
     } finally {
       setLoading(false);
-      // Clear the de-dupe key shortly after send
-      setTimeout(() => (lastSentRef.current = ""), 300);
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    sendMessage(input);
-  }
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const quickAsk = async (q: string) => {
+    setInput(q);
+    await new Promise((r) => setTimeout(r, 50));
+    sendMessage();
+  };
 
   return (
-    <>
-      {/* Floating launcher button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3 shadow-xl hover:opacity-90"
-          aria-label="Open chat"
-        >
-          <MessageCircle className="h-5 w-5" />
-          <span className="hidden sm:inline font-medium">Ask Travel Expert</span>
-        </button>
-      )}
-
-      {/* Chat panel */}
-      {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[92vw] max-w-md rounded-3xl overflow-hidden border border-border shadow-2xl bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary/90 to-primary text-primary-foreground">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-white/30 grid place-items-center">
-                <Sparkles className="h-4 w-4" />
-              </div>
-              <div className="leading-tight">
-                <p className="text-sm font-semibold">Travel Assistant</p>
-                <p className="text-[11px] opacity-90">Online • replies instantly</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setOpen(false)}
-                className="grid place-items-center h-8 w-8 rounded-full hover:bg-white/20 transition"
-                aria-label="Minimize"
-                title="Minimize"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setOpen(false)}
-                className="grid place-items-center h-8 w-8 rounded-full hover:bg-white/20 transition"
-                aria-label="Close"
-                title="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
+    <div className="fixed bottom-6 right-6 z-50 text-slate-800 font-sans">
+      {/* Chat box */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-[370px] bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-r from-emerald-800 to-emerald-700 text-white">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 rounded-full p-2">💬</div>
+            <div>
+              <div className="font-semibold">Travel Assistant</div>
+              <div className="text-xs opacity-75">Online • replies instantly</div>
             </div>
           </div>
-
-          {/* Messages */}
-          <div
-            ref={listRef}
-            className="max-h-[60vh] overflow-y-auto px-3 py-4 space-y-3 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10"
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="hover:bg-white/10 rounded-full px-2 text-lg"
           >
-            {messages.map((m) =>
-              m.role === "assistant" ? (
-                <div key={m.id} className="flex items-start gap-2">
-                  <div className="h-7 w-7 shrink-0 rounded-full bg-primary/15 grid place-items-center text-primary">
-                    <Sparkles className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-white/80 dark:bg-neutral-800/80 backdrop-blur border border-border px-3 py-2 shadow-sm max-w-[80%]">
-                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{m.text}</p>
-                    <span className="mt-1 block text-[10px] text-muted-foreground">{m.time}</span>
-                  </div>
-                </div>
-              ) : (
-                <div key={m.id} className="flex justify-end">
-                  <div className="max-w-[80%]">
-                    <div className="rounded-2xl rounded-tr-sm bg-primary text-primary-foreground px-3 py-2 shadow">
-                      <p className="text-sm whitespace-pre-wrap leading-relaxed">{m.text}</p>
-                    </div>
-                    <span className="mt-1 block text-right text-[10px] text-muted-foreground">{m.time}</span>
-                  </div>
-                </div>
-              )
-            )}
-
-            {/* Typing indicator */}
-            {loading && (
-              <div className="flex items-center gap-2 pl-9">
-                <div className="h-7 w-7 shrink-0 rounded-full bg-primary/15 grid place-items-center text-primary">
-                  <Sparkles className="h-3.5 w-3.5" />
-                </div>
-                <div className="rounded-2xl bg-white/80 dark:bg-neutral-800/80 border border-border px-3 py-2 shadow-sm">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Typing…
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Quick suggestion chips */}
-            {!loading && (
-              <div className="flex flex-wrap gap-2 pt-1 pl-9">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => sendMessage(s)}
-                    className="text-xs rounded-full border border-border px-3 py-1 hover:bg-white/60 dark:hover:bg-neutral-800/60 transition"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Input */}
-          <form onSubmit={handleSubmit} className="p-3 border-t border-border bg-white/70 dark:bg-neutral-900/70 backdrop-blur">
-            <div className="flex items-center gap-2">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message…"
-                className="flex-1 rounded-full border border-border bg-white/80 dark:bg-neutral-800/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || loading}
-                className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground shadow disabled:opacity-50"
-                aria-label="Send message"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </div>
-          </form>
+            {open ? "▾" : "▴"}
+          </button>
         </div>
-      )}
-    </>
+
+        {open && (
+          <>
+            {/* Messages */}
+            <div ref={scrollRef} className="h-[320px] overflow-y-auto p-3 space-y-3 bg-gray-50">
+              {messages
+                .filter((m) => m.role !== "system")
+                .map((m) => (
+                  <motion.div
+                    key={m.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex ${m.role === "assistant" ? "justify-start" : "justify-end"}`}
+                  >
+                    <div
+                      className={`px-3 py-2 rounded-xl text-sm whitespace-pre-wrap leading-relaxed shadow-sm ${
+                        m.role === "assistant"
+                          ? "bg-white text-slate-800 border border-slate-200"
+                          : "bg-emerald-700 text-white"
+                      }`}
+                      style={{ maxWidth: "85%" }}
+                    >
+                      {m.text}
+                    </div>
+                  </motion.div>
+                ))}
+
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="bg-white border rounded-xl px-3 py-2 text-sm text-slate-500 animate-pulse">
+                    Typing...
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="p-3 border-t bg-white">
+              <div className="flex items-center gap-2">
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKey}
+                  placeholder="Type your message..."
+                  className="flex-1 border rounded-full px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-600"
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={loading}
+                  className="bg-emerald-700 text-white px-4 py-2 rounded-full text-sm hover:bg-emerald-800 disabled:opacity-60"
+                >
+                  {loading ? "…" : "Send"}
+                </button>
+              </div>
+
+              {/* Quick Ask */}
+              <div className="flex flex-wrap gap-2 mt-3 text-xs">
+                <button
+                  onClick={() => quickAsk("3-day itinerary for Shimla")}
+                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
+                >
+                  Shimla itinerary
+                </button>
+                <button
+                  onClick={() => quickAsk("Best time to visit Manali")}
+                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
+                >
+                  Best time: Manali
+                </button>
+                <button
+                  onClick={() => quickAsk("Adventure trip in Himachal")}
+                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
+                >
+                  Himachal adventure
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </motion.div>
+    </div>
   );
 }
