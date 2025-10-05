@@ -1,197 +1,223 @@
+// components/ChatWidget.tsx
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { MessageCircle, X } from "lucide-react";
 
-type Msg = { id: string; role: "user" | "assistant" | "system"; text: string };
+type Msg = { id: string; role: "user" | "assistant"; text: string; at: string };
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Msg[]>([
-    {
-      id: "sys",
-      role: "system",
-      text: `
-You are JG Camps & Resorts travel assistant.
-Rules:
-- NEVER mention hotel, resort, homestay or property names.
-- For any stay or booking requests, always say:
-  "For accommodation and personalized plans, please contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
-- Be short, helpful, and travel-focused.`,
-    },
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Msg[]>(() => [
     {
       id: "welcome",
       role: "assistant",
-      text: "👋 Hi there! I’m your JG Camps & Resorts travel assistant. Ask me about itineraries, best times to visit, or adventure ideas.",
+      text:
+        "👋 Hi! I’m your JG Camps & Resorts assistant. Ask about itineraries, best time to visit, or travel ideas.",
+      at: new Date().toISOString(),
     },
   ]);
-  const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // compute offsets so widget sits above global CTAs (if present)
+  const [bottomOffset, setBottomOffset] = useState(20);
+  const [rightOffset, setRightOffset] = useState(20);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
+    function computeOffsets() {
+      const globalCTAs = document.querySelector("#global-ctas"); // your Contact Expert container id (if any)
+      const safe = 14;
+      let bottom = 20;
+      if (globalCTAs instanceof HTMLElement) {
+        const r = globalCTAs.getBoundingClientRect();
+        bottom = Math.max(16, r.height + safe);
+      } else {
+        bottom = 20;
+      }
+      // keep a slightly larger right offset on desktop
+      const right = window.innerWidth > 768 ? 24 : 12;
+      setBottomOffset(bottom);
+      setRightOffset(right);
+    }
+    computeOffsets();
+    window.addEventListener("resize", computeOffsets);
+    return () => window.removeEventListener("resize", computeOffsets);
+  }, []);
 
-  const pushMessage = (m: Msg) => setMessages((prev) => [...prev, m]);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight + 200;
+    }
+  }, [messages, open]);
 
-  async function sendMessage() {
-    const text = input.trim();
-    if (!text) return;
+  function pushMessage(role: Msg["role"], text: string) {
+    const m: Msg = {
+      id: Math.random().toString(36).slice(2),
+      role,
+      text,
+      at: new Date().toISOString(),
+    };
+    setMessages((s) => [...s, m]);
+    return m;
+  }
 
-    const userMsg: Msg = { id: `u-${Date.now()}`, role: "user", text };
-    pushMessage(userMsg);
+  async function handleSend(e?: React.FormEvent) {
+    e?.preventDefault();
+    const trimmed = input.trim();
+    if (!trimmed) return;
+    pushMessage("user", trimmed);
     setInput("");
     setLoading(true);
 
     try {
-      const system = messages.find((m) => m.role === "system")?.text ?? "";
-
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: text },
-          ],
-        }),
+        body: JSON.stringify({ messages: [{ role: "user", content: trimmed }] }),
       });
+      const data = await res.json();
+      let reply = data?.reply || "Sorry — I couldn’t generate a reply.";
 
-      const json = await res.json();
-      const replyText =
-        (json?.reply ?? "Sorry — I couldn’t generate a reply.") +
-        "\n\n📩 *For stay bookings or packages, please contact JG Camps & Resorts — 8595167227 / 8076874150 or jgadven@gmail.com*";
+      // Replace any hotel/resort names in reply with contact instruction (as requested)
+      reply = reply.replace(
+        /\b(hotel|resort|villa|lodge|guesthouse|homestay|accommodation)\b/gi,
+        "please contact JG Camps & Resorts for stay bookings (📞 8595167227 / 8076874150 • ✉️ jgadven@gmail.com)"
+      );
 
-      pushMessage({ id: `a-${Date.now()}`, role: "assistant", text: replyText });
+      pushMessage("assistant", reply);
     } catch (err) {
-      pushMessage({
-        id: `err-${Date.now()}`,
-        role: "assistant",
-        text: "⚠️ Sorry — there was an issue connecting. Please try again in a moment.",
-      });
+      console.error("Chat send error:", err);
+      pushMessage(
+        "assistant",
+        "Sorry — something went wrong. Please try again or contact us directly at 8595167227 / 8076874150 or jgadven@gmail.com."
+      );
     } finally {
       setLoading(false);
+      setOpen(true);
     }
   }
 
-  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
-  const quickAsk = async (q: string) => {
-    setInput(q);
-    await new Promise((r) => setTimeout(r, 50));
-    sendMessage();
+  const containerStyle: React.CSSProperties = {
+    position: "fixed",
+    right: `${rightOffset}px`,
+    bottom: `${bottomOffset}px`,
+    zIndex: 9999,
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 text-slate-800 font-sans">
-      {/* Chat box */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-[370px] bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200"
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center px-4 py-3 bg-gradient-to-r from-emerald-800 to-emerald-700 text-white">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 rounded-full p-2">💬</div>
-            <div>
-              <div className="font-semibold">Travel Assistant</div>
-              <div className="text-xs opacity-75">Online • replies instantly</div>
+    <div style={containerStyle} className="pointer-events-auto">
+      {/* Collapsed button (compact) */}
+      {!open ? (
+        <button
+          aria-label="Open chat"
+          onClick={() => setOpen(true)}
+          className="flex items-center justify-center rounded-full bg-emerald-700 hover:bg-emerald-800 text-white shadow-lg w-12 h-12 md:w-14 md:h-14"
+          title="Chat with us"
+          style={{ boxShadow: "0 6px 18px rgba(10,40,20,0.35)" }}
+        >
+          <MessageCircle className="h-5 w-5" />
+        </button>
+      ) : (
+        <div className="w-[92vw] max-w-[420px] md:w-96 bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+          <div className="flex items-center justify-between px-4 py-3 bg-emerald-800 text-white">
+            <div className="flex items-center gap-3">
+              <MessageCircle className="h-5 w-5" />
+              <div>
+                <div className="font-semibold">Travel Assistant</div>
+                <div className="text-xs opacity-90">Online · replies instantly</div>
+              </div>
             </div>
+
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Minimize"
+              className="rounded-full p-1 hover:bg-white/10"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="hover:bg-white/10 rounded-full px-2 text-lg"
+
+          {/* Messages area */}
+          <div
+            ref={scrollRef}
+            className="p-4 max-h-[55vh] overflow-auto flex flex-col gap-3 bg-white"
           >
-            {open ? "▾" : "▴"}
-          </button>
-        </div>
-
-        {open && (
-          <>
-            {/* Messages */}
-            <div ref={scrollRef} className="h-[320px] overflow-y-auto p-3 space-y-3 bg-gray-50">
-              {messages
-                .filter((m) => m.role !== "system")
-                .map((m) => (
-                  <motion.div
-                    key={m.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${m.role === "assistant" ? "justify-start" : "justify-end"}`}
-                  >
-                    <div
-                      className={`px-3 py-2 rounded-xl text-sm whitespace-pre-wrap leading-relaxed shadow-sm ${
-                        m.role === "assistant"
-                          ? "bg-white text-slate-800 border border-slate-200"
-                          : "bg-emerald-700 text-white"
-                      }`}
-                      style={{ maxWidth: "85%" }}
-                    >
-                      {m.text}
-                    </div>
-                  </motion.div>
-                ))}
-
-              {loading && (
-                <div className="flex justify-start">
-                  <div className="bg-white border rounded-xl px-3 py-2 text-sm text-slate-500 animate-pulse">
-                    Typing...
+            {messages.map((m) =>
+              m.role === "assistant" ? (
+                <div
+                  key={m.id}
+                  className="self-start max-w-[86%] bg-emerald-50 p-3 rounded-lg text-sm text-gray-800"
+                >
+                  <div className="whitespace-pre-wrap">{m.text}</div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    {new Date(m.at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </div>
-              )}
-            </div>
+              ) : (
+                <div
+                  key={m.id}
+                  className="self-end max-w-[86%] bg-emerald-700 text-white p-3 rounded-lg text-sm text-right"
+                >
+                  <div className="whitespace-pre-wrap">{m.text}</div>
+                  <div className="text-xs text-emerald-200 mt-1">
+                    {new Date(m.at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
 
-            {/* Input */}
-            <div className="p-3 border-t bg-white">
-              <div className="flex items-center gap-2">
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKey}
-                  placeholder="Type your message..."
-                  className="flex-1 border rounded-full px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-600"
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={loading}
-                  className="bg-emerald-700 text-white px-4 py-2 rounded-full text-sm hover:bg-emerald-800 disabled:opacity-60"
-                >
-                  {loading ? "…" : "Send"}
-                </button>
-              </div>
+          {/* Input area */}
+          <div className="p-4 border-t border-gray-100">
+            <form onSubmit={handleSend} className="flex gap-2">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                aria-label="Type your message"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-full disabled:opacity-60"
+              >
+                {loading ? "…" : "Send"}
+              </button>
+            </form>
 
-              {/* Quick Ask */}
-              <div className="flex flex-wrap gap-2 mt-3 text-xs">
-                <button
-                  onClick={() => quickAsk("3-day itinerary for Shimla")}
-                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
-                >
-                  Shimla itinerary
-                </button>
-                <button
-                  onClick={() => quickAsk("Best time to visit Manali")}
-                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
-                >
-                  Best time: Manali
-                </button>
-                <button
-                  onClick={() => quickAsk("Adventure trip in Himachal")}
-                  className="border border-slate-200 px-3 py-1 rounded-full hover:bg-slate-100"
-                >
-                  Himachal adventure
-                </button>
-              </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                onClick={() => {
+                  setInput("3-day itinerary for Shimla");
+                  setTimeout(() => handleSend(), 80);
+                }}
+                className="text-xs rounded-full border px-3 py-1 hover:bg-gray-50"
+              >
+                3-day Shimla
+              </button>
+              <button
+                onClick={() => {
+                  setInput("Best time to visit Manali");
+                  setTimeout(() => handleSend(), 80);
+                }}
+                className="text-xs rounded-full border px-3 py-1 hover:bg-gray-50"
+              >
+                Best time: Manali
+              </button>
             </div>
-          </>
-        )}
-      </motion.div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

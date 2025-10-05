@@ -52,9 +52,9 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold mb-4">Why we exist</h2>
               <p className="text-muted-foreground mb-4">
-                We started as a small team of local guides and travel-curators.
-                Over the years we built partnerships across accommodations,
-                transport and activity providers to ensure a seamless travel
+                We started in year 2000 as a small team of local guides, travel-curators.
+                Over the years we evolved as owners/partners across accommodations, 
+                transport and certified adventure activity instructors to ensure a seamless travel 
                 experience for families, groups, and solo explorers.
               </p>
               <p className="text-muted-foreground mb-6">
