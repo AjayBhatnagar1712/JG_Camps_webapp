@@ -4,22 +4,102 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 /**
- * Updated Home page for JG Camps & Resorts
- * - preserves video hero, categories, explore scrolling
- * - "Contact Us" opens global contact modal via window event "open-contact-expert"
- * - Added an About section (id="about") which Learn More can scroll to
+ * Home page - region cards
+ *
+ * Clicking a region opens a small panel with major states for that region.
+ * - Individual state links navigate to /india/<state-slug>
+ * - Explore region goes to /india/<region-slug>
+ *
+ * Make sure to create the corresponding routes (e.g. app/india/north/page.tsx or handle them)
  */
 
-const categories = [
-  { name: "Himalaya", file: "himalaya.jpg", href: "/himalaya" },
-  { name: "International", file: "international.jpg", href: "/international" },
-  { name: "Goa", file: "goa.jpg", href: "/goa" },
-  { name: "Rajasthan", file: "rajasthan.jpg", href: "/rajasthan" },
-  { name: "Wellness", file: "wellness.jpg", href: "/wellness" },
-  { name: "Team & Group Retreats", file: "group-retreats.jpg", href: "/group-retreats" },
+type Region = {
+  key: string;
+  title: string;
+  image: string;
+  states: string[];
+  blurb?: string;
+  href?: string; // region landing page
+};
+
+const REGIONS: Region[] = [
+  {
+    key: "north",
+    title: "North India",
+    image: "/images/regions/north-india.jpg",
+    blurb: "Himalayan foothills, hill stations, spiritual & heritage routes.",
+    states: ["Jammu & Kashmir", "Himachal Pradesh", "Uttarakhand", "Punjab", "Haryana", "Delhi"],
+    href: "/india/north",
+  },
+  {
+    key: "south",
+    title: "South India",
+    image: "/images/regions/south-india.jpg",
+    blurb: "Backwaters, temple trails, beaches and hill stations.",
+    states: ["Kerala", "Karnataka", "Tamil Nadu", "Andhra Pradesh", "Telangana"],
+    href: "/india/south",
+  },
+  {
+    key: "east",
+    title: "East India",
+    image: "/images/regions/east-india.jpg",
+    blurb: "Scenic coasts, heritage towns and tribal cultures.",
+    states: ["West Bengal", "Odisha", "Bihar", "Jharkhand"],
+    href: "/india/east",
+  },
+  {
+    key: "west",
+    title: "West India",
+    image: "/images/regions/west-india.jpg",
+    blurb: "Deserts, forts, coastal gateways and vibrant culture.",
+    states: ["Rajasthan", "Gujarat", "Maharashtra", "Goa"],
+    href: "/india/west",
+  },
+  {
+    key: "northeast",
+    title: "North-East India",
+    image: "/images/regions/northeast-india.jpg",
+    blurb: "Lush valleys, unique cultures and offbeat adventures.",
+    states: ["Sikkim", "Arunachal Pradesh", "Assam", "Meghalaya", "Nagaland", "Manipur"],
+    href: "/india/northeast",
+  },
+  {
+    key: "central",
+    title: "Central India",
+    image: "/images/regions/central-india.jpg",
+    blurb: "Wildlife corridors, tribal hinterlands and ancient temples.",
+    states: ["Madhya Pradesh", "Chhattisgarh"],
+    href: "/india/central",
+  },
+
+  // ----- NEW: the three cards you requested (minimal change) -----
+  {
+    key: "group-retreats",
+    title: "Group Retreats",
+    image: "/images/themes/group-retreats.jpg",
+    blurb: "Corporate offsites, family reunions, student camps and team retreats.",
+    states: ["Corporate Offsites", "Team Building", "Student Camps", "Family Reunions"],
+    href: "/group-retreats",
+  },
+  {
+    key: "spiritual-tourism",
+    title: "Spiritual Tourism",
+    image: "/images/themes/spiritual-tourism.jpg",
+    blurb: "Pilgrimages and soulful retreats — Chardham, Vaishno Devi, Rishikesh and more.",
+    states: ["Chardham Yatra", "Vaishno Devi", "Rishikesh", "Bodh Gaya", "Amarnath"],
+    href: "/spiritual",
+  },
+  {
+    key: "wellness-health",
+    title: "Wellness & Health Tourism",
+    image: "/images/themes/wellness.jpg",
+    blurb: "Ayurveda, yoga, detox and holistic healing getaways across India.",
+    states: ["Ayurveda Retreats", "Yoga & Detox", "Holistic Resorts", "Wellness Clinics"],
+    href: "/wellness",
+  },
 ];
 
 export default function Home() {
@@ -40,6 +120,27 @@ export default function Home() {
     e.preventDefault();
     document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  // region panel state
+  const [openRegion, setOpenRegion] = useState<Region | null>(null);
+
+  function openRegionPanel(r: Region) {
+    setOpenRegion(r);
+    // ensure panel visible on small screens
+    setTimeout(() => {
+      const el = document.getElementById("region-panel");
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 40);
+  }
+
+  function closeRegionPanel() {
+    setOpenRegion(null);
+  }
+
+  // helper slugify for links
+  function slugify(s: string) {
+    return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+  }
 
   return (
     <main className="min-h-screen text-foreground">
@@ -96,9 +197,8 @@ export default function Home() {
                   muted
                   playsInline
                   preload="metadata"
-                  poster="/images/hero-poster.jpg" // optional poster
+                  poster="/images/hero-poster.jpg"
                 />
-                {/* optional overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
               </div>
               <p className="mt-2 text-xs text-muted-foreground text-center">
@@ -109,31 +209,146 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORIES GRID */}
+      {/* REGIONS GRID */}
       <section className="py-12 px-6" id="categories">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {categories.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="relative h-72 rounded-3xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all"
-            >
-              <Image
-                src={`/images/${item.file}`}
-                alt={item.name}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end justify-center pb-6">
-                <span className="text-white text-2xl font-bold tracking-wide drop-shadow-lg">
-                  {item.name}
-                </span>
-              </div>
-            </Link>
-          ))}
+        <div className="mx-auto max-w-7xl">
+          <h2 className="text-3xl font-bold mb-6">Explore India by Region</h2>
+          <p className="text-sm text-muted-foreground mb-8 max-w-3xl">
+            Choose a region to see its popular states and plan a regional itinerary. Click a state to explore that state's page.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {REGIONS.map((r) => (
+              <motion.button
+                key={r.key}
+                onClick={() => openRegionPanel(r)}
+                whileHover={{ scale: 1.02 }}
+                className="relative group text-left rounded-3xl overflow-hidden shadow-xl border border-gray-100 p-0 bg-white cursor-pointer"
+                aria-expanded={openRegion?.key === r.key}
+              >
+                <div className="relative h-56">
+                  <Image
+                    src={r.image}
+                    alt={r.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end">
+                    <div className="p-5 text-white">
+                      <div className="text-lg font-semibold">{r.title}</div>
+                      <div className="text-sm opacity-90 max-w-xs mt-1">{r.blurb}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 border-t border-gray-100 flex items-center justify-between">
+                  <div className="text-sm text-gray-600">{r.states.length} major areas</div>
+                  <div className="text-amber-600 font-semibold">View states →</div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* REGION PANEL (small overlay) */}
+      {openRegion && (
+        <div
+          id="region-panel"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-4 pointer-events-none"
+        >
+          {/* backdrop */}
+          <div
+            onClick={closeRegionPanel}
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+            className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
+          >
+            <div className="flex items-start gap-4 p-5 border-b border-gray-100">
+              <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                <Image src={openRegion.image} alt={openRegion.title} width={160} height={160} className="object-cover" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-bold">{openRegion.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 max-w-md">{openRegion.blurb}</p>
+                  </div>
+
+                  <div className="text-right">
+                    <button
+                      onClick={closeRegionPanel}
+                      className="px-3 py-2 rounded-md text-sm border border-border hover:bg-muted"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-3 text-sm text-gray-700">
+                  <strong>Major states / areas:</strong>
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {openRegion.states.map((s) => {
+                    const sSlug = slugify(s);
+                    return (
+                      <Link
+                        key={s}
+                        href={`/india/${sSlug}`}
+                        onClick={() => setTimeout(closeRegionPanel, 80)}
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm hover:bg-gray-50"
+                      >
+                        {s}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-6 flex gap-3">
+                  <Link
+                    href={openRegion.href || `/india/${openRegion.key}`}
+                    onClick={() => setTimeout(closeRegionPanel, 80)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-800 text-white font-semibold hover:opacity-95"
+                  >
+                    Explore {openRegion.title}
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      // open contact expert modal if user wants a custom plan for region
+                      window.dispatchEvent(new Event("open-contact-expert"));
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-800 text-emerald-800 font-medium hover:bg-emerald-50"
+                  >
+                    Request a Custom Plan
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* bottom: small grid of extra links */}
+            <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-3">
+              <div className="text-sm text-gray-600">Need help deciding?</div>
+              <button
+                onClick={() => {
+                  window.dispatchEvent(new Event("open-contact-expert"));
+                }}
+                className="ml-auto rounded-full px-4 py-1 border border-border text-sm hover:bg-muted"
+              >
+                Contact Travel Expert
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* EXPERIENCES */}
       <section id="explore" className="py-18 md:py-20 px-6 bg-card border-t border-border">
@@ -169,7 +384,6 @@ export default function Home() {
               </p>
             </div>
             <div className="flex gap-3">
-              {/* Open the same Contact Expert modal here too */}
               <a
                 href="#contact-expert"
                 onClick={handleOpenContact}
@@ -178,7 +392,6 @@ export default function Home() {
                 Get in Touch
               </a>
 
-              {/* Learn More -> scroll to #about */}
               <button
                 onClick={handleLearnMore}
                 className="inline-flex items-center gap-2 rounded-2xl border border-primary-foreground/30 px-5 py-3 font-semibold hover:bg-primary/10"

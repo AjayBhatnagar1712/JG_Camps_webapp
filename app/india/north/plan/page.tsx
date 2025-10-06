@@ -7,25 +7,25 @@ import ItineraryDisplay from "@/components/ItineraryDisplay";
 
 const steps = ["Duration", "Trip Type", "State", "Cities / Famous Spots", "Budget", "Review"];
 
-const HIMALAYA_STATES = [
-  "Himachal Pradesh",
+const NORTH_STATES = [
+  "Delhi",
+  "Punjab",
+  "Haryana",
   "Uttarakhand",
+  "Himachal Pradesh",
   "Jammu & Kashmir",
-  "Ladakh",
-  "Sikkim",
-  "Arunachal Pradesh",
 ] as const;
 
-const POPULAR_SPOTS: Record<(typeof HIMALAYA_STATES)[number], string[]> = {
-  "Himachal Pradesh": ["Shimla", "Kufri", "Manali", "Kasol", "Spiti Valley", "Dharamshala", "Bir Billing"],
-  Uttarakhand: ["Nainital", "Rishikesh", "Haridwar", "Mussoorie", "Auli", "Jim Corbett"],
-  "Jammu & Kashmir": ["Srinagar", "Gulmarg", "Pahalgam", "Sonmarg", "Doodhpathri"],
-  Ladakh: ["Leh", "Pangong Tso", "Nubra Valley", "Turtuk", "Tso Moriri", "Hemis"],
-  Sikkim: ["Gangtok", "Tsomgo Lake", "Yumthang Valley", "Pelling", "Nathula", "Lachung"],
-  "Arunachal Pradesh": ["Tawang", "Ziro Valley", "Bomdila", "Mechuka", "Sela Pass", "Dirang"],
+const POPULAR_SPOTS: Record<(typeof NORTH_STATES)[number], string[]> = {
+  Delhi: ["India Gate", "Qutub Minar", "Red Fort", "Lotus Temple", "Chandni Chowk"],
+  Punjab: ["Amritsar", "Golden Temple", "Wagah Border", "Jallianwala Bagh", "Patiala"],
+  Haryana: ["Kurukshetra", "Panipat", "Gurugram", "Sultanpur Bird Sanctuary"],
+  Uttarakhand: ["Rishikesh", "Haridwar", "Mussoorie", "Nainital", "Auli", "Jim Corbett"],
+  "Himachal Pradesh": ["Shimla", "Manali", "Spiti Valley", "Dharamshala", "Kasol", "Kullu"],
+  "Jammu & Kashmir": ["Srinagar", "Gulmarg", "Pahalgam", "Sonmarg", "Vaishno Devi"],
 };
 
-export default function HimalayaPlanTrip() {
+export default function NorthIndiaPlanTrip() {
   const [currentStep, setCurrentStep] = useState(0);
   const [duration, setDuration] = useState("");
   const [tripType, setTripType] = useState("");
@@ -90,28 +90,27 @@ export default function HimalayaPlanTrip() {
     (st) => POPULAR_SPOTS[st as keyof typeof POPULAR_SPOTS] || []
   );
 
-  /** ✅ Gemini AI Integration with JG Camps & Resorts rule */
+  /** ✅ Gemini AI Integration for North India */
   async function buildAIItinerary(): Promise<string> {
     const days = parseInt(duration) || 4;
     const allSpots = [...selectedSpots, ...(customSpot.trim() ? [customSpot.trim()] : [])];
-    const stateList = selectedStates.join(", ") || "Himalayan states";
-    const destinationList = allSpots.join(", ") || "Himalayan highlights";
+    const stateList = selectedStates.join(", ") || "North Indian states";
+    const destinationList = allSpots.join(", ") || "North Indian highlights";
 
-    const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**.
+    const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**, specializing in North India.
 Rules:
-- DO NOT mention or recommend any hotel, resort, Airbnb, or stay property by name.
-- Instead, clearly say: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
+- Do NOT mention or recommend any specific hotel, resort, or stay property by name.
+- Instead, say: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
 - Produce a clean Markdown itinerary with "Day 1", "Day 2", etc.
-- Mention approximate travel times, 2–3 activity highlights, and café or food suggestions.
-- Include short cost guidance (Economy / Mid / Premium) but no property names.
-- End with a one-line summary encouraging users to contact JG Camps & Resorts.
-- Keep the tone concise, elegant, and informative.`;
+- Mention approximate travel times, 2–3 activity highlights, and café or local food ideas.
+- Include short cost guidance (Economy / Mid / Premium) but avoid naming hotels.
+- End with a short summary encouraging users to contact JG Camps & Resorts for bookings.`;
 
-    const userPrompt = `Plan a ${days}-day ${tripType || "Himalayan"} itinerary.
+    const userPrompt = `Plan a ${days}-day ${tripType || "North India"} itinerary.
 States: ${stateList}
 Spots / regions: ${destinationList}
-Budget tier: ${budget || "flexible"}
-Keep it balanced and traveller-friendly.`;
+Budget: ${budget || "flexible"}
+Ensure cultural, scenic, and spiritual balance with travel-friendly pacing.`;
 
     const res = await fetch("/api/gemini", {
       method: "POST",
@@ -126,26 +125,27 @@ Keep it balanced and traveller-friendly.`;
 
     if (!res.ok) throw new Error(`Server error: ${res.status}`);
     const data = await res.json();
-    if (!data?.reply) throw new Error("No AI reply");
+    if (!data?.reply) throw new Error("No AI reply received");
     return data.reply;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-gray-900">Build Your Himalayan Itinerary</h1>
+        <h1 className="text-4xl font-extrabold text-gray-900">Build Your North India Itinerary</h1>
         <p className="text-lg text-gray-600 mt-3">
-          Generate a fully AI-powered plan — no random hotel names, just authentic routes and our verified contact info for bookings.
+          Generate a customized AI-powered travel plan — covering Delhi, Himachal, Uttarakhand, Punjab & more.  
+          No hotel ads — only curated guidance and verified JG Camps & Resorts info.
         </p>
       </div>
 
-      {/* Progress bar */}
+      {/* Step progress bar */}
       <div className="flex justify-center mb-8">
         {steps.map((step, i) => (
           <div
             key={step}
             className={`px-4 py-2 rounded-full mx-1 md:mx-2 text-sm md:text-base ${
-              i === currentStep ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
+              i === currentStep ? "bg-emerald-700 text-white" : "bg-gray-200 text-gray-700"
             }`}
           >
             {step}
@@ -153,7 +153,7 @@ Keep it balanced and traveller-friendly.`;
         ))}
       </div>
 
-      {/* Main Card */}
+      {/* Main wizard card */}
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
         {!showItinerary ? (
           <motion.div
@@ -162,50 +162,45 @@ Keep it balanced and traveller-friendly.`;
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
           >
-            {/* Steps UI same as before */}
+            {/* Duration */}
             {currentStep === 0 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">How many days?</h2>
-                <div className="flex flex-wrap gap-3">
-                  {["3", "4", "5", "7", "10+"].map((d) => (
-                    <Button key={d} variant={duration === d ? "default" : "outline"} onClick={() => setDuration(d)}>
-                      {d} Days
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              <Step title="How many days?">
+                {["3", "4", "5", "7", "10+"].map((d) => (
+                  <Button key={d} variant={duration === d ? "default" : "outline"} onClick={() => setDuration(d)}>
+                    {d} Days
+                  </Button>
+                ))}
+              </Step>
             )}
 
+            {/* Trip Type */}
             {currentStep === 1 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">What kind of trip?</h2>
-                <div className="flex flex-wrap gap-3">
-                  {["Adventure", "Spiritual", "Family", "Wellness", "Group", "Leisure"].map((t) => (
-                    <Button key={t} variant={tripType === t ? "default" : "outline"} onClick={() => setTripType(t)}>
-                      {t}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              <Step title="What kind of trip?">
+                {["Adventure", "Cultural", "Family", "Spiritual", "Wellness", "Luxury"].map((t) => (
+                  <Button key={t} variant={tripType === t ? "default" : "outline"} onClick={() => setTripType(t)}>
+                    {t}
+                  </Button>
+                ))}
+              </Step>
             )}
 
+            {/* States */}
             {currentStep === 2 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Choose your state(s)</h2>
+              <Step title="Choose your state(s)">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {HIMALAYA_STATES.map((st) => (
+                  {NORTH_STATES.map((st) => (
                     <label key={st} className="flex items-center gap-2 border rounded-lg px-3 py-2">
                       <input type="checkbox" checked={selectedStates.includes(st)} onChange={() => toggleState(st)} />
                       <span>{st}</span>
                     </label>
                   ))}
                 </div>
-              </div>
+              </Step>
             )}
 
+            {/* Cities */}
             {currentStep === 3 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Select cities / famous spots</h2>
+              <Step title="Select cities / famous spots">
                 {spotsFromSelectedStates.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                     {spotsFromSelectedStates.map((spot) => (
@@ -222,22 +217,21 @@ Keep it balanced and traveller-friendly.`;
                   placeholder="Add your own place"
                   className="w-full border rounded-lg px-3 py-2"
                 />
-              </div>
+              </Step>
             )}
 
+            {/* Budget */}
             {currentStep === 4 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">What’s your budget?</h2>
-                <div className="flex flex-wrap gap-3">
-                  {["Economy", "Premium", "Luxury"].map((b) => (
-                    <Button key={b} variant={budget === b ? "default" : "outline"} onClick={() => setBudget(b)}>
-                      {b}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              <Step title="What’s your budget?">
+                {["Economy", "Premium", "Luxury"].map((b) => (
+                  <Button key={b} variant={budget === b ? "default" : "outline"} onClick={() => setBudget(b)}>
+                    {b}
+                  </Button>
+                ))}
+              </Step>
             )}
 
+            {/* Review */}
             {currentStep === 5 && (
               <div>
                 <h2 className="text-xl font-semibold mb-4">Review your selections</h2>
@@ -248,7 +242,7 @@ Keep it balanced and traveller-friendly.`;
                   <li><strong>Places:</strong> {selectedSpots.join(", ") || customSpot || "—"}</li>
                   <li><strong>Budget:</strong> {budget || "—"}</li>
                 </ul>
-                <p className="text-xs text-gray-500 mt-3">AI will generate a plan following your inputs.</p>
+                <p className="text-xs text-gray-500 mt-3">AI will generate your custom North India itinerary.</p>
               </div>
             )}
 
@@ -269,9 +263,8 @@ Keep it balanced and traveller-friendly.`;
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <h2 className="text-2xl font-bold mb-4 text-center">Your Himalayan Itinerary</h2>
+            <h2 className="text-2xl font-bold mb-4 text-center">Your North India Itinerary</h2>
             <ItineraryDisplay itinerary={itineraryText} />
-
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Button variant="outline" onClick={() => setShowItinerary(false)}>Edit Preferences</Button>
               <a href="tel:+918595167227" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
@@ -287,6 +280,16 @@ Keep it balanced and traveller-friendly.`;
           </motion.div>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Step wrapper for consistent spacing */
+function Step({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      <div className="flex flex-wrap gap-3">{children}</div>
     </div>
   );
 }

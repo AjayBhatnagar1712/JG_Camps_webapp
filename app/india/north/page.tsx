@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, Variants } from "framer-motion"; // <-- Added Variants import
+import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
@@ -8,57 +8,73 @@ import React from "react";
 interface DestinationCard {
   name: string;
   image: string;
-  bestSeason: string;
-  famousPlaces: string[];
-  highlights: string;
+  bestSeason?: string;
+  famousPlaces?: string[];
+  highlights?: string;
 }
 
-const HIMALAYA_STATES: DestinationCard[] = [
+const NORTH_STATES: DestinationCard[] = [
+  {
+    name: "Delhi",
+    image: "/images/north-india/delhi.jpg",
+    bestSeason: "Oct – Mar",
+    famousPlaces: ["India Gate", "Red Fort", "Qutub Minar"],
+    highlights: "Historic monuments, street food and cultural hubs.",
+  },
+  {
+    name: "Punjab",
+    image: "/images/north-india/punjab.jpg",
+    bestSeason: "Oct – Mar",
+    famousPlaces: ["Amritsar", "Golden Temple", "Wagah Border"],
+    highlights: "Warm hospitality, Sikh heritage and hearty cuisine.",
+  },
   {
     name: "Himachal Pradesh",
-    image: "/images/himalaya/himachal.jpg",
-    bestSeason: "March – June, Oct",
-    famousPlaces: ["Shimla", "Manali", "Dharamshala", "Spiti Valley", "Kasol"],
-    highlights: "Snow-capped peaks, adventure sports, and charming hill towns.",
+    image: "/images/north-india/himachal.jpg",
+    bestSeason: "Mar – Jun, Sep – Oct",
+    famousPlaces: ["Shimla", "Manali", "Dharamshala"],
+    highlights: "Hill stations, treks and alpine scenery.",
   },
   {
     name: "Uttarakhand",
-    image: "/images/himalaya/uttarakhand.jpg",
+    image: "/images/north-india/uttarakhand.jpg",
     bestSeason: "Mar – Jun, Sep – Nov",
-    famousPlaces: ["Nainital", "Mussoorie", "Rishikesh", "Auli", "Jim Corbett"],
-    highlights: "Yoga retreats, spiritual hubs, and thrilling treks.",
+    famousPlaces: ["Rishikesh", "Haridwar", "Nainital"],
+    highlights: "Spiritual towns, river adventures and hill escapes.",
   },
   {
     name: "Jammu & Kashmir",
-    image: "/images/himalaya/jammu.jpg",
+    image: "/images/north-india/jammu.jpg",
     bestSeason: "May – Sep",
-    famousPlaces: ["Srinagar", "Gulmarg", "Pahalgam", "Sonmarg", "Vaishno Devi"],
-    highlights: "Paradise on Earth with breathtaking valleys and shikara rides.",
+    famousPlaces: ["Srinagar", "Gulmarg", "Pahalgam"],
+    highlights: "Lakes, meadows and Himalayan panoramas.",
   },
   {
-    name: "Ladakh",
-    image: "/images/himalaya/ladakh.jpg",
-    bestSeason: "Jun – Sep",
-    famousPlaces: ["Leh", "Pangong Lake", "Nubra Valley", "Turtuk", "Tso Moriri"],
-    highlights: "A biker's dream, home to monasteries and high-altitude passes.",
+    name: "Haryana",
+    image: "/images/north-india/haryana.jpg",
+    bestSeason: "Oct – Mar",
+    famousPlaces: ["Kurukshetra", "Sultanpur Bird Sanctuary", "Panipat"],
+    highlights: "Rural heritage, historical sites and quick city escapes.",
   },
+  // NEW: Uttar Pradesh
   {
-    name: "Sikkim",
-    image: "/images/himalaya/sikkim.jpg",
-    bestSeason: "Mar – May, Oct – Dec",
-    famousPlaces: ["Gangtok", "Tsomgo Lake", "Yumthang Valley", "Pelling", "Nathula"],
-    highlights: "Gateway to Kanchenjunga with vibrant Buddhist culture.",
+    name: "Uttar Pradesh",
+    image: "/images/north-india/uttar-pradesh.jpg",
+    bestSeason: "Oct – Mar",
+    famousPlaces: ["Agra", "Varanasi", "Lucknow"],
+    highlights: "Monumental heritage (Taj Mahal), sacred Ghats & rich Awadhi cuisine.",
   },
+  // NEW: Chandigarh (union territory / city)
   {
-    name: "Arunachal Pradesh",
-    image: "/images/himalaya/arunachal.jpg",
-    bestSeason: "Oct – Apr",
-    famousPlaces: ["Tawang", "Ziro Valley", "Bomdila", "Mechuka", "Sela Pass"],
-    highlights: "Pristine landscapes, monasteries, and unique tribal traditions.",
+    name: "Chandigarh",
+    image: "/images/north-india/chandigarh.jpg",
+    bestSeason: "Oct – Mar",
+    famousPlaces: ["Rock Garden", "Sukhna Lake", "Rose Garden"],
+    highlights: "Planned city with green spaces, lakes and modernist architecture.",
   },
 ];
 
-// ✅ Fixed: properly typed cardVariants
+// small card animation variants
 const cardVariants: Variants = {
   offscreen: { opacity: 0, y: 18, scale: 0.995 },
   onscreen: {
@@ -66,31 +82,36 @@ const cardVariants: Variants = {
     y: 0,
     scale: 1,
     transition: {
-      type: "spring" as const, // literal type so TS knows it's valid
+      type: "spring" as const,
       bounce: 0.08,
       duration: 0.6,
     },
   },
 };
 
-export default function HimalayaPage() {
+export default function NorthPage() {
   return (
     <main className="bg-white text-slate-800">
       {/* HERO */}
       <section className="relative w-full h-[68vh] md:h-[72vh] overflow-hidden rounded-b-3xl shadow-lg">
-        {/* Video background */}
+        {/**
+         * Put a hero video at: public/videos/north_hero.mp4
+         * Put fallback hero image at: public/images/north-india/north-hero.jpg
+         *
+         * The code below prefers the video if the file exists (browser will try to load).
+         * If you don't have a video, keep the image at the poster path.
+         */}
         <video
           className="absolute inset-0 w-full h-full object-cover"
-          src="/videos/himalyan_hero.mp4"
+          src="/videos/north_hero.mp4"
           autoPlay
           loop
           muted
           playsInline
           preload="metadata"
-          poster="/images/himalaya/himalaya-hero.jpg"
+          poster="/images/north-india/north-hero.jpg"
         />
-
-        {/* soft gradient overlay for legibility */}
+        {/* soft gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-transparent" />
 
         {/* hero content */}
@@ -102,7 +123,7 @@ export default function HimalayaPage() {
               transition={{ duration: 0.8 }}
               className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-md"
             >
-              Explore the Mystical <span className="text-amber-300">Himalayas</span>
+              Explore <span className="text-amber-300">North India</span>
             </motion.h1>
 
             <motion.p
@@ -111,15 +132,15 @@ export default function HimalayaPage() {
               transition={{ delay: 0.2 }}
               className="mt-4 text-lg sm:text-xl max-w-2xl text-emerald-100"
             >
-              From alpine meadows to silent monasteries — tailor an unforgettable journey across India's
-              mountain crown. Adventure, wellness, culture, and luxury — blended into one.
+              From bustling Delhi to serene Kashmir — plan cultural, spiritual, wellness or adventure trips across northern India.
             </motion.p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              {/* Build Itinerary -> goes to the North India planner page */}
               <Link
-                href="/himalaya/plan"
+                href="/india/north/plan"
                 className="inline-flex items-center gap-3 bg-amber-400 text-black px-5 py-3 rounded-2xl font-semibold shadow-lg hover:brightness-95 transition"
-                aria-label="Build itinerary for Himalaya"
+                aria-label="Build itinerary for North India"
               >
                 Build Itinerary
                 <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" aria-hidden>
@@ -138,9 +159,9 @@ export default function HimalayaPage() {
 
             {/* quick stats */}
             <div className="mt-8 flex flex-wrap gap-4">
-              <Stat label="Top Peaks" value="7,000+ m" />
-              <Stat label="Trekking Routes" value="200+" />
-              <Stat label="Best Months" value="Mar–Jun, Sep–Nov" />
+              <Stat label="Historic Sites" value="100+" />
+              <Stat label="Pilgrimage Routes" value="20+" />
+              <Stat label="Best Months" value="Oct–Mar" />
             </div>
           </div>
         </div>
@@ -150,27 +171,26 @@ export default function HimalayaPage() {
       <section className="py-14 px-6 container mx-auto">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold">Why Choose the Himalayas?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Why choose North India?</h2>
             <p className="mt-3 text-lg text-gray-600 max-w-prose">
-              The Himalayas are a tapestry of dramatic landscapes, sacred traditions, and exhilarating
-              experiences. We design trips to match your pace — whether you're after high-adrenaline treks,
-              restorative wellness stays, or curated cultural journeys.
+              North India blends heritage, mountain escapes, spiritual trails and lively city culture — ideal for mixed itineraries with varied pacing.
             </p>
 
             <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Feature title="Guided Treks" text="Local guides, safety-first routes, and authentic village experiences." />
-              <Feature title="Wellness Retreats" text="Ayurveda, yoga and spa programs tucked in tranquil valleys." />
-              <Feature title="Luxury Stays" text="Boutique resorts & camps with curated local cuisine." />
-              <Feature title="Custom Logistics" text="Transport, permits, and acclimatization planning handled." />
+              <Feature title="Heritage & Culture" text="Fort cities, museums and food trails." />
+              <Feature title="Spiritual Routes" text="Pilgrimage circuits and riverside rituals." />
+              <Feature title="Mountain Access" text="Quick gateways to the Himalayas for treks & views." />
+              <Feature title="Easy Logistics" text="Strong transport links & varied accommodation options." />
             </ul>
           </div>
 
           {/* decorative card / image */}
           <div className="rounded-2xl overflow-hidden shadow-xl bg-gradient-to-tr from-white to-emerald-50 p-1">
             <div className="relative rounded-xl overflow-hidden h-72 sm:h-80">
+              {/* hero image fallback for sections (duplicate of poster) */}
               <Image
-                src="/images/himalaya/himalaya-hero.jpg"
-                alt="Himalayas overview"
+                src="/images/north-india/north-hero.jpg"
+                alt="North India overview"
                 fill
                 className="object-cover"
                 priority
@@ -183,10 +203,11 @@ export default function HimalayaPage() {
       {/* DESTINATIONS GRID */}
       <section className="py-16 px-6 bg-slate-50">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">Top Himalayan Destinations</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">Top North India Destinations</h2>
 
-          <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
-            {HIMALAYA_STATES.map((dest, i) => (
+          {/* adjusted responsive grid so cards fill nicely (1 / 2 / 3 / 4 columns) */}
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {NORTH_STATES.map((dest) => (
               <motion.article
                 key={dest.name}
                 initial="offscreen"
@@ -203,26 +224,29 @@ export default function HimalayaPage() {
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute top-3 left-3 bg-white/90 text-sm rounded-full px-3 py-1 font-semibold text-emerald-700 shadow">
-                    {dest.bestSeason}
-                  </div>
+                  {dest.bestSeason && (
+                    <div className="absolute top-3 left-3 bg-white/90 text-sm rounded-full px-3 py-1 font-semibold text-emerald-700 shadow">
+                      {dest.bestSeason}
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-6">
                   <h3 className="text-2xl font-semibold text-emerald-800 mb-2">{dest.name}</h3>
                   <p className="text-gray-700 mb-3">{dest.highlights}</p>
-                  <div className="text-sm text-gray-500 mb-4">
-                    <strong>Famous:</strong> {dest.famousPlaces.join(", ")}
-                  </div>
+                  {dest.famousPlaces && (
+                    <div className="text-sm text-gray-500 mb-4">
+                      <strong>Famous:</strong> {dest.famousPlaces.join(", ")}
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between gap-3">
                     <Link
-                      href={`/himalaya/${slugify(dest.name)}`}
+                      href={`/india/north/${slugify(dest.name)}`}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:underline"
                       aria-label={`View itineraries for ${dest.name}`}
                     >
-                      View itineraries
-                      <span aria-hidden>→</span>
+                      View itineraries →
                     </Link>
 
                     <button
@@ -230,7 +254,7 @@ export default function HimalayaPage() {
                         logLeadClient({
                           channel: "destination-click",
                           name: dest.name,
-                          page: "himalaya",
+                          page: "north-india",
                         })
                       }
                       className="text-sm rounded-full border py-2 px-3 text-emerald-700 hover:bg-emerald-50 transition"
@@ -249,9 +273,9 @@ export default function HimalayaPage() {
       <section className="py-12 px-6">
         <div className="container mx-auto rounded-3xl bg-gradient-to-r from-amber-50/80 to-amber-100 p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold text-emerald-800">Ready for a Himalayan Escape?</h3>
+            <h3 className="text-2xl font-bold text-emerald-800">Ready to explore North India?</h3>
             <p className="mt-2 text-gray-700 max-w-xl">
-              Share your dates and preferences — our experts will craft a tailored itinerary and confirm availability.
+              Share dates & preferences and our travel experts will craft a custom itinerary with bookings.
             </p>
           </div>
 
@@ -264,7 +288,7 @@ export default function HimalayaPage() {
             </Link>
 
             <Link
-              href="/himalaya/plan"
+              href="/india/north/plan"
               className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800 font-semibold hover:bg-emerald-50 transition"
             >
               Build Itinerary
@@ -299,7 +323,6 @@ function Feature({ title, text }: { title: string; text: string }) {
   );
 }
 
-/** lightweight slug helper */
 function slugify(s: string) {
   return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
 }
@@ -312,7 +335,7 @@ async function logLeadClient(payload: Record<string, any>) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...payload,
-        page: "himalaya",
+        page: "north-india",
         meta: { clientTs: new Date().toISOString() },
       }),
     });
