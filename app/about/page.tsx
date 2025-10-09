@@ -139,7 +139,7 @@ export default function AboutPage() {
                     <h3 className="text-xl font-semibold mt-4 mb-3">About the Founder</h3>
                     <p className="text-gray-700 leading-relaxed">
                       The company was founded in 2000 by <span className="font-semibold">Anant Arya</span>,
-                      an ex-PMO advisor and travel visionary. He has trained over 200 schools, colleges,
+                      an ex-PMO advisor and travel visionary. He has trained over 200+ schools, colleges,
                       and corporate teams, and has led specialised training programs for army personnel
                       and government officials. His leadership, discipline, and dedication to real-world
                       learning shaped the ethos of the company.
