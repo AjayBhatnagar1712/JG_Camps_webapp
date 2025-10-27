@@ -1,7 +1,7 @@
 // components/PlannerModal.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   X,
   Loader2,
@@ -17,7 +17,7 @@ import {
   Copy,
 } from "lucide-react";
 
-type Props = { open: boolean; onClose: () => void };
+type Props = { open?: boolean; onClose?: () => void }; // <- made optional
 type ItinState = "idle" | "loading" | "done" | "error";
 
 /** split a plain-text markdown reply into Day sections (fallback) */
@@ -75,7 +75,11 @@ function extractJsonBlock(text: string) {
   return null;
 }
 
-export default function PlannerModal({ open, onClose }: Props) {
+export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
+  // visible: the effective visibility (controlled if controlledOpen provided, otherwise internal)
+  const [visible, setVisible] = useState<boolean>(false);
+
+  // ITIN state and fields (unchanged)
   const [state, setState] = useState<ItinState>("idle");
   const [result, setResult] = useState(""); // raw model reply
   const [structured, setStructured] = useState<any | null>(null); // parsed JSON (if any)
@@ -102,6 +106,37 @@ export default function PlannerModal({ open, onClose }: Props) {
 
   // days (fallback parsed markdown) — only used when no structured JSON exists
   const days = useMemo(() => (state === "done" && !structured ? splitDays(result) : []), [state, result, structured]);
+
+  // If parent controls open, mirror that to visible
+  useEffect(() => {
+    if (typeof controlledOpen === "boolean") {
+      setVisible(controlledOpen);
+    }
+  }, [controlledOpen]);
+
+  // If parent does NOT control, listen for "open-planner" event
+  useEffect(() => {
+    if (typeof controlledOpen === "boolean") return;
+    function handleOpen() {
+      setVisible(true);
+      setErr("");
+      setResult("");
+      setStructured(null);
+    }
+    window.addEventListener("open-planner", handleOpen);
+    return () => window.removeEventListener("open-planner", handleOpen);
+  }, [controlledOpen]);
+
+  function handleClose() {
+    // if parent passed onClose, call it (controlled usage)
+    if (onClose) {
+      try {
+        onClose();
+      } catch {}
+    }
+    // always update internal visible state to hide
+    setVisible(false);
+  }
 
   function onArriveChange(v: string) {
     setArrive(v);
@@ -133,7 +168,6 @@ export default function PlannerModal({ open, onClose }: Props) {
   }
 
   function buildSystemPrompt() {
-    // keep prompt instructive but safe (no triple-backticks literal that breaks parser)
     const fenceHint = "Wrap the JSON in a fenced block labeled json (```json ... ```).";
     return [
       "You are Travel Assistant for JG Camps & Resorts.",
@@ -192,7 +226,6 @@ export default function PlannerModal({ open, onClose }: Props) {
       "\nPlease propose the best route order and allocate nights accordingly.",
     ].join("");
 
-    // 60s timeout abort
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60000);
 
@@ -262,17 +295,17 @@ export default function PlannerModal({ open, onClose }: Props) {
     if (!structured) return;
     try {
       await navigator.clipboard.writeText(JSON.stringify(structured, null, 2));
-      // small UI feedback could be added (toast) — omitted for brevity
     } catch {
       // ignore
     }
   }
 
-  if (!open) return null;
+  // If not visible, render nothing
+  if (!visible) return null;
 
   return (
     <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
       <div className="absolute inset-0 grid place-items-center p-4">
         <div className="w-full max-w-3xl rounded-3xl bg-white/95 border border-border shadow-2xl backdrop-blur overflow-hidden">
           {/* Header */}
@@ -286,7 +319,7 @@ export default function PlannerModal({ open, onClose }: Props) {
               <button onClick={handleReset} title="Reset form" className="rounded-md px-3 py-1 bg-white/10 text-white text-sm hover:bg-white/20">
                 Reset
               </button>
-              <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-white/20" aria-label="Close">
+              <button onClick={handleClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-white/20" aria-label="Close">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -454,7 +487,6 @@ export default function PlannerModal({ open, onClose }: Props) {
                           </div>
                         ))
                       ) : (
-                        // show raw reply only when we couldn't parse json and couldn't split days
                         <div className="prose prose-sm text-sm text-foreground whitespace-pre-wrap">{result}</div>
                       )}
                     </div>
@@ -480,7 +512,7 @@ export default function PlannerModal({ open, onClose }: Props) {
           </div>
 
           <div className="px-6 pb-5">
-            <button onClick={onClose} className="w-full sm:w-auto rounded-xl border border-border px-4 py-2 text-sm hover:bg-muted">Close</button>
+            <button onClick={handleClose} className="w-full sm:w-auto rounded-xl border border-border px-4 py-2 text-sm hover:bg-muted">Close</button>
           </div>
         </div>
       </div>
