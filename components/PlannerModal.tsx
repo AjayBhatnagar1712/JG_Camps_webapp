@@ -17,7 +17,7 @@ import {
   Copy,
 } from "lucide-react";
 
-type Props = { open?: boolean; onClose?: () => void }; // <- made optional
+type Props = { open?: boolean; onClose?: () => void }; // made optional
 type ItinState = "idle" | "loading" | "done" | "error";
 
 /** split a plain-text markdown reply into Day sections (fallback) */
@@ -57,10 +57,8 @@ function diffNights(start?: string, end?: string) {
 /** Extract a fenced JSON block (```json ... ```) or plain JSON from text */
 function extractJsonBlock(text: string) {
   if (!text) return null;
-  // try fenced json first
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   const candidate = fenced ? fenced[1] : text;
-  // find first brace to last brace for robust extraction
   const firstBrace = candidate.indexOf("{");
   const lastBrace = candidate.lastIndexOf("}");
   if (firstBrace >= 0 && lastBrace > firstBrace) {
@@ -68,7 +66,6 @@ function extractJsonBlock(text: string) {
     try {
       return JSON.parse(jsonStr);
     } catch {
-      // parse failed — return null to trigger fallback
       return null;
     }
   }
@@ -76,13 +73,13 @@ function extractJsonBlock(text: string) {
 }
 
 export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
-  // visible: the effective visibility (controlled if controlledOpen provided, otherwise internal)
+  // visible: controlled when prop provided, otherwise internal and triggered by "open-planner"
   const [visible, setVisible] = useState<boolean>(false);
 
-  // ITIN state and fields (unchanged)
+  // itinerary state
   const [state, setState] = useState<ItinState>("idle");
-  const [result, setResult] = useState(""); // raw model reply
-  const [structured, setStructured] = useState<any | null>(null); // parsed JSON (if any)
+  const [result, setResult] = useState("");
+  const [structured, setStructured] = useState<any | null>(null);
   const [err, setErr] = useState("");
 
   // form fields
@@ -104,18 +101,15 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     [destinations, arrive, depart, nights, state]
   );
 
-  // days (fallback parsed markdown) — only used when no structured JSON exists
   const days = useMemo(() => (state === "done" && !structured ? splitDays(result) : []), [state, result, structured]);
 
-  // If parent controls open, mirror that to visible
   useEffect(() => {
-    if (typeof controlledOpen === "boolean") {
-      setVisible(controlledOpen);
-    }
+    // if parent controls, mirror controlledOpen
+    if (typeof controlledOpen === "boolean") setVisible(controlledOpen);
   }, [controlledOpen]);
 
-  // If parent does NOT control, listen for "open-planner" event
   useEffect(() => {
+    // if parent is not controlling, listen for global event
     if (typeof controlledOpen === "boolean") return;
     function handleOpen() {
       setVisible(true);
@@ -128,13 +122,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
   }, [controlledOpen]);
 
   function handleClose() {
-    // if parent passed onClose, call it (controlled usage)
-    if (onClose) {
-      try {
-        onClose();
-      } catch {}
-    }
-    // always update internal visible state to hide
+    if (onClose) onClose();
     setVisible(false);
   }
 
@@ -300,7 +288,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     }
   }
 
-  // If not visible, render nothing
   if (!visible) return null;
 
   return (
@@ -422,7 +409,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                   {/* If structured JSON parsed, render structured UI */}
                   {structured ? (
                     <div className="space-y-4">
-                      {/* Overview */}
                       {structured.overview && (
                         <div className="rounded-xl border border-border overflow-hidden">
                           <div className="px-3 py-2 bg-primary/10 border-b border-border"><h4 className="font-semibold text-sm">Overview</h4></div>
@@ -430,7 +416,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                         </div>
                       )}
 
-                      {/* Days */}
                       {Array.isArray(structured.days) && structured.days.map((d: any, idx: number) => (
                         <div key={idx} className="rounded-xl border border-border overflow-hidden">
                           <div className="px-3 py-2 bg-primary/10 border-b border-border">
@@ -449,7 +434,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                         </div>
                       ))}
 
-                      {/* Cost guidance */}
                       {structured.cost_guidance && (
                         <div className="rounded-xl border border-border p-3">
                           <h4 className="font-semibold text-sm mb-2">Cost guidance</h4>
@@ -461,7 +445,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                         </div>
                       )}
 
-                      {/* Raw JSON viewer (collapsed by default) with copy */}
                       <details className="rounded-lg border border-border p-3">
                         <summary className="cursor-pointer text-sm font-medium flex items-center justify-between">
                           <span>View raw JSON</span>
@@ -475,7 +458,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                       </details>
                     </div>
                   ) : (
-                    /* No structured JSON — show parsed day blocks if possible otherwise raw reply */
                     <div className="space-y-4">
                       {days.length > 0 ? (
                         days.map((d, i) => (
@@ -492,7 +474,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
                     </div>
                   )}
 
-                  {/* CTA box */}
                   <div className="rounded-xl bg-primary text-primary-foreground p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div>
                       <h5 className="font-bold">Want us to book & fine-tune this?</h5>
