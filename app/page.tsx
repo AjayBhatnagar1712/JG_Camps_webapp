@@ -1,3 +1,4 @@
+// app/page.tsx
 "use client";
 
 import Image from "next/image";
@@ -31,7 +32,16 @@ const REGIONS: Region[] = [
     title: "North India",
     image: "/images/regions/north-india.jpg",
     blurb: "Himalayan foothills, hill stations, spiritual & heritage routes.",
-    states: ["Jammu & Kashmir", "Himachal Pradesh", "Uttarakhand", "Punjab", "Haryana", "Delhi"],
+    states: [
+      "Delhi",
+      "Punjab",
+      "Haryana",
+      "Uttarakhand",
+      "Himachal Pradesh",
+      "Jammu & Kashmir",
+      "Uttar Pradesh",
+      "Chandigarh",
+    ],
     href: "/india/north",
   },
   {
@@ -39,7 +49,15 @@ const REGIONS: Region[] = [
     title: "South India",
     image: "/images/regions/south-india.jpg",
     blurb: "Backwaters, temple trails, beaches and hill stations.",
-    states: ["Kerala", "Karnataka", "Tamil Nadu", "Andhra Pradesh", "Telangana"],
+    states: [
+      "Andhra Pradesh",
+      "Telangana",
+      "Karnataka",
+      "Kerala",
+      "Tamil Nadu",
+      "Puducherry",
+      "Lakshadweep",
+    ],
     href: "/india/south",
   },
   {
@@ -47,7 +65,13 @@ const REGIONS: Region[] = [
     title: "East India",
     image: "/images/regions/east-india.jpg",
     blurb: "Scenic coasts, heritage towns and tribal cultures.",
-    states: ["West Bengal", "Odisha", "Bihar", "Jharkhand"],
+    states: [
+      "West Bengal",
+      "Odisha",
+      "Bihar",
+      "Jharkhand",
+      "Andaman and Nicobar Islands",
+    ],
     href: "/india/east",
   },
   {
@@ -55,7 +79,15 @@ const REGIONS: Region[] = [
     title: "West India",
     image: "/images/regions/west-india.jpg",
     blurb: "Deserts, forts, coastal gateways and vibrant culture.",
-    states: ["Rajasthan", "Gujarat", "Maharashtra", "Goa"],
+    // Split Dadra/Nagar and Daman/Diu into separate entries
+    states: [
+      "Goa",
+      "Rajasthan",
+      "Gujarat",
+      "Maharashtra",
+      "Dadra and Nagar Haveli",
+      "Daman and Diu",
+    ],
     href: "/india/west",
   },
   {
@@ -63,7 +95,16 @@ const REGIONS: Region[] = [
     title: "North-East India",
     image: "/images/regions/northeast-india.jpg",
     blurb: "Lush valleys, unique cultures and offbeat adventures.",
-    states: ["Sikkim", "Arunachal Pradesh", "Assam", "Meghalaya", "Nagaland", "Manipur"],
+    states: [
+      "Arunachal Pradesh",
+      "Assam",
+      "Manipur",
+      "Meghalaya",
+      "Mizoram",
+      "Nagaland",
+      "Sikkim",
+      "Tripura",
+    ],
     href: "/india/northeast",
   },
   {
@@ -75,13 +116,23 @@ const REGIONS: Region[] = [
     href: "/india/central",
   },
 
-  // ----- NEW: the three cards you requested (minimal change) -----
+  // ----- THEME CARDS (unchanged features; expanded where needed) -----
   {
     key: "group-retreats",
     title: "Group Retreats",
     image: "/images/themes/group-retreats.jpg",
     blurb: "Corporate offsites, family reunions, student camps and team retreats.",
-    states: ["Corporate Offsites", "Team Building", "Student Camps", "Family Reunions"],
+    // expanded list for the panel — links to /group-retreats/<slug>
+    states: [
+      "Corporate Tours",
+      "Training Programs",
+      "Schools",
+      "Colleges",
+      "Open Tours",
+      "Family Tours",
+      "Spiritual & Pilgrimage",
+      "Create Your Own Group",
+    ],
     href: "/group-retreats",
   },
   {
@@ -89,7 +140,30 @@ const REGIONS: Region[] = [
     title: "Spiritual Tourism",
     image: "/images/themes/spiritual-tourism.jpg",
     blurb: "Pilgrimages and soulful retreats — Chardham, Vaishno Devi, Rishikesh and more.",
-    states: ["Chardham Yatra", "Vaishno Devi", "Rishikesh", "Bodh Gaya", "Amarnath"],
+    // expanded spiritual places — links to /spiritual/<slug>
+    states: [
+      "Varanasi (Kashi)",
+      "Char Dham Yatra",
+      "Vaishno Devi",
+      "Rameshwaram",
+      "Puri (Jagannath)",
+      "Bodh Gaya",
+      "Amarnath Cave",
+      "Shirdi (Sai Baba)",
+      "Kanyakumari",
+      "Haridwar",
+      "Rishikesh",
+      "Tirupati (Venkateswara)",
+      "Amritsar (Golden Temple)",
+      "Kedarnath",
+      "Badrinath",
+      "Dwarka",
+      "Mathura & Vrindavan",
+      "Pushkar",
+      "Sabarimala",
+      "Madurai (Meenakshi Amman)",
+      "Ajmer (Dargah Sharif)",
+    ],
     href: "/spiritual",
   },
   {
@@ -299,10 +373,17 @@ export default function Home() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {openRegion.states.map((s) => {
                     const sSlug = slugify(s);
+                    // choose base path depending on region type
+                    const base =
+                      openRegion.key === "spiritual-tourism"
+                        ? "/spiritual"
+                        : openRegion.key === "group-retreats"
+                        ? "/group-retreats"
+                        : "/india";
                     return (
                       <Link
                         key={s}
-                        href={`/india/${sSlug}`}
+                        href={`${base}/${sSlug}`}
                         onClick={() => setTimeout(closeRegionPanel, 80)}
                         className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm hover:bg-gray-50"
                       >
