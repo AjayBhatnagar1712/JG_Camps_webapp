@@ -133,6 +133,7 @@ export default function SouthPage() {
                 onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
                 className="inline-flex items-center gap-3 border border-white/30 text-white px-5 py-3 rounded-2xl font-semibold hover:bg-white/10 transition"
                 aria-label="Contact travel expert"
+                type="button"
               >
                 Contact Travel Expert
               </button>
@@ -235,6 +236,7 @@ export default function SouthPage() {
                         })
                       }
                       className="text-sm rounded-full border py-2 px-3 text-emerald-700 hover:bg-emerald-50 transition"
+                      type="button"
                     >
                       Notify me
                     </button>
@@ -257,12 +259,13 @@ export default function SouthPage() {
           </div>
 
           <div className="flex gap-3">
-            <Link
-              href="/contact"
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
               className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
+              type="button"
             >
               Get Free Travel Consultation
-            </Link>
+            </button>
 
             <Link
               href="/india/south/plan"

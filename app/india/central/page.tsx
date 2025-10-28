@@ -1,3 +1,4 @@
+// app/central/page.tsx
 "use client";
 
 import { motion, Variants } from "framer-motion";
@@ -228,12 +229,13 @@ export default function CentralIndiaPage() {
           </div>
 
           <div className="flex gap-3">
-            <Link
-              href="/contact"
+            {/* Changed: this now opens the global Contact Travel Expert modal via event */}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
               className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
             >
               Get Free Travel Consultation
-            </Link>
+            </button>
 
             <Link
               href="/india/central/plan"
