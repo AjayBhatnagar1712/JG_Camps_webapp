@@ -510,11 +510,11 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-8">
             <div>
-              <p className="text-3xl font-bold text-primary">1000+</p>
+              <p className="text-3xl font-bold text-primary">10000000+</p>
               <p className="text-sm text-muted-foreground">Trips Crafted</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-primary">20+</p>
+              <p className="text-3xl font-bold text-primary">20000+</p>
               <p className="text-sm text-muted-foreground">Destinations</p>
             </div>
             <div>

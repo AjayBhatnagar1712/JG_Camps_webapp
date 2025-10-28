@@ -63,7 +63,7 @@ export default function AboutPage() {
 
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <div className="bg-emerald-50 p-4 rounded-lg shadow text-center">
-                  <p className="text-2xl font-bold text-emerald-700">1000+</p>
+                  <p className="text-2xl font-bold text-emerald-700">10000000+</p>
                   <p className="text-sm text-gray-600">Trips Crafted</p>
                 </div>
                 <div className="bg-emerald-50 p-4 rounded-lg shadow text-center">
@@ -71,7 +71,7 @@ export default function AboutPage() {
                   <p className="text-sm text-gray-600">Satisfied Travelers</p>
                 </div>
                 <div className="bg-emerald-50 p-4 rounded-lg shadow text-center">
-                  <p className="text-2xl font-bold text-emerald-700">20+</p>
+                  <p className="text-2xl font-bold text-emerald-700">20000+</p>
                   <p className="text-sm text-gray-600">Destinations Covered</p>
                 </div>
                 <div className="bg-emerald-50 p-4 rounded-lg shadow text-center">
@@ -195,8 +195,9 @@ export default function AboutPage() {
             </p>
 
             <div className="flex items-center justify-center gap-4">
+              {/* Updated: navigate to home + categories anchor */}
               <Link
-                href="/destinations"
+                href="/#categories"
                 className="px-6 py-3 rounded-2xl border border-gray-300 hover:bg-gray-50 transition"
               >
                 Explore Destinations

@@ -8,7 +8,9 @@ import GlobalCTAs from "@/components/GlobalCTAs";
 import HeaderNav from "@/components/HeaderNav";
 import FooterLinks from "@/components/FooterLinks";
 import { Compass } from "lucide-react";
-import { SpeedInsights } from "@vercel/speed-insights/next"; // ✅ Added for Vercel Speed Insights
+// NOTE: SpeedInsights can sometimes interfere with dev parsing in some setups.
+// If you need it, re-add the import and component at the bottom after confirming layout works.
+// import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -27,6 +29,10 @@ const wa = (text: string) =>
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* place any head-only tags here if needed (fonts, meta are handled by next) */}
+      </head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-slate-800`}
       >
@@ -58,23 +64,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </p>
             </div>
 
+            {/* ===== replaced "Explore" with travel-focused trust/value items ===== */}
             <div>
-              <h4 className="font-semibold mb-2">Explore</h4>
-              <ul className="space-y-1 text-sm text-emerald-100">
-                <li>
-                  <Link className="hover:text-yellow-300" href="/destinations">
-                    Destinations
-                  </Link>
+              <h4 className="font-semibold mb-2">Why Travel With Us</h4>
+              <ul className="space-y-2 text-sm text-emerald-100">
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-300 font-bold">✓</span>
+                  <span>100% Customized Itineraries</span>
                 </li>
-                <li>
-                  <Link className="hover:text-yellow-300" href="/plan">
-                    Plan a Trip
-                  </Link>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-300 font-bold">✓</span>
+                  <span>Verified Hotels & Local Guides</span>
                 </li>
-                <li>
-                  <Link className="hover:text-yellow-300" href="/about">
-                    About
-                  </Link>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-300 font-bold">✓</span>
+                  <span>24×7 Travel Support Team</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-300 font-bold">✓</span>
+                  <span>Secure Payments & Instant Bookings</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-300 font-bold">✓</span>
+                  <span>AI-Powered Trip Planning</span>
                 </li>
               </ul>
             </div>
@@ -93,8 +105,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Global AI Chat Widget (client) */}
         <ChatWidget />
 
-        {/* ✅ Vercel Speed Insights */}
-        <SpeedInsights />
+        {/* If you want SpeedInsights, re-enable here AFTER verifying layout works */}
+        {/* <SpeedInsights /> */}
       </body>
     </html>
   );
