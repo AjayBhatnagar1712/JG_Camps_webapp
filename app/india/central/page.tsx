@@ -1,5 +1,7 @@
-// app/central/page.tsx
+// app/india/central/page.tsx
 "use client";
+
+import slugify from "@/lib/slugify";
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";

@@ -1,5 +1,7 @@
+// app/northeast/page.tsx
 "use client";
 
+import slugify from "@/lib/slugify";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -304,22 +306,17 @@ function Feature({ title, text }: { title: string; text: string }) {
   );
 }
 
-function slugify(s: string) {
-  return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
-}
-
-async function logLeadClient(payload: Record<string, any>) {
-  try {
-    await fetch("/api/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...payload,
-        page: "northeast-india",
-        meta: { clientTs: new Date().toISOString() },
-      }),
-    });
-  } catch {
-    // silent
-  }
+function logLeadClient(payload: Record<string, any>) {
+  // keep same logging behavior (fire-and-forget)
+  fetch("/api/leads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...payload,
+      page: "northeast-india",
+      meta: { clientTs: new Date().toISOString() },
+    }),
+  }).catch(() => {
+    /* silent */
+  });
 }

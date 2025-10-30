@@ -1,6 +1,8 @@
 // app/page.tsx
 "use client";
 
+import slugify from "@/lib/slugify";
+
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -70,7 +72,7 @@ const REGIONS: Region[] = [
       "Odisha",
       "Bihar",
       "Jharkhand",
-      "Andaman and Nicobar Islands",
+      "Andaman & Nicobar Islands",
     ],
     href: "/india/east",
   },
@@ -209,11 +211,6 @@ export default function Home() {
 
   function closeRegionPanel() {
     setOpenRegion(null);
-  }
-
-  // helper slugify for links
-  function slugify(s: string) {
-    return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
   }
 
   return (
@@ -373,13 +370,11 @@ export default function Home() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {openRegion.states.map((s) => {
                     const sSlug = slugify(s);
-                    // choose base path depending on region type
-                    const base =
-                      openRegion.key === "spiritual-tourism"
-                        ? "/spiritual"
-                        : openRegion.key === "group-retreats"
-                        ? "/group-retreats"
-                        : "/india";
+
+                    // Use the region's configured href as base if present, otherwise fall back to /india/<region-key>
+                    // This ensures links from the panel point to the correct region subpath (e.g. /india/north/delhi).
+                    const base = openRegion.href ?? `/india/${openRegion.key}`;
+
                     return (
                       <Link
                         key={s}

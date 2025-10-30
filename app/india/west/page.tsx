@@ -293,8 +293,19 @@ function Feature({ title, text }: { title: string; text: string }) {
   );
 }
 
+
 function slugify(s: string) {
-  return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+  return s
+    .toLowerCase()
+    // remove ampersand (and similar lone punctuation) first
+    .replace(/&/g, "")
+    // remove any remaining non-word (letters/digits/_) or space or hyphen
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    // spaces -> hyphens
+    .replace(/\s+/g, "-")
+    // collapse multiple hyphens
+    .replace(/-+/g, "-");
 }
 
 async function logLeadClient(payload: Record<string, any>) {
