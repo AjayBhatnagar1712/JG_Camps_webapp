@@ -275,10 +275,6 @@ function Feature({ title, text }: { title: string; text: string }) {
   );
 }
 
-function slugify(s: string) {
-  return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
-}
-
 /** quick "fire-and-forget" client lead logger that uses the /api/leads endpoint. */
 async function logLeadClient(payload: Record<string, any>) {
   try {
