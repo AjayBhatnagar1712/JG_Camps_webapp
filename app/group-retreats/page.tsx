@@ -1,6 +1,8 @@
 // app/group-retreats/page.tsx
 "use client";
 
+import slugify from "@/lib/slugify"; // imported as you requested
+
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -139,8 +141,9 @@ export default function GroupRetreatsPage() {
                   <h3 className="text-xl font-semibold text-emerald-800 mb-2">{c.title}</h3>
                   <p className="text-gray-700 mb-4">{c.blurb}</p>
                   <div className="flex items-center justify-between gap-3">
-                    <Link href={`/group-retreats/plan?format=${c.key}`} className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:underline">
-                      Plan for this format →
+                    {/* Changed: link now goes to the individual card page (/group-retreats/<key>) */}
+                    <Link href={`/group-retreats/${slugify(c.key)}`} className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:underline">
+                      View details →
                     </Link>
                     <button onClick={() => window.dispatchEvent(new CustomEvent("log-lead", { detail: { channel: "group-card", format: c.key } }))} className="text-sm rounded-full border py-2 px-3 text-emerald-700 hover:bg-emerald-50 transition">
                       Enquire
@@ -154,35 +157,33 @@ export default function GroupRetreatsPage() {
       </section>
 
       {/* CTA */}
-      {/* CTA */}
-<section className="py-12 px-6">
-  <div className="container mx-auto rounded-3xl bg-gradient-to-r from-amber-50/80 to-amber-100 p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
-    <div>
-      <h3 className="text-2xl font-bold text-emerald-800">Ready to organise your group?</h3>
-      <p className="mt-2 text-gray-700 max-w-xl">
-        Tell us your dates and objectives — we'll propose a programme and cost estimate.
-      </p>
-    </div>
+      <section className="py-12 px-6">
+        <div className="container mx-auto rounded-3xl bg-gradient-to-r from-amber-50/80 to-amber-100 p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-bold text-emerald-800">Ready to organise your group?</h3>
+            <p className="mt-2 text-gray-700 max-w-xl">
+              Tell us your dates and objectives — we'll propose a programme and cost estimate.
+            </p>
+          </div>
 
-    <div className="flex gap-3">
-      {/* This Contact button now opens the global Contact Travel Expert */}
-      <button
-        onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
-        className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
-      >
-        Contact
-      </button>
+          <div className="flex gap-3">
+            {/* This Contact button now opens the global Contact Travel Expert */}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-contact-expert"))}
+              className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
+            >
+              Contact
+            </button>
 
-      <a
-        href="/group-retreats/plan"
-        className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800 font-semibold hover:bg-emerald-50 transition"
-      >
-        Build Group Itinerary
-      </a>
-    </div>
-  </div>
-</section>
-
+            <a
+              href="/group-retreats/plan"
+              className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800 font-semibold hover:bg-emerald-50 transition"
+            >
+              Build Group Itinerary
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

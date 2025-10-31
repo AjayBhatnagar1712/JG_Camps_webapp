@@ -1,6 +1,7 @@
 // app/spiritual/page.tsx
 "use client";
 
+import slugify from "@/lib/slugify";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,8 +27,6 @@ const PLACES: Place[] = [
   { id: "amarnath", name: "Amarnath Cave", region: "Jammu & Kashmir", image: "/images/spiritual/amarnath.jpg", blurb: "High-altitude Shiva cave shrine with seasonal pilgrimage and spectacular Himalayan scenery.", bestSeason: "Jun–Aug" },
   { id: "shirdi", name: "Shirdi (Sai Baba)", region: "Maharashtra", image: "/images/spiritual/shirdi.jpg", blurb: "Pilgrimage town devoted to Sai Baba — deep communal faith and large darshan crowds.", bestSeason: "Oct–Mar" },
   { id: "kanyakumari", name: "Kanyakumari", region: "Tamil Nadu", image: "/images/spiritual/kanyakumari.jpg", blurb: "Southern tip of India — Vivekananda Rock Memorial, sunrise/sunset views and coastal shrines.", bestSeason: "Oct–Feb" },
-
-  // Additional popular sites -- keep for wider coverage
   { id: "haridwar", name: "Haridwar", region: "Uttarakhand", image: "/images/spiritual/haridwar.jpg", blurb: "Gateway to the Himalayas and the site of the holy Ganga aarti and Kumbh festivities.", bestSeason: "Oct–Mar" },
   { id: "rishikesh", name: "Rishikesh", region: "Uttarakhand", image: "/images/spiritual/rishikesh.jpg", blurb: "Yoga capital with ashrams, meditation centers and river experiences.", bestSeason: "Sep–Nov, Feb–Apr" },
   { id: "tirupati", name: "Tirupati (Venkateswara)", region: "Andhra Pradesh", image: "/images/spiritual/tirupati.jpg", blurb: "One of the busiest and most revered temple complexes in India.", bestSeason: "Oct–Feb" },
@@ -115,7 +114,7 @@ export default function SpiritualIndexPage() {
                 <p className="text-gray-700 text-sm mt-2 flex-1">{p.blurb}</p>
                 {p.bestSeason && <div className="text-xs text-gray-500">Best: {p.bestSeason}</div>}
                 <div className="mt-3 flex gap-2">
-                  <Link href={`/spiritual/${p.id}`} className="px-4 py-2 rounded-full bg-amber-400 text-black text-sm font-semibold hover:brightness-95">
+                  <Link href={`/spiritual/${slugify(p.id)}`} className="px-4 py-2 rounded-full bg-amber-400 text-black text-sm font-semibold hover:brightness-95">
                     View Itinerary
                   </Link>
                   <button

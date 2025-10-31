@@ -51,6 +51,13 @@ const NORTH_STATES: DestinationCard[] = [
     highlights: "Lakes, meadows and Himalayan panoramas.",
   },
   {
+    name: "Leh & Ladakh",
+    image: "/images/north-india/leh-ladakh.jpg",
+    bestSeason: "May – Sep",
+    famousPlaces: ["Leh", "Pangong Lake", "Nubra Valley"],
+    highlights: "High-altitude deserts, dramatic landscapes and Buddhist monasteries.",
+  },
+  {
     name: "Haryana",
     image: "/images/north-india/haryana.jpg",
     bestSeason: "Oct – Mar",

@@ -213,6 +213,53 @@ export default function Home() {
     setOpenRegion(null);
   }
 
+  // map special slugs for group-retreats and spiritual-tourism states (these match the pages you created)
+  function getStateSlug(regionKey: string, stateName: string) {
+    if (regionKey === "group-retreats") {
+      const map: Record<string, string> = {
+        "Corporate Tours": "corporate",
+        "Training Programs": "training",
+        "Schools": "schools",
+        "Colleges": "colleges",
+        "Open Tours": "open",
+        "Family Tours": "family",
+        "Spiritual & Pilgrimage": "spiritual",
+        "Create Your Own Group": "custom",
+      };
+      return map[stateName] ?? slugify(stateName);
+    }
+
+    if (regionKey === "spiritual-tourism") {
+      const map: Record<string, string> = {
+        "Varanasi (Kashi)": "kashi",
+        "Char Dham Yatra": "char-dham",
+        "Vaishno Devi": "vaishno-devi",
+        "Rameshwaram": "rameshwaram",
+        "Puri (Jagannath)": "puri",
+        "Bodh Gaya": "bodh-gaya",
+        "Amarnath Cave": "amarnath",
+        "Shirdi (Sai Baba)": "shirdi",
+        "Kanyakumari": "kanyakumari",
+        "Haridwar": "haridwar",
+        "Rishikesh": "rishikesh",
+        "Tirupati (Venkateswara)": "tirupati",
+        "Amritsar (Golden Temple)": "amritsar",
+        "Kedarnath": "kedarnath",
+        "Badrinath": "badrinath",
+        "Dwarka": "dwarka",
+        "Mathura & Vrindavan": "mathura-vrindavan",
+        "Pushkar": "pushkar",
+        "Sabarimala": "sabarimala",
+        "Madurai (Meenakshi Amman)": "madurai",
+        "Ajmer (Dargah Sharif)": "ajmer",
+      };
+      return map[stateName] ?? slugify(stateName);
+    }
+
+    // default behaviour for other regions
+    return slugify(stateName);
+  }
+
   return (
     <main className="min-h-screen text-foreground">
       {/* HERO */}
@@ -369,7 +416,7 @@ export default function Home() {
 
                 <div className="mt-3 flex flex-wrap gap-2">
                   {openRegion.states.map((s) => {
-                    const sSlug = slugify(s);
+                    const sSlug = getStateSlug(openRegion.key, s);
 
                     // Use the region's configured href as base if present, otherwise fall back to /india/<region-key>
                     // This ensures links from the panel point to the correct region subpath (e.g. /india/north/delhi).
@@ -386,6 +433,17 @@ export default function Home() {
                       </Link>
                     );
                   })}
+
+                  {/* Additional quick link for Leh & Ladakh when North India panel is open */}
+                  {openRegion.key === "north" && (
+                    <Link
+                      href={`/india/north/${slugify("Leh & Ladakh")}`}
+                      onClick={() => setTimeout(closeRegionPanel, 80)}
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm hover:bg-gray-50"
+                    >
+                      Leh &amp; Ladakh
+                    </Link>
+                  )}
                 </div>
 
                 <div className="mt-6 flex gap-3">
