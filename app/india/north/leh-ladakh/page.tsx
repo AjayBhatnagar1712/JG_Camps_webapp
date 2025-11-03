@@ -1,171 +1,270 @@
 // app/india/north/leh-ladakh/page.tsx
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import slugify from "@/lib/slugify"; // ✅ imported from shared lib
+
+const DATA = {
+  name: "Leh & Ladakh",
+  image: "/images/north-india/leh-ladakh/leh-hero.jpg",
+  bestSeason: "May – Sep",
+  famousPlaces: [
+    "Leh Bazaar",
+    "Shanti Stupa",
+    "Leh Palace",
+    "Hemis Monastery",
+    "Thiksey Monastery",
+    "Alchi Monastery",
+    "Nubra Valley",
+    "Pangong Tso",
+    "Tso Moriri",
+    "Khardung La",
+    "Magnetic Hill",
+    "Zanskar",
+    "Hunder Sand Dunes",
+  ],
+  highlights:
+    "High-altitude desert landscapes, pristine lakes, Buddhist monasteries, and dramatic Himalayan passes — ideal for adventure and culture.",
+};
+
+const LOCATIONS = [
+  "Leh Town & Leh Bazaar",
+  "Shanti Stupa",
+  "Leh Palace",
+  "Hemis Monastery",
+  "Thiksey Monastery",
+  "Shey Palace & Gompa",
+  "Alchi Monastery",
+  "Nubra Valley (Diskit, Hunder)",
+  "Pangong Tso (Spangmik, Lukung)",
+  "Tso Moriri (Korzok)",
+  "Khardung La (pass)",
+  "Magnetic Hill",
+  "Hunder Sand Dunes (camel safaris)",
+  "Zanskar Valley (Padum, Phuktal)",
+  "Suru Valley & Kargil approach",
+  "Lamayuru (Moonland)",
+  "Stok Kangri base (trek start)",
+  "Changthang plateau (nomadic settlements)",
+];
+
+const DOS = [
+  "Acclimatise in Leh for 1–2 days before driving to high passes.",
+  "Carry prescription meds and a basic altitude sickness kit.",
+  "Book permits (if required) and vehicle/driver in advance for remote routes.",
+  "Respect monastery rules: dress modestly, remove shoes where indicated and ask before photographing monks.",
+];
+
+const DONT_S = [
+  "Don’t rush—avoid ascending to high passes on the day you arrive in Leh.",
+  "Avoid alcohol for the first 24–48 hours after arrival.",
+  "Don’t leave litter at lakes or campsites — Ladakh is ecologically fragile.",
+  "Avoid off-trail driving in protected or fragile areas.",
+];
 
 export default function LehLadakhPage() {
+  const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
+
+  // Dispatch a planner event and navigate to the planner page with query params
+  const openPlannerWith = (state: string, location?: string) => {
+    try {
+      window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
+    } catch (e) {
+      // ignore
+    }
+
+    const params = new URLSearchParams({ state });
+    if (location) params.append("location", location);
+    // navigate to planner route
+    window.location.href = `/india/north/plan?${params.toString()}`;
+  };
+
+  const createItineraryAuto = () => openPlannerWith(DATA.name);
+
   return (
     <main className="bg-white text-slate-800">
       {/* HERO */}
-      <section className="relative w-full h-[68vh] md:h-[72vh] overflow-hidden rounded-b-3xl shadow-lg">
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/videos/leh_ladakh_hero.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster="/images/north-india/leh-ladakh.jpg"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+      <section className="relative w-full h-[56vh] md:h-[64vh] overflow-hidden rounded-b-2xl shadow-lg">
+        <Image src={DATA.image} alt={DATA.name} fill className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-transparent" />
 
         <div className="relative z-10 container mx-auto px-6 h-full flex items-center">
           <div className="max-w-3xl text-white">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-md"
-            >
-              Leh &amp; Ladakh —{" "}
-              <span className="text-amber-300">High-altitude Adventure</span>
-            </motion.h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold">{DATA.name}</h1>
+            <p className="mt-3 text-lg text-emerald-100">{DATA.highlights}</p>
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-              className="mt-4 text-lg sm:text-xl max-w-2xl text-emerald-100"
-            >
-              Dramatic mountain passes, crystal-clear lakes (Pangong, Tso Moriri), Buddhist gompas and unique high-desert landscapes — perfect for adventure, photography and wilderness escapes.
-            </motion.p>
-
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link
-                href="/india/north/plan"
-                className="inline-flex items-center gap-3 bg-amber-400 text-black px-5 py-3 rounded-2xl font-semibold shadow-lg hover:brightness-95 transition"
-                aria-label="Build itinerary for Leh & Ladakh"
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                onClick={createItineraryAuto}
+                className="px-4 py-2 rounded-2xl bg-amber-400 text-black font-semibold"
               >
-                Build Leh Itinerary
-                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" aria-hidden>
-                  <path d="M6 5l6 5-6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
+                Create Itinerary (Auto)
+              </button>
 
-              <a
-                href="#contact-expert"
-                onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("open-contact-expert")); }}
-                className="inline-flex items-center gap-3 border border-white/30 text-white px-5 py-3 rounded-2xl font-semibold hover:bg-white/10 transition"
+              <button
+                onClick={openContact}
+                className="px-4 py-2 rounded-2xl border border-white/30 text-white"
               >
-                Contact Travel Expert
-              </a>
+                Personalize Itinerary
+              </button>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Stat label="Best Time" value="May–Sep" />
-              <Stat label="Altitude" value="3,500–5,600 m" />
-              <Stat label="Activities" value="Trekking, biking, sightseeing" />
+            <div className="mt-3 text-sm text-emerald-100">
+              Best season: <strong>{DATA.bestSeason}</strong>
             </div>
           </div>
         </div>
       </section>
 
-      {/* WHY / HIGHLIGHTS */}
-      <section className="py-14 px-6 container mx-auto">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold">Why visit Leh &amp; Ladakh?</h2>
-            <p className="mt-3 text-lg text-gray-600 max-w-prose">
-              Unique landscapes, clear night skies, remote monasteries and adrenaline routes make Ladakh a one-of-a-kind destination for nature lovers and adventurers.
-            </p>
+      {/* MAIN CONTENT */}
+      <section className="py-12 px-6 container mx-auto max-w-6xl">
+        <h2 className="text-2xl font-bold text-emerald-800 mb-4">About {DATA.name}</h2>
+        <p className="text-gray-700 mb-4">
+          {DATA.highlights} Best season: <strong>{DATA.bestSeason}</strong>.
+        </p>
 
-            <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Feature title="Stunning Lakes" text="Pangong, Tso Moriri and shallow salt lakes with surreal colors." />
-              <Feature title="Cultural Gompas" text="Hemis, Thiksey and Shey — rich Tibetan Buddhist heritage." />
-              <Feature title="High Pass Drives" text="Khardung La, Tanglang La and other iconic mountain passes." />
-              <Feature title="Adventure Sports" text="Trekking, mountain biking and river rafting (seasonal)." />
+        {/* Famous Places */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Famous places & highlights</h3>
+          <ul className="list-disc pl-6 text-gray-700">
+            {DATA.famousPlaces.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* LOCATIONS */}
+        <div className="mb-8">
+          <h3 className="font-semibold mb-3">Destinations & experiences across Leh & Ladakh</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {LOCATIONS.map((loc) => (
+              <div key={loc} className="rounded-lg p-4 bg-white border border-gray-100 shadow-sm">
+                <div className="font-medium text-emerald-800">{loc}</div>
+                <div className="text-sm text-gray-600 mt-1">{getShortDescriptionFor(loc)}</div>
+                <div className="mt-3">
+                  <button
+                    onClick={() => openPlannerWith(DATA.name, loc)}
+                    className="text-sm px-3 py-1 rounded-full border border-emerald-200 text-emerald-800 hover:bg-emerald-50"
+                  >
+                    Plan {shortLabel(loc)}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* DOs & DON'Ts */}
+        <div className="mb-8 grid md:grid-cols-2 gap-6">
+          <div className="rounded-2xl bg-slate-50 p-6 border border-gray-100">
+            <h4 className="font-semibold mb-3">Do's</h4>
+            <ul className="list-disc pl-6 text-gray-700">
+              {DOS.map((d) => (
+                <li key={d} className="mb-2">
+                  {d}
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div className="rounded-2xl overflow-hidden shadow-xl bg-gradient-to-tr from-white to-emerald-50 p-1">
-            <div className="relative rounded-xl overflow-hidden h-72 sm:h-80">
-              <Image
-                src="/images/north-india/leh-ladakh.jpg"
-                alt="Leh Ladakh overview"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
+          <div className="rounded-2xl bg-slate-50 p-6 border border-gray-100">
+            <h4 className="font-semibold mb-3">Don'ts</h4>
+            <ul className="list-disc pl-6 text-gray-700">
+              {DONT_S.map((d) => (
+                <li key={d} className="mb-2">
+                  {d}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </section>
 
-      {/* QUICK ITINERARY / CTA */}
-      <section className="py-12 px-6 bg-slate-50">
-        <div className="container mx-auto max-w-4xl">
-          <h3 className="text-2xl font-bold text-center text-emerald-800 mb-4">Sample 6-day Leh &amp; Ladakh</h3>
+        {/* FINAL CTA */}
+        <div className="rounded-2xl bg-slate-50 p-6 border border-gray-100">
+          <h4 className="font-semibold mb-2">Plan your Leh & Ladakh trip</h4>
+          <p className="text-gray-600 mb-4">
+            Tell us your dates & preferences — our experts will craft a safe, altitude-aware
+            itinerary and handle permits and bookings.
+          </p>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="p-4 bg-white rounded-xl shadow-sm border">
-              <h4 className="font-semibold mb-2">Day 1</h4>
-              <p className="text-sm text-gray-600">Arrive Leh — acclimatize, short local walks, visit Leh Palace.</p>
-            </div>
-            <div className="p-4 bg-white rounded-xl shadow-sm border">
-              <h4 className="font-semibold mb-2">Day 2</h4>
-              <p className="text-sm text-gray-600">Leh → Nubra Valley via Khardung La, sand dunes at Hunder.</p>
-            </div>
-            <div className="p-4 bg-white rounded-xl shadow-sm border">
-              <h4 className="font-semibold mb-2">Day 3</h4>
-              <p className="text-sm text-gray-600">Nubra → Pangong Lake, overnight by the lake (camp/stay).</p>
-            </div>
-          </div>
-
-          <div className="mt-6 text-center">
-            <Link
-              href="/india/north/plan"
-              className="inline-flex items-center px-6 py-3 rounded-2xl bg-emerald-800 text-white font-semibold hover:brightness-95 transition"
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={createItineraryAuto}
+              className="inline-flex items-center px-6 py-3 rounded-2xl bg-amber-400 text-black font-semibold"
             >
-              Get a Custom Leh Plan
+              Create Itinerary (Auto)
+            </button>
+
+            <button
+              onClick={openContact}
+              className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800"
+            >
+              Personalize Itinerary
+            </button>
+
+            <Link
+              href="/india/north"
+              className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800"
+            >
+              Back to North
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* PRACTICALS */}
-      <section className="py-12 px-6">
-        <div className="container mx-auto max-w-4xl">
-          <h4 className="text-xl font-bold mb-3">Practical tips</h4>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>Acclimatization is important — take it slow on arrival.</li>
-            <li>Carry warm clothing even in summer nights — temperatures drop quickly.</li>
-            <li>Permit requirements: check for protected area permits (if visiting certain passes/islands).</li>
-          </ul>
         </div>
       </section>
     </main>
   );
 }
 
-/* small helpers used above (kept simple & consistent with other pages) */
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="inline-flex items-center gap-3 bg-white/5 rounded-full px-4 py-2">
-      <div className="text-sm text-amber-200 font-bold">{value}</div>
-      <div className="text-sm text-emerald-100">{label}</div>
-    </div>
-  );
+/* helper for short labels */
+function shortLabel(loc: string) {
+  const match = loc.match(/^([^(,]+)/);
+  return match ? match[1].trim() : loc;
 }
 
-function Feature({ title, text }: { title: string; text: string }) {
+/* Short descriptions for Leh & Ladakh locations */
+function getShortDescriptionFor(loc: string) {
+  const map: Record<string, string> = {
+    "Leh Town & Leh Bazaar":
+      "Historic market, cafes, shops and acclimatisation hub with scenic viewpoints.",
+    "Shanti Stupa":
+      "White-domed peace pagoda offering sunrise/sunset views over Leh.",
+    "Leh Palace":
+      "Nine-storey palace overlooking Leh — history and great vantage point.",
+    "Hemis Monastery":
+      "Largest and richest monastery in Ladakh, hosts the Hemis Festival.",
+    "Thiksey Monastery":
+      "Beautiful gompa with assembly hall and panoramic views; resembles Potala Palace in miniature.",
+    "Shey Palace & Gompa":
+      "Former summer capital with seated Buddha statue and historic ruins.",
+    "Alchi Monastery":
+      "Ancient monastery famed for its rare murals and Kashmiri-influenced artwork.",
+    "Nubra Valley (Diskit, Hunder)":
+      "Green valleys, double-humped camels and scenic drives via Khardung La.",
+    "Pangong Tso (Spangmik, Lukung)":
+      "Famous high-altitude lake known for shifting blue hues and dramatic vistas.",
+    "Tso Moriri (Korzok)":
+      "Remote, serene high-altitude lake with nomadic Changpa settlements.",
+    "Khardung La (pass)":
+      "One of the world’s highest motorable passes — gateway to Nubra Valley.",
+    "Magnetic Hill":
+      "Optical-illusion stretch reputed to show cars rolling uphill.",
+    "Hunder Sand Dunes (camel safaris)":
+      "Unique cold desert dunes in Nubra offering camel rides.",
+    "Zanskar Valley (Padum, Phuktal)":
+      "Remote valley for multi-day treks and the famous Phuktal monastery cave complex.",
+    "Suru Valley & Kargil approach":
+      "Lush valley extending south towards Kargil with remote villages and scenic drives.",
+    "Lamayuru (Moonland)":
+      "Lunar-like rock formations and an ancient monastery — dramatic landscape.",
+    "Stok Kangri base (trek start)":
+      "Base area for high-altitude trekking (note seasonal/permit restrictions).",
+    "Changthang plateau (nomadic settlements)":
+      "Expansive plateau dotted with yak herders and remote lakes.",
+  };
   return (
-    <div className="flex gap-4 items-start bg-white p-4 rounded-xl shadow-sm">
-      <div className="h-10 w-10 rounded-md bg-emerald-50 grid place-items-center text-emerald-700 font-bold">✓</div>
-      <div>
-        <div className="font-semibold text-emerald-800">{title}</div>
-        <div className="text-sm text-gray-600">{text}</div>
-      </div>
-    </div>
+    map[loc] ||
+    "Explore this remarkable place in Ladakh — unique landscapes and cultural heritage await."
   );
 }

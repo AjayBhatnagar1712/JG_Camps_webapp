@@ -1,15 +1,13 @@
 // lib/slugify.ts
 export default function slugify(s: string) {
+  const map: Record<string, string> = {
+    "Jammu & Kashmir": "jammu-and-kashmir",
+    "Leh & Ladakh": "leh-ladakh",
+  };
+  if (map[s]) return map[s];
   return s
     .toLowerCase()
-    // convert "&" or " & " to nothing (we'll drop 'and' to keep slugs compact)
-    .replace(/\b&\b/g, "")
-    .replace(/\band\b/g, "")
-    // remove remaining punctuation except spaces and hyphens
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    // collapse multiple spaces to single
+    .replace(/&/g, "and")
     .replace(/\s+/g, "-")
-    // collapse multiple hyphens to single
-    .replace(/-+/g, "-");
+    .replace(/[^\w-]/g, "");
 }

@@ -1,5 +1,7 @@
-// app/north/page.tsx
+// app/india/north/page.tsx
 "use client";
+
+import slugify from "@/lib/slugify";
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
@@ -332,10 +334,6 @@ function Feature({ title, text }: { title: string; text: string }) {
       </div>
     </div>
   );
-}
-
-function slugify(s: string) {
-  return s.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
 }
 
 /** quick "fire-and-forget" client lead logger that uses the /api/leads endpoint. */
