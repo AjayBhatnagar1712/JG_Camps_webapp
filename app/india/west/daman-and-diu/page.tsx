@@ -1,4 +1,4 @@
-// app/india/east/jharkhand/page.tsx
+// app/india/west/daman-and-diu/page.tsx
 "use client";
 
 import Image from "next/image";
@@ -6,61 +6,57 @@ import Link from "next/link";
 import React from "react";
 
 /**
- * Jharkhand index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/east/plan with params)
- * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
- *
- * Matches the style/pattern used for Bihar page.
+ * Daman & Diu index page — follows the same pattern as Bihar/Maharashtra pages.
+ * - Lists major destinations and quick itinerary options
+ * - Auto itinerary opens /india/west/plan?state=Daman%20and%20Diu
+ * - "Personalize Itinerary" dispatches global event "open-contact-expert"
  */
 
 const DATA = {
-  name: "Jharkhand",
-  image: "/images/east-india/jharkhand.jpg",
+  name: "Daman & Diu",
+  image: "/images/west-india/daman-diu.jpg",
   bestSeason: "Oct – Mar",
   highlights:
-    "Jharkhand is a land of forests, waterfalls and tribal culture — from the capital Ranchi to the steel city of Jamshedpur and pilgrimage hubs like Deoghar.",
+    "Two coastal enclaves with Portuguese heritage, forts, calm beaches and seafood — ideal for short coastal getaways and heritage walks.",
 };
 
 const LOCATIONS = [
-  "Ranchi (Capital & Rock Gardens)",
-  "Jamshedpur (Steel City & Tata Steel Garden)",
-  "Deoghar (Baidyanath Jyotirlinga)",
-  "Hazaribagh (National Park & lakes)",
-  "Netarhat (Sunrise point & viewpoints)",
-  "Dhanbad (Coalfields & Maithon nearby)",
-  "Giridih (Parasnath & waterfalls)",
-  "Palamu (Palamu Fort & wildlife)",
-  "Betla (Betla National Park & Palamu Reserve)",
-  "Parasnath (Jain pilgrimage hill)",
-  "Rajrappa (Rajrappa Temple & river confluence)",
-  "Gumla (Hillscapes & tribal villages)",
-  "Lohardaga (Bauxite country & scenic hills)",
-  "Khunti (Rock art & tribal culture)",
-  "Saraikela (Cultural town known for Chhau dance)",
-  "Chaibasa (West Singhbhum gateway)",
-  "Dumka (Santal Parganas historic town)",
-  "Godda (Pilgrimage & scenic pockets)",
-  "Pakur (Granite & riverine beauty)",
-  "Sahibganj (Ghats on the Ganges & ferry points)",
-  "Latehar (Waterfalls & forest treks)",
-  "Simdega (Waterfalls & tribal festivals)",
+  // Daman
+  "Moti Daman Fort (St. Jerome Fort)",
+  "St. Jerome Church (Moti Daman)",
+  "Devka Beach (Daman)",
+  "Jampore Beach (Daman)",
+  "Nani Daman (Old Quarter & promenades)",
+  "Citadel of Daman (Fort area & lighthouse)",
+  "Daman Ganga Tourist Complex",
+
+  // Diu
+  "Diu Fort (Portuguese Fort)",
+  "Nagoa Beach (Diu)",
+  "Naida Caves & Lighthouse (Diu)",
+  "St. Paul's Church (Diu)",
+  "Gangeshwar Temple (Diu, sea-shore Shiva temples)",
+  "Diu Museum & Old Harbour",
+  "Ghoghla Beach (Diu)",
+  "Jallandhar/ETY Beach (Diu)",
+  "Simbor (historic Portuguese outpost area)",
 ];
 
 const DOS = [
-  "Respect tribal customs and local rules when visiting villages and protected zones.",
-  "Plan for Oct–Mar for comfortable weather and clear skies at hill viewpoints.",
-  "Hire local guides for forest safaris and Parasnath treks — they know safe routes and history.",
-  "Carry water, insect repellent and sturdy footwear for waterfall/forest trails.",
+  "Respect timings at religious sites like Gangeshwar Temple and local shrines.",
+  "Carry sun protection for beach days and light rainwear during shoulder seasons.",
+  "Try fresh seafood at local seaside shacks and small restaurants.",
+  "Hire a local boat or guide for short island/harbour excursions where available.",
 ];
 
 const DONT_S = [
-  "Don't enter protected areas or reserve zones without permission or a guide.",
-  "Avoid littering at scenic spots and river ghats; use designated disposal points.",
-  "Don't assume frequent public transport in remote areas — arrange private transfer if needed.",
-  "Avoid photographing people in villages without asking; be culturally sensitive.",
+  "Don't leave plastic or litter on beaches — the authorities are strict about cleanliness.",
+  "Avoid swimming alone at unmarked stretches during rough seas.",
+  "Do not trespass inside active protected fort sections or restricted military areas.",
+  "Be mindful of local customs in small hamlets and fishing villages.",
 ];
 
-export default function JharkhandPage() {
+export default function DamanAndDiuPage() {
   const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
 
   const openPlannerWith = (state: string, location?: string) => {
@@ -72,7 +68,7 @@ export default function JharkhandPage() {
     const params = new URLSearchParams({ state });
     if (location) params.append("location", location);
     // Navigate to plan page with params so the planner can read them
-    window.location.href = `/india/east/plan?${params.toString()}`;
+    window.location.href = `/india/west/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);
@@ -95,7 +91,6 @@ export default function JharkhandPage() {
               >
                 Create Itinerary (Auto)
               </button>
-
               <button
                 onClick={openContact}
                 className="px-4 py-2 rounded-2xl border border-white/30 text-white"
@@ -120,7 +115,7 @@ export default function JharkhandPage() {
 
         {/* LOCATIONS GRID */}
         <div className="mb-8">
-          <h3 className="font-semibold mb-3">Top Destinations in Jharkhand</h3>
+          <h3 className="font-semibold mb-3">Top Destinations in Daman &amp; Diu</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {LOCATIONS.map((loc) => (
               <div key={loc} className="rounded-lg p-4 bg-white border border-gray-100 shadow-sm">
@@ -172,10 +167,10 @@ export default function JharkhandPage() {
 
         {/* FINAL CTA */}
         <div className="rounded-2xl bg-slate-50 p-6 border border-gray-100">
-          <h4 className="font-semibold mb-2">Plan your Jharkhand trip</h4>
+          <h4 className="font-semibold mb-2">Plan your Daman &amp; Diu trip</h4>
           <p className="text-gray-600 mb-4">
-            From the cultural and tribal hubs to waterfalls and wildlife, Jharkhand offers an offbeat and rewarding travel experience.
-            Tell us your travel style and dates, and we’ll craft an itinerary that fits.
+            Relax on quiet beaches, explore Portuguese forts and savour coastal cuisine. Tell us your travel dates
+            and preferences and we’ll craft a short coastal itinerary for Daman &amp; Diu.
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -194,10 +189,10 @@ export default function JharkhandPage() {
             </button>
 
             <Link
-              href="/india/east"
+              href="/india/west"
               className="inline-flex items-center px-6 py-3 rounded-2xl border border-emerald-200 text-emerald-800"
             >
-              Back to East India
+              Back to West India
             </Link>
           </div>
         </div>
@@ -215,28 +210,22 @@ function shortLabel(loc: string) {
 /* Helper: small summaries per destination */
 function getShortDescriptionFor(loc: string) {
   const map: Record<string, string> = {
-    "Ranchi (Capital & Rock Gardens)": "Ranchi — capital city with rock gardens, waterfalls (Jonha, Hundru) and pleasant hilltop views.",
-    "Jamshedpur (Steel City & Tata Steel Garden)": "Industrial city with parks, Tata Steel Garden and nearby Dalma Wildlife Sanctuary.",
-    "Deoghar (Baidyanath Jyotirlinga)": "Major pilgrimage town home to the Baidyanath (Jyotirlinga) temple attracting devotees year-round.",
-    "Hazaribagh (National Park & lakes)": "Hazaribagh National Park, scenic lakes and quiet hill retreats.",
-    "Netarhat (Sunrise point & viewpoints)": "Famous for sunrise points, pine forests and peaceful hill walks.",
-    "Dhanbad (Coalfields & Maithon nearby)": "Coal-mining region with Maithon Dam nearby and local industrial heritage.",
-    "Giridih (Parasnath & waterfalls)": "Gateway to Parasnath hill (Jain pilgrimage) and scenic waterfalls.",
-    "Palamu (Palamu Fort & wildlife)": "Historic fort town with access to forested Palamu wildlife country.",
-    "Betla (Betla National Park & Palamu Reserve)": "Known for Betla National Park — safaris, tribal villages and wildlife.",
-    "Parasnath (Jain pilgrimage hill)": "Sacred Jain tirtha — a prominent trekking and pilgrimage destination.",
-    "Rajrappa (Rajrappa Temple & river confluence)": "Pilgrimage temple at a river confluence with scenic surroundings.",
-    "Gumla (Hillscapes & tribal villages)": "Hilly district rich in tribal culture, waterfalls and rural landscapes.",
-    "Lohardaga (Bauxite country & scenic hills)": "Known for bauxite deposits and quiet hill scenery.",
-    "Khunti (Rock art & tribal culture)": "Tribal heartland with ancient rock art sites and cultural experiences.",
-    "Saraikela (Cultural town known for Chhau dance)": "Cultural town famed for Chhau dance and local festivals.",
-    "Chaibasa (West Singhbhum gateway)": "Gateway to West Singhbhum with access to tribal areas and forest treks.",
-    "Dumka (Santal Parganas historic town)": "Historic Dumka region — cultural and rural landscapes of Santal Parganas.",
-    "Godda (Pilgrimage & scenic pockets)": "Emerging district with pilgrimage centres and countryside charm.",
-    "Pakur (Granite & riverine beauty)": "Known for stone quarries and riverside pockets along the Ganges tributaries.",
-    "Sahibganj (Ghats on the Ganges & ferry points)": "Ghats along the Ganges, river ferries and local markets.",
-    "Latehar (Waterfalls & forest treks)": "Waterfalls, forest trails and offbeat trekking opportunities.",
-    "Simdega (Waterfalls & tribal festivals)": "Waterfalls, tribal festivals and rural cultural experiences.",
+    "Moti Daman Fort (St. Jerome Fort)": "Large Portuguese-era fort with ramparts, lighthouse and historic churches nearby.",
+    "St. Jerome Church (Moti Daman)": "Historic church near the fort with colonial architecture and quiet courtyards.",
+    "Devka Beach (Daman)": "Popular beach with promenades, small food stalls and sunset views.",
+    "Jampore Beach (Daman)": "Cleaner, quieter beach known for picnics and short boat rides.",
+    "Nani Daman (Old Quarter & promenades)": "Heritage lanes, market streets and Portuguese-style buildings.",
+    "Citadel of Daman (Fort area & lighthouse)": "Scenic fort area with views across the river and sea.",
+    "Daman Ganga Tourist Complex": "Leisure complex with boating, gardens and family-friendly facilities.",
+    "Diu Fort (Portuguese Fort)": "Massive coastal fort with commanding sea views and well-preserved ramparts.",
+    "Nagoa Beach (Diu)": "Curved sandy beach ideal for swimming, water sports and family days out.",
+    "Naida Caves & Lighthouse (Diu)": "Limestone caves and rocky promontories with a small lighthouse viewpoint.",
+    "St. Paul's Church (Diu)": "One of the island’s notable churches demonstrating colonial-era ecclesiastical style.",
+    "Gangeshwar Temple (Diu, sea-shore Shiva temples)": "Unique set of Shiva lingas located along the seashore — scenic and spiritual.",
+    "Diu Museum & Old Harbour": "Small museum with artefacts and displays about Diu’s maritime and colonial past.",
+    "Ghoghla Beach (Diu)": "Long sandy stretch, quieter than Nagoa and suitable for long walks.",
+    "Jallandhar/ETY Beach (Diu)": "Smaller beaches and local fishing village ambience.",
+    "Simbor (historic Portuguese outpost area)": "Remote coastal headland with old fort ruins and storied maritime past.",
   };
-  return map[loc] || "Explore the natural beauty, cultural heritage and tribal traditions of this destination.";
+  return map[loc] || "Explore the beaches, forts and historic Portuguese heritage of Daman & Diu.";
 }

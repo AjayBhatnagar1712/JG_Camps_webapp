@@ -50,7 +50,7 @@ const WEST_STATES: DestinationCard[] = [
     highlights: "Quiet nature retreats, tribal crafts and riverside walks.",
   },
   {
-    name: "Daman & Diu",
+    name: "Daman and Diu",
     image: "/images/west-india/daman-diu.jpg",
     bestSeason: "Oct – Feb",
     famousPlaces: ["Diu Fort", "Nagoa Beach", "Daman Lighthouse"],
