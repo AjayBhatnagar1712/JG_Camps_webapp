@@ -108,9 +108,8 @@ function buildLocalItinerary(messages: Message[]) {
         drive_time: startCity ? `Start from ${startCity}` : "Flexible arrival",
         nights_at: primary,
         highlights: [
-          `Arrive and settle into the ${primary} area`,
-          `Do a relaxed local orientation around ${place}`,
-          "Keep the evening light with nearby food and market time",
+          `Arrive and settle near ${primary}`,
+          `Easy orientation around ${place}`,
         ],
         food_suggestions: ["local snacks", "regional dinner"],
       };
@@ -122,9 +121,8 @@ function buildLocalItinerary(messages: Message[]) {
         drive_time: "Keep transfers flexible",
         nights_at: "Departure day",
         highlights: [
-          "Use the morning for any missed nearby experience",
-          "Keep buffer time for packing, traffic, and onward travel",
-          "Call JG Camps & Resorts for final booking support",
+          "Keep the morning light and flexible",
+          "Leave buffer for traffic and onward travel",
         ],
         food_suggestions: ["easy breakfast", "packed snacks for travel"],
       };
@@ -135,24 +133,23 @@ function buildLocalItinerary(messages: Message[]) {
       drive_time: "Local transfers as per route",
       nights_at: place,
       highlights: [
-        `Explore the main ${theme.toLowerCase()} highlights around ${place}`,
-        "Add one guided local experience or cultural stop",
-        "Keep late afternoon open for cafes, markets, or viewpoints",
+        `Cover top ${theme.toLowerCase()} highlights around ${place}`,
+        "Add one local culture or viewpoint stop",
       ],
       food_suggestions: ["popular local dishes", "trusted local cafes"],
     };
   });
 
-  const overview = `A ${daysCount}-day / ${nights}-night ${theme.toLowerCase()} route for ${route.join(", ")} with comfortable pacing, local experiences, and booking support from JG Camps & Resorts.`;
+  const overview = `${daysCount} days in ${route.join(", ")} with comfortable pacing, local food, and JG booking support.`;
   const structured = {
     overview,
     total_nights: nights,
     route,
     days: baseDays,
     cost_guidance: {
-      economy: "Budget-friendly transport, simple stays by area/category, and local meals",
-      mid: "Comfortable transport, better-located stays by area/category, and curated experiences",
-      premium: "Private transfers, premium stay categories by area, and expert-led experiences",
+      economy: "Shared transport, simple stay category, local meals",
+      mid: "Comfortable transfers, better stay area, curated stops",
+      premium: "Private transfers, premium stay category, guided experiences",
     },
     summary: "For stay options, transport, permits, and booking support, contact JG Camps & Resorts.",
   };

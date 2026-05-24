@@ -14,15 +14,43 @@ import {
   ChevronRight,
   Plus,
   XCircle,
-  Copy,
 } from "lucide-react";
 
 type Props = { open?: boolean; onClose?: () => void }; // made optional
 type ItinState = "idle" | "loading" | "done" | "error";
 
+function cleanDisplayText(value?: string) {
+  return (value || "")
+    .replace(/^[-*•\s]+/, "")
+    .replace(/\*\*/g, "")
+    .replace(/```(?:json)?/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function compactSentence(value?: string, maxWords = 16) {
+  const cleaned = cleanDisplayText(value);
+  const words = cleaned.split(" ").filter(Boolean);
+  return words.length > maxWords ? `${words.slice(0, maxWords).join(" ")}...` : cleaned;
+}
+
+function compactItems(items: unknown, maxItems = 2, maxWords = 14) {
+  const list = Array.isArray(items) ? items : typeof items === "string" ? items.split(/\n|,/) : [];
+  return list.map((item) => compactSentence(String(item), maxWords)).filter(Boolean).slice(0, maxItems);
+}
+
+function stripJsonFromText(text: string) {
+  return text
+    .replace(/```(?:json)?[\s\S]*?```/gi, "")
+    .replace(/```(?:json)?[\s\S]*$/gi, "")
+    .replace(/\n\s*\{\s*["']overview["'][\s\S]*$/i, "")
+    .replace(/\n\s*\{\s*["']days["'][\s\S]*$/i, "")
+    .trim();
+}
+
 /** split a plain-text markdown reply into Day sections (fallback) */
 function splitDays(text: string) {
-  const lines = text.split(/\r?\n/);
+  const lines = stripJsonFromText(text).split(/\r?\n/);
   const days: { title: string; body: string }[] = [];
   let currentTitle = "Overview";
   let buf: string[] = [];
@@ -88,16 +116,17 @@ function buildPrefillNotes(detail: { state?: string; city?: string; location?: s
 /** Extract a fenced JSON block (```json ... ```) or plain JSON from text */
 function extractJsonBlock(text: string) {
   if (!text) return null;
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  const candidate = fenced ? fenced[1] : text;
-  const firstBrace = candidate.indexOf("{");
-  const lastBrace = candidate.lastIndexOf("}");
-  if (firstBrace >= 0 && lastBrace > firstBrace) {
-    const jsonStr = candidate.slice(firstBrace, lastBrace + 1);
+  const candidates = [...text.matchAll(/```(?:json)?\s*([\s\S]*?)\s*```/gi)].map((match) => match[1]);
+  candidates.push(text);
+
+  for (const candidate of candidates) {
+    const firstBrace = candidate.indexOf("{");
+    const lastBrace = candidate.lastIndexOf("}");
+    if (firstBrace < 0 || lastBrace <= firstBrace) continue;
     try {
-      return JSON.parse(jsonStr);
+      return JSON.parse(candidate.slice(firstBrace, lastBrace + 1));
     } catch {
-      return null;
+      // try the next fenced block or full response
     }
   }
   return null;
@@ -139,6 +168,15 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     // if parent controls, mirror controlledOpen
     if (typeof controlledOpen === "boolean") setVisible(controlledOpen);
   }, [controlledOpen]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [visible]);
 
   useEffect(() => {
     // Listen for global events even when parent controls the open state so location
@@ -212,7 +250,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     return [
       "You are Travel Assistant for JG Camps & Resorts.",
       "Return TWO things in your reply:",
-      "1) A concise, traveler-friendly Markdown itinerary using 'Day 1', 'Day 2', etc.",
+      "1) A very concise, traveler-friendly Markdown itinerary using 'Day 1', 'Day 2', etc.",
       `2) Immediately after the markdown, include a valid JSON object and ${fenceHint}`,
       "",
       `Trip length is exact: ${expectedNights || expectedDays - 1} nights = ${expectedDays} calendar days.`,
@@ -240,7 +278,12 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
 }`,
       "",
       "Rules:",
-      "- Keep the markdown concise and clear.",
+      "- Keep the markdown compact and scannable.",
+      "- Overview must be 20 words or fewer.",
+      "- Each day must have one short title and exactly 2 short activity bullets.",
+      "- Each activity bullet must be 12 words or fewer.",
+      "- Food suggestions should be 1 or 2 short items only.",
+      "- Do not write paragraphs inside day sections.",
       "- The JSON must be valid JSON (no trailing commas) and must be wrapped in a fenced ```json block.",
       `- Include exactly ${expectedDays} markdown day sections and exactly ${expectedDays} JSON day objects.`,
       "- End the markdown with a short summary line and then the JSON block.",
@@ -285,7 +328,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
             { role: "system", content: system },
             { role: "user", content: user },
           ],
-          maxOutputTokens: 2600,
+          maxOutputTokens: 1800,
           temperature: 0.5,
           timeoutMs: 18000,
         }),
@@ -341,13 +384,40 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     setState("idle");
   }
 
-  async function copyStructuredJson() {
-    if (!structured) return;
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(structured, null, 2));
-    } catch {
-      // ignore
-    }
+  function renderDayCard(day: any, idx: number) {
+    const dayNumber = day?.day || idx + 1;
+    const title = cleanDisplayText(day?.title || `Day ${dayNumber}`);
+    const titleWithoutPrefix = title.replace(/^Day\s+\d+\s*[-—:]\s*/i, "");
+    const highlights = compactItems(day?.highlights, 2, 13);
+    const food = compactItems(day?.food_suggestions, 2, 6);
+    const drive = compactSentence(day?.drive_time, 6);
+    const nightsAt = compactSentence(day?.nights_at, 8);
+
+    return (
+      <article key={`${dayNumber}-${idx}`} className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 border-b border-emerald-100 bg-emerald-50 px-3 py-2">
+          <div className="min-w-0">
+            <div className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">Day {dayNumber}</div>
+            <h4 className="truncate text-sm font-black text-slate-900">{titleWithoutPrefix || title}</h4>
+          </div>
+          {drive && <span className="shrink-0 rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-600">{drive}</span>}
+        </div>
+        <div className="space-y-3 p-3">
+          <ul className="grid gap-2">
+            {highlights.map((item, itemIdx) => (
+              <li key={itemIdx} className="flex gap-2 text-sm leading-5 text-slate-700">
+                <Sparkles className="mt-0.5 h-4 w-4 flex-none text-amber-500" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-wrap gap-2">
+            {nightsAt && <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">Stay: {nightsAt}</span>}
+            {food.length > 0 && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">Food: {food.join(", ")}</span>}
+          </div>
+        </div>
+      </article>
+    );
   }
 
   if (!visible) return null;
@@ -355,10 +425,10 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-[60]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
-      <div className="absolute inset-0 grid place-items-center p-4">
-        <div className="w-full max-w-3xl rounded-3xl bg-white/95 border border-border shadow-2xl backdrop-blur overflow-hidden">
+      <div className="absolute inset-0 grid place-items-center p-3 sm:p-4">
+        <div className="flex h-[min(820px,calc(100vh-1.5rem))] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-border bg-white/95 shadow-2xl backdrop-blur">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-primary/90 to-primary text-primary-foreground">
+          <div className="flex flex-none items-center justify-between px-5 py-4 sm:px-6 bg-gradient-to-r from-primary/90 to-primary text-primary-foreground">
             <div>
               <h3 className="text-lg font-bold">Get Your Free Itinerary (Multi-Destination)</h3>
               <p className="text-xs opacity-90">Pick dates and places — we’ll propose the route and nights per stop.</p>
@@ -375,9 +445,10 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
           </div>
 
           {/* Form + Output */}
-          <div className="grid md:grid-cols-2 gap-4 px-6 py-5 md:max-h-[75vh] overflow-auto">
+          <div className="grid min-h-0 flex-1 gap-4 overflow-hidden px-5 py-5 sm:px-6 md:grid-cols-[minmax(320px,0.9fr)_minmax(360px,1.1fr)]">
             {/* LEFT: Inputs */}
-            <div className="grid gap-3">
+            <div className="min-h-0 overflow-hidden pr-1">
+              <div className="grid gap-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="grid gap-1">
                   <label className="text-xs font-medium">Arrival</label>
@@ -451,10 +522,16 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
               </div>
 
               {state === "error" && <div className="text-sm text-red-600"><div>Couldn't generate itinerary: {err}</div><button onClick={generate} className="mt-2 px-3 py-1 rounded-md bg-amber-400 text-black font-semibold">Retry</button></div>}
+              </div>
             </div>
 
             {/* RIGHT: Output */}
-            <div className="rounded-2xl border border-border bg-card p-4 shadow-sm min-h-[260px] overflow-y-auto">
+            <div className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              <div className="flex-none border-b border-border bg-white/80 px-4 py-3">
+                <div className="text-sm font-black text-slate-900">Itinerary Preview</div>
+                <p className="text-xs text-muted-foreground">Compact day-wise plan</p>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {state === "idle" && (
                 <div className="text-center text-muted-foreground py-10">
                   <Sparkles className="h-6 w-6 mx-auto mb-2" />
@@ -483,68 +560,42 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
 
                   {/* If structured JSON parsed, render structured UI */}
                   {structured ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {structured.overview && (
-                        <div className="rounded-xl border border-border overflow-hidden">
-                          <div className="px-3 py-2 bg-primary/10 border-b border-border"><h4 className="font-semibold text-sm">Overview</h4></div>
-                          <div className="p-3 prose prose-sm max-w-none text-foreground"><p>{structured.overview}</p></div>
+                        <div className="overflow-hidden rounded-2xl border border-sky-100 bg-sky-50/70 shadow-sm">
+                          <div className="border-b border-sky-100 bg-white/60 px-3 py-2"><h4 className="text-sm font-black text-slate-900">Overview</h4></div>
+                          <p className="p-3 text-sm leading-6 text-slate-700">{compactSentence(structured.overview, 22)}</p>
                         </div>
                       )}
 
-                      {Array.isArray(structured.days) && structured.days.map((d: any, idx: number) => (
-                        <div key={idx} className="rounded-xl border border-border overflow-hidden">
-                          <div className="px-3 py-2 bg-primary/10 border-b border-border">
-                            <h4 className="font-semibold text-sm">{d.title || `Day ${d.day}`}{d.drive_time ? ` • ${d.drive_time}` : ""}</h4>
-                          </div>
-                          <div className="p-3 prose prose-sm max-w-none text-foreground">
-                            {d.highlights && <>
-                              <strong>Highlights:</strong>
-                              <ul>{d.highlights.map((h: string, i: number) => <li key={i}>{h}</li>)}</ul>
-                            </>}
-                            {d.food_suggestions && <>
-                              <strong>Food:</strong><div>{d.food_suggestions.join(", ")}</div>
-                            </>}
-                            {d.nights_at && <div className="mt-2 text-sm">Nights: {d.nights_at}</div>}
-                          </div>
-                        </div>
-                      ))}
-
+                      {Array.isArray(structured.days) && structured.days.map((d: any, idx: number) => renderDayCard(d, idx))}
                       {structured.cost_guidance && (
-                        <div className="rounded-xl border border-border p-3">
-                          <h4 className="font-semibold text-sm mb-2">Cost guidance</h4>
-                          <div className="flex gap-3">
-                            <div className="text-sm">Economy: {structured.cost_guidance.economy}</div>
-                            <div className="text-sm">Mid: {structured.cost_guidance.mid}</div>
-                            <div className="text-sm">Premium: {structured.cost_guidance.premium}</div>
+                        <div className="rounded-2xl border border-amber-100 bg-amber-50/70 p-3 shadow-sm">
+                          <h4 className="mb-2 text-sm font-black text-slate-900">Cost Guide</h4>
+                          <div className="grid gap-2 text-xs text-slate-700 sm:grid-cols-3">
+                            <div className="rounded-xl bg-white px-3 py-2"><b>Economy</b><br />{compactSentence(structured.cost_guidance.economy, 8)}</div>
+                            <div className="rounded-xl bg-white px-3 py-2"><b>Mid</b><br />{compactSentence(structured.cost_guidance.mid, 8)}</div>
+                            <div className="rounded-xl bg-white px-3 py-2"><b>Premium</b><br />{compactSentence(structured.cost_guidance.premium, 8)}</div>
                           </div>
                         </div>
                       )}
 
-                      <details className="rounded-lg border border-border p-3">
-                        <summary className="cursor-pointer text-sm font-medium flex items-center justify-between">
-                          <span>View raw JSON</span>
-                        </summary>
-                        <div className="mt-2 flex items-start gap-2">
-                          <pre className="mt-1 max-h-48 overflow-auto text-xs bg-black/5 p-2 rounded flex-1">{JSON.stringify(structured, null, 2)}</pre>
-                          <button onClick={copyStructuredJson} title="Copy JSON" className="inline-flex items-center gap-2 px-3 py-2 rounded bg-muted hover:bg-muted/80">
-                            <Copy className="h-4 w-4" /> Copy
-                          </button>
-                        </div>
-                      </details>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {days.length > 0 ? (
                         days.map((d, i) => (
-                          <div key={i} className="rounded-xl border border-border overflow-hidden">
-                            <div className="px-3 py-2 bg-primary/10 border-b border-border"><h4 className="font-semibold text-sm">{d.title}</h4></div>
-                            <div className="p-3 prose prose-sm max-w-none text-foreground">
-                              {d.body.split("\n").map((ln, idx) => <p key={idx} className={ln.startsWith("•") || ln.startsWith("-") ? "ml-3" : ""}>{ln}</p>)}
+                          <div key={i} className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
+                            <div className="border-b border-emerald-100 bg-emerald-50 px-3 py-2"><h4 className="text-sm font-black text-slate-900">{cleanDisplayText(d.title)}</h4></div>
+                            <div className="space-y-2 p-3">
+                              {d.body.split("\n").filter(Boolean).slice(0, 3).map((ln, idx) => (
+                                <p key={idx} className="text-sm leading-5 text-slate-700">{compactSentence(ln, 16)}</p>
+                              ))}
                             </div>
                           </div>
                         ))
                       ) : (
-                        <div className="prose prose-sm text-sm text-foreground whitespace-pre-wrap">{result}</div>
+                        <div className="whitespace-pre-wrap rounded-2xl border border-border bg-white p-3 text-sm leading-6 text-slate-700">{compactSentence(stripJsonFromText(result), 90)}</div>
                       )}
                     </div>
                   )}
@@ -564,10 +615,11 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
               )}
 
               {state === "error" && <div className="text-sm text-red-600 p-3">{err || "Something went wrong."}</div>}
+              </div>
             </div>
           </div>
 
-          <div className="px-6 pb-5">
+          <div className="flex-none border-t border-border bg-white/85 px-5 py-3 sm:px-6">
             <button onClick={handleClose} className="w-full sm:w-auto rounded-xl border border-border px-4 py-2 text-sm hover:bg-muted">Close</button>
           </div>
         </div>
