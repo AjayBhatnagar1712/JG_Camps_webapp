@@ -49,9 +49,43 @@ function readField(text: string, label: string) {
   return match?.[1]?.trim() || "";
 }
 
+function requestedDays(messages: Message[]) {
+  const text = extractLastUserText(messages);
+  const explicitDays = Number(text.match(/Exact itinerary length:\s*(\d+)\s+days?/i)?.[1]);
+  if (explicitDays > 0) return Math.max(1, Math.min(14, explicitDays));
+  const nights = Number(text.match(/\((\d+)\s+nights?\)/i)?.[1] || text.match(/(\d+)\s+nights?/i)?.[1]);
+  return Math.max(1, Math.min(14, nights > 0 ? nights + 1 : 4));
+}
+
+function extractJsonBlock(text: string) {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  const candidate = fenced ? fenced[1] : text;
+  const firstBrace = candidate.indexOf("{");
+  const lastBrace = candidate.lastIndexOf("}");
+  if (firstBrace < 0 || lastBrace <= firstBrace) return null;
+  try {
+    return JSON.parse(candidate.slice(firstBrace, lastBrace + 1));
+  } catch {
+    return null;
+  }
+}
+
+function countReplyDays(reply: string) {
+  const parsed = extractJsonBlock(reply);
+  if (Array.isArray(parsed?.days)) return parsed.days.length;
+
+  const dayMatches = [...reply.matchAll(/\bDay\s+(\d+)\b/gi)].map((match) => Number(match[1])).filter(Boolean);
+  return new Set(dayMatches).size;
+}
+
+function replyHasEnoughDays(reply: string, messages: Message[]) {
+  const expected = requestedDays(messages);
+  return countReplyDays(reply) >= expected;
+}
+
 function buildLocalItinerary(messages: Message[]) {
   const text = extractLastUserText(messages);
-  const destinationText = text.match(/Plan a combined itinerary for:\s*([^\\.\\n]+)/i)?.[1]?.trim() || "your selected destination";
+  const destinationText = text.match(/Plan a combined itinerary for:\s*([^\.\n]+)/i)?.[1]?.trim() || "your selected destination";
   const destinations = destinationText
     .split(/,|•| and /i)
     .map((item) => item.trim())
@@ -185,7 +219,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               generationConfig: {
                 temperature,
                 topP: 0.9,
-                maxOutputTokens: Math.max(256, Math.min(maxOutputTokens, 1800)),
+                maxOutputTokens: Math.max(512, Math.min(maxOutputTokens, 3500)),
               },
             }),
           }
@@ -200,7 +234,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const data = await resp.json();
         const reply = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("\n") || "";
-        if (reply.trim()) return res.status(200).json({ reply, model, latencyMs: Date.now() - startedAt });
+        if (reply.trim() && replyHasEnoughDays(reply, messages)) {
+          return res.status(200).json({ reply, model, latencyMs: Date.now() - startedAt });
+        }
+        if (reply.trim()) {
+          return res.status(200).json({
+            reply: buildLocalItinerary(messages),
+            degraded: true,
+            fallbackReason: `short-ai-reply-${countReplyDays(reply)}-days`,
+            model,
+            latencyMs: Date.now() - startedAt,
+          });
+        }
         lastError = `${model}: empty reply`;
       } catch (err: any) {
         clearTimeout(timer);

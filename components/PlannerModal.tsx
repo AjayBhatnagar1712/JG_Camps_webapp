@@ -207,13 +207,18 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     }
   }
 
-  function buildSystemPrompt() {
+  function buildSystemPrompt(expectedDays: number, expectedNights?: number) {
     const fenceHint = "Wrap the JSON in a fenced block labeled json (```json ... ```).";
     return [
       "You are Travel Assistant for JG Camps & Resorts.",
       "Return TWO things in your reply:",
       "1) A concise, traveler-friendly Markdown itinerary using 'Day 1', 'Day 2', etc.",
       `2) Immediately after the markdown, include a valid JSON object and ${fenceHint}`,
+      "",
+      `Trip length is exact: ${expectedNights || expectedDays - 1} nights = ${expectedDays} calendar days.`,
+      `You must include every day from Day 1 through Day ${expectedDays}.`,
+      `The JSON days array must contain exactly ${expectedDays} day objects.`,
+      "Do not return only Day 1 unless the requested trip is actually 1 day.",
       "",
       "JSON shape (example):",
       `{
@@ -237,6 +242,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
       "Rules:",
       "- Keep the markdown concise and clear.",
       "- The JSON must be valid JSON (no trailing commas) and must be wrapped in a fenced ```json block.",
+      `- Include exactly ${expectedDays} markdown day sections and exactly ${expectedDays} JSON day objects.`,
       "- End the markdown with a short summary line and then the JSON block.",
     ].join("\n");
   }
@@ -253,11 +259,13 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
         ? `Arrive ${new Date(arrive).toLocaleDateString()}, depart ${new Date(depart).toLocaleDateString()} (${nights} nights).`
         : "";
 
+    const expectedDays = Math.max(1, (nights || 1) + 1);
     const list = destinations.join(", ");
-    const system = buildSystemPrompt();
+    const system = buildSystemPrompt(expectedDays, nights);
     const user = [
       `Plan a combined itinerary for: ${list}.`,
       when ? ` ${when}` : "",
+      ` Exact itinerary length: ${expectedDays} days / ${nights || expectedDays - 1} nights. Include Day 1 through Day ${expectedDays}.`,
       startCity ? ` Starting city: ${startCity}.` : "",
       budget ? ` Budget: ${budget}.` : "",
       theme ? ` Theme: ${theme}.` : "",
@@ -277,7 +285,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
             { role: "system", content: system },
             { role: "user", content: user },
           ],
-          maxOutputTokens: 1200,
+          maxOutputTokens: 2600,
           temperature: 0.5,
           timeoutMs: 18000,
         }),
