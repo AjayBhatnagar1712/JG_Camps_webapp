@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const GLAPI_BASE = "https://generativelanguage.googleapis.com/v1";
+const GLAPI_BASE = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_TIMEOUT_MS = 18000;
 const SERVER_TRAVEL_POLICY = [
   "Non-negotiable JG Camps & Resorts policy:",
@@ -13,6 +13,14 @@ const SERVER_TRAVEL_POLICY = [
 ].join("\n");
 
 type Message = { role: "user" | "assistant" | "system"; content: string };
+
+function uniqueList(items: string[]) {
+  return Array.from(new Set(items.map((item) => item.trim()).filter(Boolean)));
+}
+
+function modelCandidates() {
+  return uniqueList([...MODEL.split(","), "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]);
+}
 
 function pickPromptParts(messages: Message[]) {
   const system = messages
@@ -30,6 +38,99 @@ function pickPromptParts(messages: Message[]) {
     }));
 
   return { system, conversation };
+}
+
+function extractLastUserText(messages: Message[]) {
+  return [...messages].reverse().find((m) => m.role === "user")?.content || "";
+}
+
+function readField(text: string, label: string) {
+  const match = text.match(new RegExp(`${label}:\\s*([^\\.\\n]+)`, "i"));
+  return match?.[1]?.trim() || "";
+}
+
+function buildLocalItinerary(messages: Message[]) {
+  const text = extractLastUserText(messages);
+  const destinationText = text.match(/Plan a combined itinerary for:\s*([^\\.\\n]+)/i)?.[1]?.trim() || "your selected destination";
+  const destinations = destinationText
+    .split(/,|•| and /i)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 6);
+  const route = destinations.length ? destinations : ["Selected destination"];
+  const nights = Math.max(1, Math.min(10, Number(text.match(/\((\d+)\s+nights?\)/i)?.[1]) || 3));
+  const daysCount = nights + 1;
+  const theme = readField(text, "Theme") || "Leisure";
+  const startCity = readField(text, "Starting city");
+  const notes = readField(text, "Notes");
+  const primary = route[0] || "the destination";
+  const baseDays = Array.from({ length: daysCount }, (_, idx) => {
+    const day = idx + 1;
+    const place = route[Math.min(idx, route.length - 1)] || primary;
+    if (day === 1) {
+      return {
+        day,
+        title: `Day ${day} - Arrival and easy orientation`,
+        drive_time: startCity ? `Start from ${startCity}` : "Flexible arrival",
+        nights_at: primary,
+        highlights: [
+          `Arrive and settle into the ${primary} area`,
+          `Do a relaxed local orientation around ${place}`,
+          "Keep the evening light with nearby food and market time",
+        ],
+        food_suggestions: ["local snacks", "regional dinner"],
+      };
+    }
+    if (day === daysCount) {
+      return {
+        day,
+        title: `Day ${day} - Departure buffer`,
+        drive_time: "Keep transfers flexible",
+        nights_at: "Departure day",
+        highlights: [
+          "Use the morning for any missed nearby experience",
+          "Keep buffer time for packing, traffic, and onward travel",
+          "Call JG Camps & Resorts for final booking support",
+        ],
+        food_suggestions: ["easy breakfast", "packed snacks for travel"],
+      };
+    }
+    return {
+      day,
+      title: `Day ${day} - ${place} experiences`,
+      drive_time: "Local transfers as per route",
+      nights_at: place,
+      highlights: [
+        `Explore the main ${theme.toLowerCase()} highlights around ${place}`,
+        "Add one guided local experience or cultural stop",
+        "Keep late afternoon open for cafes, markets, or viewpoints",
+      ],
+      food_suggestions: ["popular local dishes", "trusted local cafes"],
+    };
+  });
+
+  const overview = `A ${daysCount}-day / ${nights}-night ${theme.toLowerCase()} route for ${route.join(", ")} with comfortable pacing, local experiences, and booking support from JG Camps & Resorts.`;
+  const structured = {
+    overview,
+    total_nights: nights,
+    route,
+    days: baseDays,
+    cost_guidance: {
+      economy: "Budget-friendly transport, simple stays by area/category, and local meals",
+      mid: "Comfortable transport, better-located stays by area/category, and curated experiences",
+      premium: "Private transfers, premium stay categories by area, and expert-led experiences",
+    },
+    summary: "For stay options, transport, permits, and booking support, contact JG Camps & Resorts.",
+  };
+
+  const markdownDays = baseDays
+    .map(
+      (day) =>
+        `Day ${day.day}: ${day.title}\n- ${day.highlights.join("\n- ")}\n- Food ideas: ${day.food_suggestions.join(", ")}`
+    )
+    .join("\n\n");
+
+  return `${overview}\n\n${markdownDays}\n\nFor stays, transport, permits, and bookings, contact JG Camps & Resorts.\n\n\`\`\`json\n${JSON.stringify(structured, null, 2)}\n\`\`\``;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -55,57 +156,71 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       console.error("GEMINI_API_KEY missing");
-      return res.status(500).json({ error: "Server misconfiguration: missing GEMINI_API_KEY" });
+      return res.status(200).json({
+        reply: buildLocalItinerary(messages),
+        degraded: true,
+        fallbackReason: "missing-api-key",
+      });
     }
 
     const { system, conversation } = pickPromptParts(messages);
     const systemInstruction = [system, SERVER_TRAVEL_POLICY].filter(Boolean).join("\n\n");
-    const controller = new AbortController();
     const startedAt = Date.now();
-    const timer = setTimeout(() => controller.abort(), Math.max(5000, Math.min(timeoutMs, 45000)));
+    let lastError = "";
 
-    const resp = await fetch(
-      `${GLAPI_BASE}/models/${MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          contents: conversation,
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          generationConfig: {
-            temperature,
-            topP: 0.9,
-            maxOutputTokens: Math.max(256, Math.min(maxOutputTokens, 1800)),
-          },
-        }),
+    for (const model of modelCandidates()) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), Math.max(5000, Math.min(timeoutMs, 45000)));
+
+      try {
+        const resp = await fetch(
+          `${GLAPI_BASE}/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: conversation,
+              systemInstruction: { parts: [{ text: systemInstruction }] },
+              generationConfig: {
+                temperature,
+                topP: 0.9,
+                maxOutputTokens: Math.max(256, Math.min(maxOutputTokens, 1800)),
+              },
+            }),
+          }
+        );
+        clearTimeout(timer);
+
+        if (!resp.ok) {
+          lastError = `${model}: ${resp.status} ${await resp.text().catch(() => "")}`;
+          console.error("Generative API error:", lastError);
+          continue;
+        }
+
+        const data = await resp.json();
+        const reply = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("\n") || "";
+        if (reply.trim()) return res.status(200).json({ reply, model, latencyMs: Date.now() - startedAt });
+        lastError = `${model}: empty reply`;
+      } catch (err: any) {
+        clearTimeout(timer);
+        lastError = `${model}: ${err?.name || "Error"} ${err?.message || ""}`;
+        console.error("Generative API request failed:", lastError);
       }
-    );
-    clearTimeout(timer);
-
-    if (!resp.ok) {
-      const text = await resp.text();
-      console.error("Generative API error:", resp.status, text);
-      return res.status(200).json({
-        reply: "Sorry, I couldn't reach the itinerary service right now. Please try again in a moment.",
-        degraded: true,
-      });
     }
 
-    const data = await resp.json();
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("\n") ||
-      "Sorry, I couldn't generate a reply.";
-
-    return res.status(200).json({ reply, model: MODEL, latencyMs: Date.now() - startedAt });
+    return res.status(200).json({
+      reply: buildLocalItinerary(messages),
+      degraded: true,
+      fallbackReason: lastError || "upstream-unavailable",
+      latencyMs: Date.now() - startedAt,
+    });
   } catch (err: any) {
     console.error("gemini handler error:", err);
     return res.status(200).json({
-      reply:
-        err?.name === "AbortError"
-          ? "The itinerary service took too long. Try fewer destinations or try again."
-          : "Sorry, I'm having trouble right now. Please try again or contact our travel experts directly.",
+      reply: buildLocalItinerary((req.body?.messages || []) as Message[]),
       degraded: true,
+      fallbackReason: err?.name === "AbortError" ? "timeout" : "handler-error",
     });
   }
 }
