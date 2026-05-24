@@ -62,6 +62,29 @@ function dateOffsetISO(daysFromToday: number) {
   return local.toISOString().slice(0, 10);
 }
 
+function shortPlaceName(place?: string) {
+  return (place || "").split("(")[0].replace(/\s+/g, " ").trim();
+}
+
+function inferThemeFromPlace(detail: { state?: string; city?: string; location?: string }) {
+  const text = `${detail.location || ""} ${detail.state || ""} ${detail.city || ""}`.toLowerCase();
+  if (/temple|pilgrimage|ghat|aarti|char dham|kedarnath|badrinath|haridwar|rishikesh|kashi|varanasi|mathura|vrindavan|dwarka|tirupati|shirdi|sabarimala|vaishno|amritsar|golden temple/.test(text)) return "Spiritual";
+  if (/fort|palace|heritage|monument|gate|qutub|red fort|old goa|ajanta|ellora|jaipur|udaipur|jaisalmer|rajasthan|delhi/.test(text)) return "Heritage";
+  if (/beach|island|coast|backwater|houseboat|goa|lakshadweep|andaman|kovalam|varkala|puducherry|daman|diu/.test(text)) return "Family";
+  if (/trek|rafting|ski|wildlife|national park|safari|auli|corbett|spiti|ladakh|valley of flowers|meghalaya|arunachal/.test(text)) return "Adventure";
+  if (/ayurveda|wellness|yoga|retreat|spa/.test(text)) return "Wellness";
+  return "Family";
+}
+
+function buildPrefillNotes(detail: { state?: string; city?: string; location?: string }) {
+  const destination = shortPlaceName(detail.location) || detail.city || detail.state || "this destination";
+  const region = detail.state || detail.city;
+  return [
+    `Plan a practical route focused on ${destination}${region && region !== destination ? ` in ${region}` : ""}.`,
+    "Keep the pacing comfortable, include local experiences and food suggestions, and avoid naming hotels.",
+  ].join(" ");
+}
+
 /** Extract a fenced JSON block (```json ... ```) or plain JSON from text */
 function extractJsonBlock(text: string) {
   if (!text) return null;
@@ -109,6 +132,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     [destinations, arrive, depart, nights, state]
   );
 
+  const hasPlannerPrefill = destinations.length > 0 && !!arrive && !!depart;
   const days = useMemo(() => (state === "done" && !structured ? splitDays(result) : []), [state, result, structured]);
 
   useEffect(() => {
@@ -130,9 +154,14 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
       const detail = (event as CustomEvent<{ state?: string; city?: string; location?: string }>).detail;
       const next = [detail?.location, detail?.state, detail?.city].filter(Boolean) as string[];
       if (next.length > 0) {
-        setDestinations((existing) => Array.from(new Set([...next, ...existing])));
-        setArrive((current) => current || dateOffsetISO(7));
-        setDepart((current) => current || dateOffsetISO(11));
+        setDestinations(Array.from(new Set(next)));
+        setArrive(dateOffsetISO(7));
+        setDepart(dateOffsetISO(11));
+        setStartCity(detail?.city || shortPlaceName(detail?.location) || detail?.state || "");
+        setTheme(inferThemeFromPlace(detail || {}));
+        setNotes(buildPrefillNotes(detail || {}));
+        setBudget("");
+        setDestInput("");
       }
       handleOpen();
     }
@@ -419,7 +448,20 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
 
             {/* RIGHT: Output */}
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm min-h-[260px] overflow-y-auto">
-              {state === "idle" && <div className="text-center text-muted-foreground py-10"><Sparkles className="h-6 w-6 mx-auto mb-2" />Add your <b>dates</b> and <b>destinations</b>, then click <span className="font-semibold">Build Itinerary</span>.</div>}
+              {state === "idle" && (
+                <div className="text-center text-muted-foreground py-10">
+                  <Sparkles className="h-6 w-6 mx-auto mb-2" />
+                  {hasPlannerPrefill ? (
+                    <>
+                      Review the prefilled trip details, add budget only if needed, then click <span className="font-semibold">Build Itinerary</span>.
+                    </>
+                  ) : (
+                    <>
+                      Add your <b>dates</b> and <b>destinations</b>, then click <span className="font-semibold">Build Itinerary</span>.
+                    </>
+                  )}
+                </div>
+              )}
               {state === "loading" && <div className="space-y-3 animate-pulse"><div className="h-5 w-2/5 rounded bg-muted/60" /><div className="h-16 w-full rounded bg-muted/40" /><div className="h-5 w-1/3 rounded bg-muted/60" /><div className="h-16 w-full rounded bg-muted/40" /></div>}
 
               {state === "done" && (
