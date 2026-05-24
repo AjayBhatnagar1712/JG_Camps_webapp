@@ -50,6 +50,169 @@
   --border: oklch(0.91 0.01 248);
   --input: oklch(0.91 0.01 248);
   --ring: oklch(0.55 0.12 163);
+  --theme-sky: #0ea5e9;
+  --theme-sea: #0891b2;
+  --theme-deep: #075985;
+  --theme-soft: #e0f7ff;
+  --theme-sand: #fde68a;
+  --theme-ink: #082f49;
+  --theme-card: rgba(255, 255, 255, 0.88);
+  --theme-line: rgba(14, 165, 233, 0.28);
+  --theme-glow: rgba(14, 165, 233, 0.14);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(14, 165, 233, 0.16), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(45, 212, 191, 0.12), transparent 28rem),
+    linear-gradient(180deg, #f0faff 0%, #ffffff 42%, #f8fafc 100%);
+}
+
+body[data-travel-theme="north"] {
+  --theme-sky: #38bdf8;
+  --theme-sea: #2563eb;
+  --theme-deep: #1e3a8a;
+  --theme-soft: #eef6ff;
+  --theme-sand: #dbeafe;
+  --theme-ink: #172554;
+  --theme-line: rgba(37, 99, 235, 0.28);
+  --theme-glow: rgba(147, 197, 253, 0.20);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(191, 219, 254, 0.42), transparent 34rem),
+    radial-gradient(circle at 86% 8%, rgba(125, 211, 252, 0.20), transparent 28rem),
+    linear-gradient(180deg, #f6fbff 0%, #ffffff 45%, #f8fafc 100%);
+}
+
+body[data-travel-theme="south"] {
+  --theme-sky: #06b6d4;
+  --theme-sea: #0d9488;
+  --theme-deep: #115e59;
+  --theme-soft: #e6fffb;
+  --theme-sand: #fde68a;
+  --theme-ink: #134e4a;
+  --theme-line: rgba(13, 148, 136, 0.30);
+  --theme-glow: rgba(45, 212, 191, 0.18);
+  --theme-aura:
+    radial-gradient(circle at 15% 0%, rgba(45, 212, 191, 0.22), transparent 34rem),
+    radial-gradient(circle at 88% 5%, rgba(253, 224, 71, 0.14), transparent 26rem),
+    linear-gradient(180deg, #ecfeff 0%, #ffffff 42%, #f0fdfa 100%);
+}
+
+body[data-travel-theme="east"] {
+  --theme-sky: #22c55e;
+  --theme-sea: #0284c7;
+  --theme-deep: #166534;
+  --theme-soft: #f0fdf4;
+  --theme-sand: #fef3c7;
+  --theme-ink: #14532d;
+  --theme-line: rgba(34, 197, 94, 0.26);
+  --theme-glow: rgba(74, 222, 128, 0.14);
+  --theme-aura:
+    radial-gradient(circle at 14% 0%, rgba(34, 197, 94, 0.14), transparent 30rem),
+    radial-gradient(circle at 86% 8%, rgba(14, 165, 233, 0.12), transparent 28rem),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 46%, #f8fafc 100%);
+}
+
+body[data-travel-theme="west"] {
+  --theme-sky: #f59e0b;
+  --theme-sea: #0284c7;
+  --theme-deep: #92400e;
+  --theme-soft: #fff7ed;
+  --theme-sand: #fed7aa;
+  --theme-ink: #78350f;
+  --theme-line: rgba(245, 158, 11, 0.34);
+  --theme-glow: rgba(251, 191, 36, 0.20);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(251, 191, 36, 0.26), transparent 34rem),
+    radial-gradient(circle at 90% 6%, rgba(14, 165, 233, 0.12), transparent 28rem),
+    linear-gradient(180deg, #fff7ed 0%, #ffffff 45%, #fffbeb 100%);
+}
+
+body[data-travel-theme="northeast"] {
+  --theme-sky: #2dd4bf;
+  --theme-sea: #16a34a;
+  --theme-deep: #065f46;
+  --theme-soft: #ecfdf5;
+  --theme-sand: #ccfbf1;
+  --theme-ink: #064e3b;
+  --theme-line: rgba(20, 184, 166, 0.30);
+  --theme-glow: rgba(52, 211, 153, 0.18);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(45, 212, 191, 0.22), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(34, 197, 94, 0.14), transparent 28rem),
+    linear-gradient(180deg, #ecfdf5 0%, #ffffff 45%, #f0fdfa 100%);
+}
+
+body[data-travel-theme="central"] {
+  --theme-sky: #84cc16;
+  --theme-sea: #a16207;
+  --theme-deep: #3f6212;
+  --theme-soft: #f7fee7;
+  --theme-sand: #fef3c7;
+  --theme-ink: #365314;
+  --theme-line: rgba(101, 163, 13, 0.30);
+  --theme-glow: rgba(190, 242, 100, 0.16);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(132, 204, 22, 0.18), transparent 32rem),
+    radial-gradient(circle at 86% 8%, rgba(180, 83, 9, 0.12), transparent 28rem),
+    linear-gradient(180deg, #f7fee7 0%, #ffffff 46%, #f8fafc 100%);
+}
+
+body[data-travel-theme="spiritual"] {
+  --theme-sky: #f97316;
+  --theme-sea: #b45309;
+  --theme-deep: #7c2d12;
+  --theme-soft: #fff7ed;
+  --theme-sand: #fed7aa;
+  --theme-ink: #431407;
+  --theme-line: rgba(249, 115, 22, 0.34);
+  --theme-glow: rgba(251, 146, 60, 0.18);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(251, 146, 60, 0.24), transparent 32rem),
+    radial-gradient(circle at 88% 8%, rgba(253, 224, 71, 0.18), transparent 28rem),
+    linear-gradient(180deg, #fff7ed 0%, #ffffff 48%, #fffbeb 100%);
+}
+
+body[data-travel-theme="groups"] {
+  --theme-sky: #6366f1;
+  --theme-sea: #0ea5e9;
+  --theme-deep: #3730a3;
+  --theme-soft: #eef2ff;
+  --theme-sand: #fde68a;
+  --theme-ink: #312e81;
+  --theme-line: rgba(99, 102, 241, 0.30);
+  --theme-glow: rgba(129, 140, 248, 0.16);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.16), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(14, 165, 233, 0.14), transparent 28rem),
+    linear-gradient(180deg, #eef2ff 0%, #ffffff 46%, #f8fafc 100%);
+}
+
+body[data-travel-theme="international"] {
+  --theme-sky: #38bdf8;
+  --theme-sea: #2563eb;
+  --theme-deep: #1d4ed8;
+  --theme-soft: #eff6ff;
+  --theme-sand: #fef3c7;
+  --theme-ink: #172554;
+  --theme-line: rgba(37, 99, 235, 0.28);
+  --theme-glow: rgba(56, 189, 248, 0.16);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.18), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(59, 130, 246, 0.16), transparent 28rem),
+    linear-gradient(180deg, #eff6ff 0%, #ffffff 45%, #f8fafc 100%);
+}
+
+body[data-travel-theme="wellness"] {
+  --theme-sky: #34d399;
+  --theme-sea: #14b8a6;
+  --theme-deep: #047857;
+  --theme-soft: #ecfdf5;
+  --theme-sand: #d9f99d;
+  --theme-ink: #064e3b;
+  --theme-line: rgba(20, 184, 166, 0.30);
+  --theme-glow: rgba(52, 211, 153, 0.18);
+  --theme-aura:
+    radial-gradient(circle at 12% 0%, rgba(52, 211, 153, 0.20), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(217, 249, 157, 0.16), transparent 28rem),
+    linear-gradient(180deg, #ecfdf5 0%, #ffffff 46%, #f8fafc 100%);
 }
 
 .dark {
@@ -84,11 +247,7 @@
 
   body {
     @apply bg-background text-foreground;
-    background:
-      radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 34rem),
-      radial-gradient(circle at 85% 10%, rgba(45, 212, 191, 0.12), transparent 28rem),
-      radial-gradient(circle at 55% 0%, rgba(253, 230, 138, 0.14), transparent 24rem),
-      linear-gradient(180deg, #f0faff 0%, #ffffff 38%, #f8fafc 100%);
+    background: var(--theme-aura);
   }
 
   ::selection {
@@ -125,6 +284,236 @@
 
   main :where(img, video) {
     background: #e2e8f0;
+  }
+
+  body[data-travel-theme] header {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--theme-ink) 88%, transparent), color-mix(in srgb, var(--theme-deep) 78%, transparent));
+    box-shadow: 0 16px 45px color-mix(in srgb, var(--theme-ink) 20%, transparent);
+  }
+
+  body[data-travel-theme] footer {
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--theme-sky) 18%, transparent), transparent 30rem),
+      linear-gradient(135deg, var(--theme-ink), color-mix(in srgb, var(--theme-deep) 85%, #020617));
+    border-color: color-mix(in srgb, var(--theme-sky) 30%, transparent);
+  }
+
+  body[data-travel-theme] main > main,
+  body[data-travel-theme] main > div,
+  body[data-travel-theme] main > section {
+    background-color: transparent;
+  }
+
+  body[data-travel-theme] main > main {
+    position: relative;
+  }
+
+  body[data-travel-theme] main > main::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--theme-aura);
+  }
+
+  body[data-travel-theme] main main > section:first-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--theme-sky) 30%, transparent);
+  }
+
+  body[data-travel-theme] main main > section:first-child :where(h1) {
+    text-shadow: 0 14px 38px rgba(2, 6, 23, 0.32);
+  }
+
+  body[data-travel-theme] main main > section:first-child :where(p, div) {
+    text-wrap: pretty;
+  }
+
+  body[data-travel-theme] main :where(.text-emerald-900, .text-emerald-800, .text-emerald-700, .text-indigo-800, .text-primary) {
+    color: var(--theme-deep) !important;
+  }
+
+  body[data-travel-theme] main :where(.text-emerald-100, .text-emerald-50) {
+    color: color-mix(in srgb, white 86%, var(--theme-soft)) !important;
+  }
+
+  body[data-travel-theme] main :where(.bg-emerald-950, .bg-emerald-900, .bg-emerald-800, .bg-emerald-700, .bg-primary, .bg-indigo-700) {
+    background: linear-gradient(135deg, var(--theme-deep), var(--theme-sea)) !important;
+  }
+
+  body[data-travel-theme] main :where(.bg-emerald-100, .bg-emerald-50, .bg-indigo-50, .bg-blue-50) {
+    background-color: var(--theme-soft) !important;
+  }
+
+  body[data-travel-theme] main :where(.border-emerald-200, .border-emerald-100, .border-indigo-300, .border-blue-100) {
+    border-color: color-mix(in srgb, var(--theme-sky) 28%, white) !important;
+  }
+
+  body[data-travel-theme] main :where(.bg-amber-400, .bg-yellow-400, .bg-yellow-500) {
+    background: linear-gradient(135deg, var(--theme-sand), #fbbf24) !important;
+    color: var(--theme-ink) !important;
+  }
+
+  body[data-travel-theme] main :where(article, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl):not(.fixed):not([class*="bg-black"]) {
+    border-color: color-mix(in srgb, var(--theme-sky) 22%, white);
+  }
+
+  body[data-travel-theme] main :where(article.bg-white, div.bg-white, .bg-card) {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, white 94%, var(--theme-soft)), white) !important;
+  }
+
+  body[data-travel-theme] main :where(.shadow-lg, .shadow-xl, .shadow-2xl) {
+    box-shadow: 0 24px 70px color-mix(in srgb, var(--theme-ink) 13%, transparent);
+  }
+
+  body[data-travel-theme] main :where(section.bg-slate-50, section.bg-gray-50, div.bg-gray-50) {
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--theme-sky) 13%, transparent), transparent 30rem),
+      linear-gradient(180deg, var(--theme-soft) 0%, #ffffff 100%) !important;
+  }
+
+  body[data-travel-theme] main :where(.container, .max-w-6xl, .max-w-7xl) > :where(h2, h3):first-child {
+    color: var(--theme-ink);
+  }
+
+  body[data-travel-theme] main :where(.grid.sm\:grid-cols-2, .grid.lg\:grid-cols-3, .grid.md\:grid-cols-2) > :where(div, article) {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  body[data-travel-theme] main :where(.grid.sm\:grid-cols-2, .grid.lg\:grid-cols-3, .grid.md\:grid-cols-2) > :where(div, article):hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--theme-sky) 48%, white);
+  }
+
+  body[data-travel-theme] main main {
+    background:
+      radial-gradient(circle at 8% 12rem, var(--theme-glow), transparent 24rem),
+      radial-gradient(circle at 94% 28rem, color-mix(in srgb, var(--theme-sand) 22%, transparent), transparent 24rem);
+  }
+
+  body[data-travel-theme] main main > section:not(:first-child) {
+    position: relative;
+  }
+
+  body[data-travel-theme] main main > section:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 1px;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, var(--theme-line), transparent);
+    opacity: 0.55;
+  }
+
+  body[data-travel-theme] main main > section.max-w-4xl.mx-auto.p-6 {
+    margin-top: -1.75rem;
+    margin-bottom: 3rem;
+    border: 1px solid color-mix(in srgb, var(--theme-line) 75%, white);
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(circle at 100% 0%, var(--theme-glow), transparent 18rem),
+      linear-gradient(180deg, color-mix(in srgb, white 94%, var(--theme-soft)), rgba(255, 255, 255, 0.96));
+    box-shadow:
+      0 24px 80px color-mix(in srgb, var(--theme-ink) 13%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+  }
+
+  body[data-travel-theme] main main > section.max-w-4xl.mx-auto.p-6::before {
+    inset: 0 1.5rem auto;
+    width: auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--theme-sky), var(--theme-sea), var(--theme-sand));
+    opacity: 0.9;
+  }
+
+  body[data-travel-theme] main :where(article.bg-white, div.bg-white.rounded-lg, div.bg-white.rounded-xl, div.bg-white.rounded-2xl, div.bg-white.rounded-3xl, div.bg-slate-50.rounded-2xl, div.bg-slate-50.rounded-3xl) {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-color: color-mix(in srgb, var(--theme-line) 75%, white) !important;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, white 95%, var(--theme-soft)), rgba(255, 255, 255, 0.96)) !important;
+    box-shadow:
+      0 22px 65px color-mix(in srgb, var(--theme-ink) 11%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+
+  body[data-travel-theme] main :where(article.bg-white, div.bg-white.rounded-lg, div.bg-white.rounded-xl, div.bg-white.rounded-2xl, div.bg-white.rounded-3xl, div.bg-slate-50.rounded-2xl, div.bg-slate-50.rounded-3xl)::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 2;
+    height: 4px;
+    background: linear-gradient(90deg, var(--theme-sky), var(--theme-sea), var(--theme-sand));
+    opacity: 0.88;
+  }
+
+  body[data-travel-theme] main :where(article.bg-white, div.bg-white.rounded-lg, div.bg-white.rounded-xl, div.bg-white.rounded-2xl, div.bg-white.rounded-3xl, div.bg-slate-50.rounded-2xl, div.bg-slate-50.rounded-3xl)::after {
+    content: "";
+    position: absolute;
+    right: -6rem;
+    bottom: -7rem;
+    z-index: -1;
+    width: 15rem;
+    height: 15rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, var(--theme-glow), transparent 68%);
+  }
+
+  body[data-travel-theme] main :where(article.bg-white, div.bg-white.rounded-lg, div.bg-white.rounded-xl, div.bg-white.rounded-2xl, div.bg-white.rounded-3xl, div.bg-slate-50.rounded-2xl, div.bg-slate-50.rounded-3xl):hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 30px 82px color-mix(in srgb, var(--theme-ink) 16%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  }
+
+  body[data-travel-theme] main :where(.relative.h-48, .relative.h-56, .relative.h-72, .relative.h-80) {
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--theme-soft) 68%, white), color-mix(in srgb, var(--theme-sky) 16%, white));
+  }
+
+  body[data-travel-theme] main :where(.relative.h-48, .relative.h-56, .relative.h-72, .relative.h-80)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 48%, rgba(2, 6, 23, 0.18));
+  }
+
+  body[data-travel-theme] main :where(.list-disc li)::marker {
+    color: var(--theme-sea);
+  }
+
+  body[data-travel-theme] main :where(.rounded-full, .rounded-2xl):is(a, button) {
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--theme-ink) 9%, transparent);
+  }
+
+  body[data-travel-theme] main :where(.border):is(a, button) {
+    border-color: color-mix(in srgb, var(--theme-line) 75%, white) !important;
+  }
+
+  @media (max-width: 640px) {
+    body[data-travel-theme] main main > section:first-child {
+      min-height: 52vh;
+      border-bottom-left-radius: 1.25rem;
+      border-bottom-right-radius: 1.25rem;
+    }
+
+    body[data-travel-theme] main main > section:not(:first-child) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    body[data-travel-theme] main :where(article.bg-white, div.bg-white.rounded-lg, div.bg-white.rounded-xl, div.bg-white.rounded-2xl, div.bg-white.rounded-3xl, div.bg-slate-50.rounded-2xl, div.bg-slate-50.rounded-3xl) {
+      border-radius: 1.25rem;
+    }
+
+    body[data-travel-theme] main :where(a, button) {
+      min-height: 2.75rem;
+    }
   }
 
   .masonry {

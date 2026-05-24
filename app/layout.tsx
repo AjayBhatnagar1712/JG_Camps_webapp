@@ -7,6 +7,7 @@ import ChatWidget from "@/components/ChatWidget";
 import FooterLinks from "@/components/FooterLinks";
 import GlobalCTAs from "@/components/GlobalCTAs";
 import HeaderNav from "@/components/HeaderNav";
+import RouteTheme from "@/components/RouteTheme";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-white text-slate-900 antialiased`}>
+        <RouteTheme />
         <header className="sticky top-0 z-50 border-b border-white/15 bg-sky-950/80 text-white shadow-xl shadow-sky-950/15 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
             <Link href="/" className="flex min-w-0 items-center gap-3 font-black tracking-tight">
