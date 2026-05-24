@@ -81,7 +81,7 @@ function buildPrefillNotes(detail: { state?: string; city?: string; location?: s
   const region = detail.state || detail.city;
   return [
     `Plan a practical route focused on ${destination}${region && region !== destination ? ` in ${region}` : ""}.`,
-    "Keep the pacing comfortable, include local experiences and food suggestions, and avoid naming hotels.",
+    "Keep the pacing comfortable, include local experiences, food suggestions, transit notes, and the best route order.",
   ].join(" ");
 }
 
@@ -237,7 +237,6 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
       "Rules:",
       "- Keep the markdown concise and clear.",
       "- The JSON must be valid JSON (no trailing commas) and must be wrapped in a fenced ```json block.",
-      "- Do NOT include any named hotels or booking links. Instead instruct the user to contact JG Camps & Resorts for bookings.",
       "- End the markdown with a short summary line and then the JSON block.",
     ].join("\n");
   }
