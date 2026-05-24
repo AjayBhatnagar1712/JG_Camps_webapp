@@ -11,9 +11,9 @@ import React from "react";
  * - Place per-island images at: public/images/south-india/lakshadweep/<island>.jpg (optional)
  *
  * Behavior:
- * - "Create Itinerary (Auto)" opens a planner route with state=Lakshadweep
+ * - "Create Itinerary (Auto)" opens the global itinerary builder with state=Lakshadweep
  * - "Personalize Itinerary" triggers global contact modal via event "open-contact-expert"
- * - Per-location "Plan" buttons open planner route with state=Lakshadweep & location=<island>
+ * - Per-location "Plan" buttons open the global itinerary builder with state=Lakshadweep & location=<island>
  */
 
 const DATA = {
@@ -52,18 +52,12 @@ const DONT_S = [
 
 export default function LakshadweepPage() {
   const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
-
-  // open planner and navigate to plan page with query params
   const openPlannerWith = (state: string, location?: string) => {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
     } catch (e) {
       /* noop */
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to planner (keeps behaviour consistent across other pages)
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

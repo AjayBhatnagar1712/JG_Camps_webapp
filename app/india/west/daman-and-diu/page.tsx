@@ -8,7 +8,7 @@ import React from "react";
 /**
  * Daman & Diu index page — follows the same pattern as Bihar/Maharashtra pages.
  * - Lists major destinations and quick itinerary options
- * - Auto itinerary opens /india/west/plan?state=Daman%20and%20Diu
+ * - Auto itinerary opens the global itinerary builder
  * - "Personalize Itinerary" dispatches global event "open-contact-expert"
  */
 
@@ -65,10 +65,6 @@ export default function DamanAndDiuPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to plan page with params so the planner can read them
-    window.location.href = `/india/west/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

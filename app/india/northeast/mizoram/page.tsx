@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Mizoram index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/northeast/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Matches the Bihar / Meghalaya pattern for consistent site structure.
@@ -67,10 +67,6 @@ export default function MizoramPage() {
     } catch {
       // noop — best-effort
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to planner page so planner can pick up params
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

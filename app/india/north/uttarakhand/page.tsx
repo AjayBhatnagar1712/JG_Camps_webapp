@@ -73,10 +73,6 @@ export default function UttarakhandPage() {
     } catch (e) {
       // ignore
     }
-
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

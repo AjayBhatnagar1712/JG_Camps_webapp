@@ -51,10 +51,6 @@ export default function HaryanaPage() {
     } catch (e) {
       // ignore errors
     }
-
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith("Haryana");

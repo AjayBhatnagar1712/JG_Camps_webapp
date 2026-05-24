@@ -66,19 +66,12 @@ const DONT_S = [
 
 export default function LehLadakhPage() {
   const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
-
-  // Dispatch a planner event and navigate to the planner page with query params
   const openPlannerWith = (state: string, location?: string) => {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
     } catch (e) {
       // ignore
     }
-
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to planner route
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

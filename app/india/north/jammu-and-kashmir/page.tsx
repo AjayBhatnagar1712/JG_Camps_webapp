@@ -9,7 +9,7 @@ import React from "react";
  * Jammu & Kashmir page
  * - Contains a hero, description, list of popular locations (with short descriptions)
  * - Buttons:
- *    - Create Itinerary (auto) -> opens planner with state (and optional location) and redirects to /india/north/plan
+ *    - Create Itinerary (auto) -> opens the global itinerary builder with state and optional location
  *    - Personalize Itinerary -> triggers global "open-contact-expert" event
  *
  * Note: Leh & Ladakh are handled separately under /india/north/leh-ladakh.
@@ -93,11 +93,6 @@ export default function JammuAndKashmirPage() {
     } catch (e) {
       // ignore if event fails
     }
-
-    // Also redirect to planner route with query params so existing planner page works the same way
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

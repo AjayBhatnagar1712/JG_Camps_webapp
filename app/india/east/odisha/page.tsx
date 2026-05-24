@@ -59,10 +59,6 @@ export default function OdishaPage() {
     } catch (e) {
       // ignore
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to plan page with params so your planner can read them
-    window.location.href = `/india/east/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

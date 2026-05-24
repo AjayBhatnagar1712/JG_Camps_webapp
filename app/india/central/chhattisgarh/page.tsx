@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Chhattisgarh index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/central/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Follows the same structure/pattern used across other state pages (Bihar / Madhya Pradesh).
@@ -71,10 +71,6 @@ export default function ChhattisgarhPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to central region plan page with params
-    window.location.href = `/india/central/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Sikkim index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/northeast/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Matches the Bihar / Nagaland / Mizoram layout.
@@ -72,9 +72,6 @@ export default function SikkimPage() {
     } catch {
       // noop — safe fallback
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

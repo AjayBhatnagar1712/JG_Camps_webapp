@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Dadra and Nagar Haveli index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/west/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Structure mirrors other state/region pages (e.g. Bihar) for consistent UX.
@@ -55,10 +55,6 @@ export default function DadraAndNagarHaveliPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to plan page with params so the planner can read them
-    window.location.href = `/india/west/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Tripura index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/northeast/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Follows the same structure as the other state pages (Bihar / Sikkim pattern).
@@ -71,9 +71,6 @@ export default function TripuraPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

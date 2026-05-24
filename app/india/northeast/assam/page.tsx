@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Assam index page — lists all major destinations.
- * - Auto-create itinerary button → navigates to /india/northeast/plan with state & location params
+ * - Auto-create itinerary button → opens the global itinerary builder
  * - Personalize itinerary button → triggers global “open-contact-expert” event
  */
 
@@ -64,10 +64,6 @@ export default function AssamPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to plan page with params
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

@@ -8,7 +8,7 @@ import React from "react";
 /**
  * Rajasthan index page — follows Bihar/Goa structure.
  * - Lists major destinations and quick itinerary options
- * - Auto itinerary opens /india/west/plan?state=Rajasthan
+ * - Auto itinerary opens the global itinerary builder
  * - "Personalize Itinerary" dispatches global event "open-contact-expert"
  */
 
@@ -71,9 +71,6 @@ export default function RajasthanPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/west/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

@@ -76,11 +76,6 @@ export default function HimachalPage() {
     } catch (e) {
       // ignore
     }
-
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // follow same pattern as other pages — redirect to planner route with params
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

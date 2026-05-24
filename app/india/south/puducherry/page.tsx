@@ -46,18 +46,12 @@ const DONT_S = [
 
 export default function PuducherryPage() {
   const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
-
-  // Global planner trigger: dispatch event + navigate to plan page with params
   const openPlannerWith = (state: string, location?: string) => {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
     } catch (e) {
       /* noop */
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to shared planner route (keeps behavior consistent across pages)
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

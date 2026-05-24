@@ -58,9 +58,6 @@ export default function TamilNaduPage() {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
     } catch (e) {}
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

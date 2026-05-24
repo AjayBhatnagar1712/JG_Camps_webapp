@@ -52,11 +52,6 @@ export default function DelhiPage() {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { city, location } }));
     } catch {}
-
-    // Always navigate to planner page as fallback
-    const params = new URLSearchParams({ city });
-    if (location) params.append("location", location);
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith("Delhi");

@@ -54,11 +54,6 @@ export default function PunjabPage() {
     } catch (e) {
       // ignore
     }
-
-    // Fallback navigation to planner page with query params
-    const params = new URLSearchParams({ city });
-    if (location) params.append("location", location);
-    window.location.href = `/india/north/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith("Punjab");

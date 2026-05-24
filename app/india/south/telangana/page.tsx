@@ -54,10 +54,6 @@ export default function TelanganaPage() {
     } catch (e) {
       // ignore if event can't be dispatched
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // follow the app behaviour used elsewhere — navigate to the planner route with params
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

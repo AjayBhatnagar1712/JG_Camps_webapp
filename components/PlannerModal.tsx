@@ -54,6 +54,14 @@ function diffNights(start?: string, end?: string) {
   return Math.round(ms / (1000 * 60 * 60 * 24));
 }
 
+function dateOffsetISO(daysFromToday: number) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromToday);
+  d.setHours(12, 0, 0, 0);
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
 /** Extract a fenced JSON block (```json ... ```) or plain JSON from text */
 function extractJsonBlock(text: string) {
   if (!text) return null;
@@ -113,6 +121,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
     // buttons can prefill the planner before the parent opens it.
     function handleOpen() {
       setVisible(true);
+      setState("idle");
       setErr("");
       setResult("");
       setStructured(null);
@@ -122,6 +131,8 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
       const next = [detail?.location, detail?.state, detail?.city].filter(Boolean) as string[];
       if (next.length > 0) {
         setDestinations((existing) => Array.from(new Set([...next, ...existing])));
+        setArrive((current) => current || dateOffsetISO(7));
+        setDepart((current) => current || dateOffsetISO(11));
       }
       handleOpen();
     }

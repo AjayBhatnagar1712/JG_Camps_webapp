@@ -59,10 +59,6 @@ export default function KeralaPage() {
     } catch (e) {
       // ignore
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to planner route (keeps same pattern used elsewhere)
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Manipur index page — lists major destinations and provides quick actions:
- * - Create Itinerary (Auto) -> navigates to /india/northeast/plan with state & optional location
+ * - Create Itinerary (Auto) -> opens the global itinerary builder
  * - Personalize Itinerary -> dispatches global event "open-contact-expert"
  *
  * Follows the same structure as other regional pages (Bihar / Assam).
@@ -65,10 +65,6 @@ export default function ManipurPage() {
     } catch {
       // noop
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to the regional planner page with params
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

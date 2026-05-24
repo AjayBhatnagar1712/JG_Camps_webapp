@@ -8,7 +8,7 @@ import React from "react";
 /**
  * Goa index page — follows the same structure as the Bihar page you supplied.
  * - Lists major destinations
- * - "Create Itinerary (Auto)" navigates to /india/west/plan?state=Goa (and optional location)
+ * - "Create Itinerary (Auto)" opens the global itinerary builder.
  * - "Personalize Itinerary" dispatches global event "open-contact-expert"
  * - Each location has Plan (auto) and Personalize actions
  */
@@ -70,10 +70,6 @@ export default function GoaPage() {
     } catch {
       // noop if event fails
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to plan page with params so the planner can read them
-    window.location.href = `/india/west/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

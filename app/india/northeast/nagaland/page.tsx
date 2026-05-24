@@ -7,7 +7,7 @@ import React from "react";
 
 /**
  * Nagaland index page — lists major destinations, quick actions to:
- * - auto-create an itinerary (navigates to /india/northeast/plan with params)
+ * - auto-create an itinerary (opens the global itinerary builder.
  * - open contact modal for a personalised itinerary (dispatches global event "open-contact-expert")
  *
  * Follows the same structure as Bihar/Mizoram pages for consistency across the site.
@@ -67,10 +67,6 @@ export default function NagalandPage() {
     } catch {
       // noop — best-effort
     }
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // Navigate to planner page with params so the planner can read them
-    window.location.href = `/india/northeast/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);

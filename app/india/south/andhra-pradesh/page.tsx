@@ -66,18 +66,13 @@ const DONT_S = [
 export default function AndhraPradeshPage() {
   const openContact = () => window.dispatchEvent(new Event("open-contact-expert"));
 
-  // opens planner with query params and fires a custom event that planner modal/listener can use
+  // opens the global itinerary builder with state and optional location
   const openPlannerWith = (state: string, location?: string) => {
     try {
       window.dispatchEvent(new CustomEvent("open-planner-with", { detail: { state, location } }));
     } catch (e) {
       // ignore if event can't be dispatched
     }
-
-    const params = new URLSearchParams({ state });
-    if (location) params.append("location", location);
-    // navigate to the planner route (keeps same behaviour used elsewhere)
-    window.location.href = `/india/south/plan?${params.toString()}`;
   };
 
   const createItineraryAuto = () => openPlannerWith(DATA.name);
