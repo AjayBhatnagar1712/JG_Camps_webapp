@@ -109,16 +109,28 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
   }, [controlledOpen]);
 
   useEffect(() => {
-    // if parent is not controlling, listen for global event
-    if (typeof controlledOpen === "boolean") return;
+    // Listen for global events even when parent controls the open state so location
+    // buttons can prefill the planner before the parent opens it.
     function handleOpen() {
       setVisible(true);
       setErr("");
       setResult("");
       setStructured(null);
     }
+    function handleOpenWith(event: Event) {
+      const detail = (event as CustomEvent<{ state?: string; city?: string; location?: string }>).detail;
+      const next = [detail?.location, detail?.state, detail?.city].filter(Boolean) as string[];
+      if (next.length > 0) {
+        setDestinations((existing) => Array.from(new Set([...next, ...existing])));
+      }
+      handleOpen();
+    }
     window.addEventListener("open-planner", handleOpen);
-    return () => window.removeEventListener("open-planner", handleOpen);
+    window.addEventListener("open-planner-with", handleOpenWith as EventListener);
+    return () => {
+      window.removeEventListener("open-planner", handleOpen);
+      window.removeEventListener("open-planner-with", handleOpenWith as EventListener);
+    };
   }, [controlledOpen]);
 
   function handleClose() {
@@ -226,6 +238,9 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
             { role: "system", content: system },
             { role: "user", content: user },
           ],
+          maxOutputTokens: 1200,
+          temperature: 0.5,
+          timeoutMs: 18000,
         }),
         signal: controller.signal,
       });

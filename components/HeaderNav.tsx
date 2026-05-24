@@ -1,132 +1,121 @@
-// components/HeaderNav.tsx
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
-import { ChevronDown } from "lucide-react";
+import { useCallback, useState } from "react";
+import { CalendarPlus, ChevronDown, Menu, MessageCircle, X } from "lucide-react";
 
-/**
- * HeaderNav
- *
- * - Shows top navigation (Destinations dropdown, Plan a Trip, About, Contact)
- * - "Plan a Trip" button dispatches the global events that open the itinerary/planner modal.
- *
- * NOTE: this component intentionally dispatches two event names to be resilient to differences
- * in the modal listener name across your codebase. Remove one if you confirm the single event name.
- */
+const DESTINATIONS = [
+  ["North India", "/india/north"],
+  ["South India", "/india/south"],
+  ["East India", "/india/east"],
+  ["West India", "/india/west"],
+  ["North-East India", "/india/northeast"],
+  ["Central India", "/india/central"],
+  ["International", "/international"],
+  ["Group Retreats", "/group-retreats"],
+  ["Spiritual Tourism", "/spiritual"],
+  ["Wellness & Health", "/wellness"],
+] as const;
 
 export default function HeaderNav() {
   const [destOpen, setDestOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleDest = useCallback(() => setDestOpen((s) => !s), []);
-  const closeDest = useCallback(() => setDestOpen(false), []);
-
-  // Dispatches events that open the global "Get an Itinerary" modal / planner
   const openPlanner = useCallback((e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    // Try both common event names — remove the one you don't need if you want a single event
+    e?.preventDefault();
+    setMobileOpen(false);
     window.dispatchEvent(new Event("open-planner"));
-    window.dispatchEvent(new Event("open-itinerary-planner"));
   }, []);
 
-  return (
-    <nav className="flex items-center gap-6">
-      {/* Destinations + dropdown */}
+  const openContact = useCallback((e?: React.MouseEvent) => {
+    e?.preventDefault();
+    setMobileOpen(false);
+    window.dispatchEvent(new Event("open-contact-expert"));
+  }, []);
+
+  const navBody = (
+    <>
       <div className="relative">
         <button
-          onClick={toggleDest}
+          onClick={() => setDestOpen((s) => !s)}
           aria-expanded={destOpen}
-          className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
+          className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-white/90 hover:bg-cyan-100/10"
         >
           Destinations
           <ChevronDown className="h-4 w-4" />
         </button>
 
-        {/* dropdown panel */}
         <div
-          className={`origin-top-right absolute right-0 mt-2 w-56 rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition-opacity duration-150 z-50 ${
-            destOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+          className={`absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-sky-100 bg-white text-slate-800 shadow-2xl shadow-sky-950/15 transition ${
+            destOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-1 opacity-0"
           }`}
-          onMouseLeave={closeDest}
+          onMouseLeave={() => setDestOpen(false)}
         >
-          <ul className="p-3 space-y-2 text-sm text-slate-700">
-            {/* Keep these in sync with the cards on app/page.tsx */}
-            <li>
-              <Link href="/india/north" className="block px-3 py-2 rounded hover:bg-slate-50">
-                North India
+          <div className="grid p-2">
+            {DESTINATIONS.map(([label, href]) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => {
+                  setDestOpen(false);
+                  setMobileOpen(false);
+                }}
+                className="rounded-xl px-3 py-2 text-sm font-medium hover:bg-sky-50 hover:text-sky-900"
+              >
+                {label}
               </Link>
-            </li>
-            <li>
-              <Link href="/india/south" className="block px-3 py-2 rounded hover:bg-slate-50">
-                South India
-              </Link>
-            </li>
-            <li>
-              <Link href="/india/east" className="block px-3 py-2 rounded hover:bg-slate-50">
-                East India
-              </Link>
-            </li>
-            <li>
-              <Link href="/india/west" className="block px-3 py-2 rounded hover:bg-slate-50">
-                West India
-              </Link>
-            </li>
-            <li>
-              <Link href="/india/northeast" className="block px-3 py-2 rounded hover:bg-slate-50">
-                North-East India
-              </Link>
-            </li>
-            <li>
-              <Link href="/india/central" className="block px-3 py-2 rounded hover:bg-slate-50">
-                Central India
-              </Link>
-            </li>
-
-            {/* theme cards from home page */}
-            <li>
-              <Link href="/group-retreats" className="block px-3 py-2 rounded hover:bg-slate-50">
-                Group Retreats
-              </Link>
-            </li>
-            <li>
-              <Link href="/spiritual" className="block px-3 py-2 rounded hover:bg-slate-50">
-                Spiritual Tourism
-              </Link>
-            </li>
-            <li>
-              <Link href="/wellness" className="block px-3 py-2 rounded hover:bg-slate-50">
-                Wellness & Health
-              </Link>
-            </li>
-          </ul>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Plan a Trip: open global itinerary modal */}
-      <button
-        onClick={openPlanner}
-        className="hidden sm:inline text-sm font-medium hover:underline"
-        aria-label="Open itinerary planner"
-      >
-        Plan a Trip
+      <button onClick={openPlanner} className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-white/90 hover:bg-cyan-100/10 sm:inline-flex">
+        <CalendarPlus className="h-4 w-4" />
+        Plan
       </button>
 
-      {/* About */}
-      <Link href="/about" className="hidden sm:inline text-sm font-medium hover:underline">
+      <Link href="/about" className="hidden rounded-full px-3 py-2 text-sm font-semibold text-white/90 hover:bg-cyan-100/10 sm:inline-flex">
         About
       </Link>
 
-      {/* Contact */}
-      <Link
-        href="#contact-expert"
-        onClick={(e) => {
-          e.preventDefault();
-          window.dispatchEvent(new Event("open-contact-expert"));
-        }}
-        className="inline-flex items-center px-4 py-2 rounded-md bg-amber-400 text-black font-semibold"
-      >
+      <button onClick={openContact} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-yellow-300 px-4 py-2 text-sm font-black text-sky-950 shadow-lg shadow-sky-950/20 hover:brightness-105">
+        <MessageCircle className="h-4 w-4" />
         Contact
-      </Link>
-    </nav>
+      </button>
+    </>
+  );
+
+  return (
+    <>
+      <nav className="hidden items-center gap-2 md:flex">{navBody}</nav>
+      <button
+        onClick={() => setMobileOpen((s) => !s)}
+        className="grid h-10 w-10 place-items-center rounded-full bg-white/10 md:hidden"
+        aria-label="Open navigation"
+      >
+        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </button>
+
+      {mobileOpen && (
+        <div className="absolute left-4 right-4 top-[68px] z-50 rounded-3xl border border-white/10 bg-sky-950/95 p-4 shadow-2xl backdrop-blur-xl md:hidden">
+          <div className="grid gap-2">
+            {DESTINATIONS.map(([label, href]) => (
+              <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-2xl px-4 py-3 text-sm font-semibold text-white/90 hover:bg-cyan-100/10">
+                {label}
+              </Link>
+            ))}
+            <button onClick={openPlanner} className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/90 hover:bg-cyan-100/10">
+              Plan a Trip
+            </button>
+            <Link href="/about" onClick={() => setMobileOpen(false)} className="rounded-2xl px-4 py-3 text-sm font-semibold text-white/90 hover:bg-cyan-100/10">
+              About
+            </Link>
+            <button onClick={openContact} className="rounded-2xl bg-gradient-to-r from-amber-200 to-yellow-300 px-4 py-3 text-left text-sm font-black text-sky-950">
+              Contact Travel Expert
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

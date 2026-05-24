@@ -105,7 +105,10 @@ Rules:
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-      }),
+          maxOutputTokens: 1100,
+          temperature: 0.5,
+          timeoutMs: 18000,
+        }),
     });
 
     if (!res.ok) throw new Error(`Server returned ${res.status}`);
@@ -228,7 +231,7 @@ Rules:
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Button variant="outline" onClick={() => setShowItinerary(false)}>Edit Preferences</Button>
               <a href="tel:+918595167227" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">📞 8595167227</a>
-              <a href="tel:+918076874150" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">📞 8076874150</a>
+              <a href="tel:+918076874156" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">📞 8076874156</a>
               <a href="mailto:jgadven@gmail.com" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-yellow-500 text-black hover:bg-yellow-400">✉️ jgadven@gmail.com</a>
             </div>
           </motion.div>

@@ -87,7 +87,7 @@ export default function GroupRetreatsPlan() {
 Rules:
 - DO NOT mention or recommend any hotel, resort, Airbnb, or stay property by name.
 - If you would otherwise recommend a property, instead say:
-  "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
+  "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a clear Markdown itinerary with Day 1 / Day 2 / etc (show nights per location).
 - For each day include: travel time (approx), 1–3 activity highlights, and one food/meal suggestion.
 - Include a short cost guidance for groups (Economy / Mid / Premium).
@@ -109,7 +109,10 @@ Please propose a practical route, nights per stop, and a sample daily programme.
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-      }),
+          maxOutputTokens: 1100,
+          temperature: 0.5,
+          timeoutMs: 18000,
+        }),
     });
 
     if (!res.ok) throw new Error(`Server error: ${res.status}`);

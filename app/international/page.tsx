@@ -2,90 +2,89 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import Head from "next/head";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-type Card = {
-  id: number;
-  title: string;
-  desc: string;
-  img: string;
-  category: string;
-  href: string;
-};
+import { ArrowRight, Globe2 } from "lucide-react";
+import { INTERNATIONAL_TRIPS } from "@/data/internationalTrips";
 
 const CATEGORIES = ["All", "Europe", "Southeast Asia", "Middle East", "Adventure", "Luxury"];
 
-const CARDS: Card[] = [
-  { id: 1, title: "Europe Highlights", desc: "Paris–Swiss Alps–Italy classics in one elegant loop.", img: "/images/International/europe-highlights.jpg", category: "Europe", href: "/international/europe-highlights" },
-  { id: 2, title: "Swiss Alps Getaway", desc: "Lakes, glaciers & alpine trains for scenic souls.", img: "/images/International/swiss-alps.jpg", category: "Europe", href: "/international/swiss-alps" },
-  { id: 3, title: "Bali & Beyond", desc: "Beaches, rice terraces & temples across Indonesia.", img: "/images/International/bali.jpg", category: "Southeast Asia", href: "/international/bali" },
-  { id: 4, title: "Thailand Explorer", desc: "Bangkok buzz, Phuket beaches, and northern culture.", img: "/images/International/thailand.jpg", category: "Southeast Asia", href: "/international/thailand" },
-  { id: 5, title: "Dubai Luxe Break", desc: "Skyline views, desert safaris & premium dining.", img: "/images/International/dubai.jpg", category: "Middle East", href: "/international/dubai" },
-  { id: 6, title: "Jordan Heritage Trail", desc: "Petra, Wadi Rum & the Dead Sea in style.", img: "/images/International/jordan.jpg", category: "Middle East", href: "/international/jordan" },
-  { id: 7, title: "Alps Adventure Trek", desc: "Multi-day trekking with glacier vistas.", img: "/images/International/alps-trek.jpg", category: "Adventure", href: "/international/alps-trek" },
-  { id: 8, title: "New Zealand Road Trip", desc: "Epic drives, fjords & adrenaline activities.", img: "/images/International/new-zealand.jpg", category: "Adventure", href: "/international/new-zealand" },
-  { id: 9, title: "Mediterranean Yacht Week", desc: "Island-hopping on a private yacht.", img: "/images/International/med-yacht.jpg", category: "Luxury", href: "/international/med-yacht" },
-  { id: 10, title: "Maldives Overwater Escape", desc: "Turquoise lagoons & blissful downtime.", img: "/images/International/maldives.jpg", category: "Luxury", href: "/international/maldives" },
-];
-
 export default function InternationalPage() {
   const [active, setActive] = useState("All");
-  const filtered = active === "All" ? CARDS : CARDS.filter(c => c.category === active);
+  const filtered = useMemo(
+    () => (active === "All" ? INTERNATIONAL_TRIPS : INTERNATIONAL_TRIPS.filter((trip) => trip.category === active)),
+    [active]
+  );
 
   return (
-    <div className="bg-gradient-to-b from-blue-50 to-indigo-100 min-h-screen pb-24">
-      {/* SEO */}
-      <Head>
-        <title>International Trips | JG Camps & Resorts</title>
-        <meta name="description" content="Curated international holidays: Europe, Southeast Asia, Middle East, adventure treks and luxury escapes." />
-        <meta property="og:title" content="International Trips | JG Camps & Resorts" />
-        <meta property="og:description" content="Premium itineraries across Europe, Asia & beyond." />
-        <meta property="og:image" content="/images/International/international-hero.jpg" />
-      </Head>
-
-      {/* Hero */}
-      <section className="relative w-full h-[56vh]">
-        <Image src="/images/International/international-hero.jpg" alt="International travel collage" fill priority className="object-cover brightness-75" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.h1 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.6}} className="text-white text-4xl md:text-6xl font-bold text-center drop-shadow-xl">
-            Discover the World, Beautifully
-          </motion.h1>
+    <main className="min-h-screen bg-white text-slate-950">
+      <section className="relative min-h-[70vh] overflow-hidden">
+        <Image src="/images/International/international-hero.jpg" alt="International travel" fill priority className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/10" />
+        <div className="relative z-10 mx-auto flex min-h-[70vh] max-w-7xl flex-col justify-end px-6 pb-14 pt-28 text-white">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+            <Globe2 className="h-4 w-4" />
+            Curated international holidays
+          </div>
+          <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight md:text-7xl">Discover the World, Beautifully</h1>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-100">
+            Premium international itineraries across Europe, Asia, the Middle East, adventure routes, and luxury escapes.
+          </p>
         </div>
       </section>
 
-      {/* Filters */}
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div initial={{opacity:0}} animate={{opacity:1}} className="flex flex-wrap gap-3 justify-center -mt-6 mb-8">
-          {CATEGORIES.map(cat => (
-            <button key={cat}
-              onClick={()=>setActive(cat)}
-              className={`px-4 py-2 rounded-full border text-sm font-medium backdrop-blur ${active===cat ? "bg-indigo-700 text-white border-indigo-700" : "bg-white/80 text-indigo-700 border-indigo-300 hover:bg-indigo-50"}`}>
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <div className="mb-8 flex flex-wrap gap-3">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`rounded-full border px-4 py-2 text-sm font-bold transition ${
+                active === cat
+                  ? "border-emerald-800 bg-emerald-800 text-white"
+                  : "border-emerald-100 bg-white text-emerald-900 hover:bg-emerald-50"
+              }`}
+            >
               {cat}
             </button>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Cards */}
-        <AnimatePresence initial={false}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filtered.map(card => (
-              <motion.div key={card.id} initial={{opacity:0, y:20}} animate={{opacity:1,y:0}} exit={{opacity:0, y:20}} transition={{duration:.35}}>
-                <Link href={card.href} className="block group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition">
-                  <div className="relative h-56">
-                    <Image src={card.img} alt={card.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+        <AnimatePresence mode="popLayout">
+          <motion.div layout className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((trip) => (
+              <motion.article
+                layout
+                key={trip.slug}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 18 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Link href={`/international/${trip.slug}`} className="group block overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-950/5">
+                  <div className="relative h-64 overflow-hidden">
+                    <Image src={trip.image} alt={trip.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-950">
+                      {trip.category}
+                    </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="text-xl font-semibold text-indigo-800">{card.title}</h3>
-                    <p className="text-gray-600 mt-2">{card.desc}</p>
+                    <h3 className="text-2xl font-black text-slate-950">{trip.title}</h3>
+                    <p className="mt-2 min-h-[72px] text-sm leading-6 text-slate-600">{trip.description}</p>
+                    <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                      <span className="text-sm font-semibold text-emerald-800">{trip.duration}</span>
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-amber-700">
+                        View trip <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
                   </div>
                 </Link>
-              </motion.div>
+              </motion.article>
             ))}
-          </div>
+          </motion.div>
         </AnimatePresence>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

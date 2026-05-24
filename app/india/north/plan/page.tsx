@@ -100,7 +100,7 @@ export default function NorthIndiaPlanTrip() {
     const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**, specializing in North India.
 Rules:
 - Do NOT mention or recommend any specific hotel, resort, or stay property by name.
-- Instead, say: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
+- Instead, say: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a clean Markdown itinerary with "Day 1", "Day 2", etc.
 - Mention approximate travel times, 2–3 activity highlights, and café or local food ideas.
 - Include short cost guidance (Economy / Mid / Premium) but avoid naming hotels.
@@ -120,7 +120,10 @@ Ensure cultural, scenic, and spiritual balance with travel-friendly pacing.`;
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-      }),
+          maxOutputTokens: 1100,
+          temperature: 0.5,
+          timeoutMs: 18000,
+        }),
     });
 
     if (!res.ok) throw new Error(`Server error: ${res.status}`);
@@ -270,8 +273,8 @@ Ensure cultural, scenic, and spiritual balance with travel-friendly pacing.`;
               <a href="tel:+918595167227" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
                 📞 8595167227
               </a>
-              <a href="tel:+918076874150" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
-                📞 8076874150
+              <a href="tel:+918076874156" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
+                📞 8076874156
               </a>
               <a href="mailto:jgadven@gmail.com" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-yellow-500 text-black hover:bg-yellow-400">
                 ✉️ jgadven@gmail.com

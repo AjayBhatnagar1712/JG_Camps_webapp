@@ -97,7 +97,7 @@ export default function CentralIndiaPlanTrip() {
     const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**, specializing in Central India.
 Rules:
 - DO NOT mention or recommend any hotel, resort, or property by name.
-- Instead, write: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874150 or ✉️ jgadven@gmail.com."
+- Instead, write: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a well-structured Markdown itinerary ("Day 1", "Day 2", etc.)
 - Include 2–3 attractions per day, brief travel times, and local food experiences.
 - Mention cost tiers (Economy / Mid / Premium) with approximate INR ranges.
@@ -117,7 +117,10 @@ Ensure a good balance of nature, culture, and comfort.`;
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-      }),
+          maxOutputTokens: 1100,
+          temperature: 0.5,
+          timeoutMs: 18000,
+        }),
     });
 
     if (!res.ok) throw new Error(`Server error: ${res.status}`);
@@ -266,8 +269,8 @@ Ensure a good balance of nature, culture, and comfort.`;
               <a href="tel:+918595167227" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
                 📞 8595167227
               </a>
-              <a href="tel:+918076874150" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
-                📞 8076874150
+              <a href="tel:+918076874156" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700">
+                📞 8076874156
               </a>
               <a href="mailto:jgadven@gmail.com" className="inline-flex items-center justify-center rounded-md px-4 py-2 bg-yellow-500 text-black hover:bg-yellow-400">
                 ✉️ jgadven@gmail.com

@@ -1,31 +1,20 @@
-// app/page.tsx
 "use client";
 
 import slugify from "@/lib/slugify";
-
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight, CalendarDays, CloudSun, Compass, MapPinned, MessageCircle, Sparkles, Umbrella, UsersRound } from "lucide-react";
 import { useCallback, useState } from "react";
-
-/**
- * Home page - region cards
- *
- * Clicking a region opens a small panel with major states for that region.
- * - Individual state links navigate to /india/<state-slug>
- * - Explore region goes to /india/<region-slug>
- *
- * Make sure to create the corresponding routes (e.g. app/india/north/page.tsx or handle them)
- */
 
 type Region = {
   key: string;
   title: string;
   image: string;
   states: string[];
-  blurb?: string;
-  href?: string; // region landing page
+  blurb: string;
+  href: string;
+  accent: string;
 };
 
 const REGIONS: Region[] = [
@@ -33,116 +22,70 @@ const REGIONS: Region[] = [
     key: "north",
     title: "North India",
     image: "/images/regions/north-india.jpg",
-    blurb: "Himalayan foothills, hill stations, spiritual & heritage routes.",
-    states: [
-      "Delhi",
-      "Punjab",
-      "Haryana",
-      "Uttarakhand",
-      "Himachal Pradesh",
-      "Jammu & Kashmir",
-      "Uttar Pradesh",
-      "Chandigarh",
-    ],
+    blurb: "Himalayan drives, hill stations, spiritual routes, and heritage cities.",
+    states: ["Delhi", "Punjab", "Haryana", "Uttarakhand", "Himachal Pradesh", "Jammu & Kashmir", "Uttar Pradesh", "Chandigarh"],
     href: "/india/north",
+    accent: "Mountain circuits",
   },
   {
     key: "south",
     title: "South India",
     image: "/images/regions/south-india.jpg",
-    blurb: "Backwaters, temple trails, beaches and hill stations.",
-    states: [
-      "Andhra Pradesh",
-      "Telangana",
-      "Karnataka",
-      "Kerala",
-      "Tamil Nadu",
-      "Puducherry",
-      "Lakshadweep",
-    ],
+    blurb: "Backwaters, temple towns, beaches, wellness retreats, and coastal food trails.",
+    states: ["Andhra Pradesh", "Telangana", "Karnataka", "Kerala", "Tamil Nadu", "Puducherry", "Lakshadweep"],
     href: "/india/south",
+    accent: "Culture and coast",
   },
   {
     key: "east",
     title: "East India",
     image: "/images/regions/east-india.jpg",
-    blurb: "Scenic coasts, heritage towns and tribal cultures.",
-    states: [
-      "West Bengal",
-      "Odisha",
-      "Bihar",
-      "Jharkhand",
-      "Andaman & Nicobar Islands",
-    ],
+    blurb: "Heritage towns, island escapes, temple routes, forests, and tribal culture.",
+    states: ["West Bengal", "Odisha", "Bihar", "Jharkhand", "Andaman & Nicobar Islands"],
     href: "/india/east",
+    accent: "Heritage trails",
   },
   {
     key: "west",
     title: "West India",
     image: "/images/regions/west-india.jpg",
-    blurb: "Deserts, forts, coastal gateways and vibrant culture.",
-    // Split Dadra/Nagar and Daman/Diu into separate entries
-    states: [
-      "Goa",
-      "Rajasthan",
-      "Gujarat",
-      "Maharashtra",
-      "Dadra and Nagar Haveli",
-      "Daman and Diu",
-    ],
+    blurb: "Desert forts, beach weekends, wildlife, food streets, and luxury breaks.",
+    states: ["Goa", "Rajasthan", "Gujarat", "Maharashtra", "Dadra and Nagar Haveli", "Daman and Diu"],
     href: "/india/west",
+    accent: "Desert to beach",
   },
   {
     key: "northeast",
     title: "North-East India",
     image: "/images/regions/northeast-india.jpg",
-    blurb: "Lush valleys, unique cultures and offbeat adventures.",
-    states: [
-      "Arunachal Pradesh",
-      "Assam",
-      "Manipur",
-      "Meghalaya",
-      "Mizoram",
-      "Nagaland",
-      "Sikkim",
-      "Tripura",
-    ],
+    blurb: "Cloud forests, living-root bridges, monasteries, valleys, and offbeat drives.",
+    states: ["Arunachal Pradesh", "Assam", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Sikkim", "Tripura"],
     href: "/india/northeast",
+    accent: "Offbeat India",
   },
   {
     key: "central",
     title: "Central India",
     image: "/images/regions/central-india.jpg",
-    blurb: "Wildlife corridors, tribal hinterlands and ancient temples.",
+    blurb: "Wildlife corridors, ancient temples, tribal hinterlands, and slow journeys.",
     states: ["Madhya Pradesh", "Chhattisgarh"],
     href: "/india/central",
+    accent: "Wildlife and heritage",
   },
-
-  // ----- THEME CARDS (unchanged features; expanded where needed) -----
   {
     key: "group-retreats",
     title: "Group Retreats",
     image: "/images/themes/group-retreats.jpg",
-    blurb: "Corporate offsites, family reunions, student camps and team retreats.",
-    // expanded list for the panel — links to /group-retreats/<slug>
-    states: [
-      "Corporate Tours",
-      "Training Programs",
-      "Schools",
-      "Colleges",
-      "Open Tours",
-      "Family Tours",
-      "Spiritual & Pilgrimage",
-      "Create Your Own Group",
-    ],
+    blurb: "Corporate offsites, school camps, college programs, family groups, and custom departures.",
+    states: ["Corporate Tours", "Training Programs", "Schools", "Colleges", "Open Tours", "Family Tours", "Spiritual & Pilgrimage", "Create Your Own Group"],
     href: "/group-retreats",
+    accent: "Designed for groups",
   },
   {
     key: "spiritual-tourism",
     title: "Spiritual Tourism",
     image: "/images/themes/spiritual-tourism.jpg",
-    blurb: "Pilgrimages and soulful retreats — Chardham, Vaishno Devi, Rishikesh and more.",
-    // expanded spiritual places — links to /spiritual/<slug>
+    blurb: "Pilgrimage circuits, sacred stays, puja logistics, and restorative spiritual travel.",
     states: [
       "Varanasi (Kashi)",
       "Char Dham Yatra",
@@ -167,60 +110,45 @@ const REGIONS: Region[] = [
       "Ajmer (Dargah Sharif)",
     ],
     href: "/spiritual",
+    accent: "Sacred circuits",
   },
   {
     key: "wellness-health",
-    title: "Wellness & Health Tourism",
+    title: "Wellness & Health",
     image: "/images/themes/wellness.jpg",
-    blurb: "Ayurveda, yoga, detox and holistic healing getaways across India.",
+    blurb: "Ayurveda, yoga, detox, healing getaways, and quiet retreats across India.",
     states: ["Ayurveda Retreats", "Yoga & Detox", "Holistic Resorts", "Wellness Clinics"],
     href: "/wellness",
+    accent: "Reset journeys",
   },
 ];
 
+const SIGNATURES = [
+  { title: "Sea to sky routes", text: "Beaches, hill roads, forests, islands, temples, and cities planned as one journey.", icon: CloudSun },
+  { title: "Human-paced travel", text: "Balanced days, sensible drives, local experiences, stays, permits, and support.", icon: Compass },
+  { title: "Groups handled well", text: "Offsites, camps, family groups, pilgrimages, retreats, and custom plans.", icon: UsersRound },
+];
+
 export default function Home() {
-  // Smooth scroll to the #explore section
-  const handleExplore = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    document.getElementById("explore")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const [openRegion, setOpenRegion] = useState<Region | null>(null);
+
+  const openPlanner = useCallback((e?: React.MouseEvent) => {
+    e?.preventDefault();
+    window.dispatchEvent(new Event("open-planner"));
   }, []);
 
-  // Fire a global event that GlobalCTAs listens for to open the Contact modal
-  const handleOpenContact = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
+  const openContact = useCallback((e?: React.MouseEvent) => {
+    e?.preventDefault();
     window.dispatchEvent(new Event("open-contact-expert"));
   }, []);
 
-  // Scroll to About
-  const handleLearnMore = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
-  // region panel state
-  const [openRegion, setOpenRegion] = useState<Region | null>(null);
-
-  function openRegionPanel(r: Region) {
-    setOpenRegion(r);
-    // ensure panel visible on small screens
-    setTimeout(() => {
-      const el = document.getElementById("region-panel");
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 40);
-  }
-
-  function closeRegionPanel() {
-    setOpenRegion(null);
-  }
-
-  // map special slugs for group-retreats and spiritual-tourism states (these match the pages you created)
   function getStateSlug(regionKey: string, stateName: string) {
     if (regionKey === "group-retreats") {
       const map: Record<string, string> = {
         "Corporate Tours": "corporate",
         "Training Programs": "training",
-        "Schools": "schools",
-        "Colleges": "colleges",
+        Schools: "schools",
+        Colleges: "colleges",
         "Open Tours": "open",
         "Family Tours": "family",
         "Spiritual & Pilgrimage": "spiritual",
@@ -234,135 +162,160 @@ export default function Home() {
         "Varanasi (Kashi)": "kashi",
         "Char Dham Yatra": "char-dham",
         "Vaishno Devi": "vaishno-devi",
-        "Rameshwaram": "rameshwaram",
+        Rameshwaram: "rameswaram",
         "Puri (Jagannath)": "puri",
         "Bodh Gaya": "bodh-gaya",
         "Amarnath Cave": "amarnath",
         "Shirdi (Sai Baba)": "shirdi",
-        "Kanyakumari": "kanyakumari",
-        "Haridwar": "haridwar",
-        "Rishikesh": "rishikesh",
+        Kanyakumari: "kanyakumari",
+        Haridwar: "haridwar",
+        Rishikesh: "rishikesh",
         "Tirupati (Venkateswara)": "tirupati",
         "Amritsar (Golden Temple)": "amritsar",
-        "Kedarnath": "kedarnath",
-        "Badrinath": "badrinath",
-        "Dwarka": "dwarka",
+        Kedarnath: "kedarnath",
+        Badrinath: "badrinath",
+        Dwarka: "dwarka",
         "Mathura & Vrindavan": "mathura-vrindavan",
-        "Pushkar": "pushkar",
-        "Sabarimala": "sabarimala",
+        Pushkar: "pushkar",
+        Sabarimala: "sabarimala",
         "Madurai (Meenakshi Amman)": "madurai",
         "Ajmer (Dargah Sharif)": "ajmer",
       };
       return map[stateName] ?? slugify(stateName);
     }
 
-    // default behaviour for other regions
     return slugify(stateName);
   }
 
   return (
-    <main className="min-h-screen text-foreground">
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* Soft radial background */}
-        <div className="pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(70%_50%_at_50%_0%,black,transparent)]">
-          <div className="absolute -top-40 right-0 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute -top-20 -left-20 h-[24rem] w-[24rem] rounded-full bg-primary/15 blur-3xl" />
-        </div>
+    <main className="bg-[linear-gradient(180deg,#e0f7ff_0%,#ffffff_28%,#f7fbff_100%)] text-slate-950">
+      <section className="relative min-h-[calc(100svh-66px)] overflow-hidden">
+        <Image
+          src="/images/Goa/goa-hero.jpg"
+          alt="Sea, sky, and coastal travel"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,89,133,0.78),rgba(14,165,233,0.34)_48%,rgba(255,255,255,0.10)),linear-gradient(180deg,rgba(2,132,199,0.16),rgba(8,47,73,0.72))]" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#e0f7ff] to-transparent" />
 
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            {/* LEFT: Text */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-medium">
-                Curated • Trusted • Hassle-free
-              </span>
-              <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight">
-                JG Camps &amp; Resorts
-              </h1>
-              <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-2xl">
-                Bringing you unforgettable experiences across India &amp; abroad — from adventure tourism to
-                luxury resorts, spiritual retreats, and holistic health getaways.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <a
-                  href="#explore"
-                  onClick={handleExplore}
-                  className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-primary-foreground font-semibold shadow hover:opacity-90"
-                >
-                  Explore Now <ChevronRight className="ml-1 h-4 w-4" />
-                </a>
+        <div className="relative z-10 mx-auto grid min-h-[calc(100svh-66px)] max-w-7xl items-center gap-8 px-4 py-10 text-white sm:px-6 md:grid-cols-[1.08fr_0.92fr] md:py-14 lg:gap-12">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }} className="max-w-3xl pt-4 md:pt-0">
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/30 bg-white/16 px-3 py-2 text-xs font-semibold text-sky-50 shadow-lg shadow-sky-950/10 backdrop-blur sm:px-4 sm:text-sm">
+              <Umbrella className="h-4 w-4 flex-none text-amber-200" />
+              Sea, sky, forest, mountain and culture journeys
+            </div>
 
-                {/* Open Contact Expert modal instead of navigating away */}
-                <a
-                  href="#contact-expert"
-                  onClick={handleOpenContact}
-                  className="inline-flex items-center justify-center rounded-2xl border border-border px-6 py-3 font-semibold shadow-sm hover:bg-white"
-                >
-                  Contact Us
-                </a>
+            <h1 className="mt-5 max-w-4xl text-[clamp(2.75rem,7.4vw,6.15rem)] font-black leading-[0.94] tracking-tight text-balance drop-shadow-[0_10px_30px_rgba(7,47,73,0.35)]">
+              Journeys that feel like open skies.
+            </h1>
+
+            <p className="mt-5 max-w-2xl text-base leading-7 text-sky-50 sm:text-lg md:text-xl md:leading-8">
+              Coastal breaks, mountain drives, retreats, pilgrimages, group camps and international holidays, planned with natural pacing and real support.
+            </p>
+
+            <div className="mt-7 flex flex-col gap-3 pb-16 sm:flex-row md:pb-0">
+              <button onClick={openPlanner} className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-yellow-300 px-6 py-4 font-black text-sky-950 shadow-2xl shadow-sky-950/25 hover:brightness-105">
+                Build an Itinerary <ArrowRight className="h-5 w-5" />
+              </button>
+              <button onClick={openContact} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/14 px-6 py-4 font-bold text-white shadow-xl shadow-sky-950/15 backdrop-blur hover:bg-white/20">
+                <MessageCircle className="h-5 w-5" />
+                Talk to an Expert
+              </button>
+            </div>
+
+            <div className="mt-8 hidden max-w-2xl grid-cols-3 gap-2 sm:grid sm:gap-3">
+              {[
+                ["20K+", "ideas"],
+                ["24/7", "support"],
+                ["100%", "custom"],
+              ].map(([value, label]) => (
+                <div key={label} className="rounded-2xl border border-white/20 bg-white/16 p-3 text-center shadow-lg shadow-sky-950/10 backdrop-blur sm:p-5">
+                  <div className="text-2xl font-black text-amber-200 sm:text-3xl">{value}</div>
+                  <div className="mt-1 text-xs font-semibold text-sky-50/90 sm:text-sm">{label}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.12 }} className="hidden md:block">
+            <div className="relative mx-auto aspect-[4/5] max-h-[620px] max-w-[470px]">
+              <div className="absolute left-0 top-10 h-[72%] w-[72%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/30">
+                <Image src="/images/south-india/lakshadweep.jpg" alt="Island water" fill className="object-cover" sizes="38vw" />
               </div>
-            </motion.div>
-
-            {/* RIGHT: Drone Video */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-              <div className="relative rounded-3xl overflow-hidden shadow-xl border border-border aspect-[16/10] bg-black">
-                <video
-                  className="w-full h-full object-cover"
-                  src="/videos/drone_footage.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  poster="/images/hero-poster.jpg"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+              <div className="absolute right-0 top-0 h-[46%] w-[55%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/25">
+                <Image src="/images/northeast-india/meghalaya.jpg" alt="Green valley" fill className="object-cover" sizes="28vw" />
               </div>
-              <p className="mt-2 text-xs text-muted-foreground text-center">
-                Scenic drone footage of the mountains.
-              </p>
-            </motion.div>
-          </div>
+              <div className="absolute bottom-0 right-8 h-[40%] w-[58%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/25">
+                <Image src="/images/north-india/leh-ladakh.jpg" alt="Mountain sky" fill className="object-cover" sizes="28vw" />
+              </div>
+              <div className="absolute bottom-12 left-8 rounded-3xl border border-white/30 bg-white/85 p-5 text-sky-950 shadow-2xl shadow-sky-950/20 backdrop-blur">
+                <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-700">This season</div>
+                <div className="mt-1 text-xl font-black">Sea + Sky Escapes</div>
+                <div className="mt-1 text-sm text-slate-600">Goa, Lakshadweep, Kerala, Northeast</div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* REGIONS GRID */}
-      <section className="py-12 px-6" id="categories">
+      <section className="relative z-10 -mt-8 px-4 pb-10 sm:px-6 md:-mt-12">
+        <div className="mx-auto grid max-w-7xl gap-4 rounded-[2rem] border border-sky-100 bg-white/92 p-4 shadow-2xl shadow-sky-950/12 backdrop-blur md:grid-cols-3">
+          {SIGNATURES.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.title} className="rounded-3xl bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5">
+                <Icon className="h-6 w-6 text-cyan-700" />
+                <h3 className="mt-4 text-lg font-black text-slate-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="explore" className="px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold mb-6">Explore India by Region</h2>
-          <p className="text-sm text-muted-foreground mb-8 max-w-3xl">
-            Choose a region to see its popular states and plan a regional itinerary. Click a state to explore that state's page.
-          </p>
+          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-emerald-800">
+                <CalendarDays className="h-3.5 w-3.5" />
+                Explore
+              </div>
+              <h2 className="text-[clamp(2.25rem,5vw,4.5rem)] font-black leading-tight tracking-tight text-slate-950">Pick Your Journey</h2>
+            </div>
+            <p className="max-w-xl text-base leading-7 text-slate-600">
+              Choose a region or travel style, then jump into destinations, sample routes, and quick consultation.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {REGIONS.map((r) => (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {REGIONS.map((region, index) => (
               <motion.button
-                key={r.key}
-                onClick={() => openRegionPanel(r)}
-                whileHover={{ scale: 1.02 }}
-                className="relative group text-left rounded-3xl overflow-hidden shadow-xl border border-gray-100 p-0 bg-white cursor-pointer"
-                aria-expanded={openRegion?.key === r.key}
+                key={region.key}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.2) }}
+                onClick={() => setOpenRegion(region)}
+                className="group relative min-h-[330px] overflow-hidden rounded-[2rem] bg-sky-950 text-left shadow-2xl shadow-sky-950/10 sm:min-h-[360px]"
               >
-                <div className="relative h-56">
-                  <Image
-                    src={r.image}
-                    alt={r.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end">
-                    <div className="p-5 text-white">
-                      <div className="text-lg font-semibold">{r.title}</div>
-                      <div className="text-sm opacity-90 max-w-xs mt-1">{r.blurb}</div>
-                    </div>
+                <Image src={region.image} alt={region.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-sky-950 via-sky-950/30 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+                  <div className="mb-4 inline-flex rounded-full bg-amber-200 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-950">
+                    {region.accent}
                   </div>
-                </div>
-
-                <div className="p-4 border-t border-gray-100 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">{r.states.length} major areas</div>
-                  <div className="text-amber-600 font-semibold">View states →</div>
+                  <h3 className="text-3xl font-black">{region.title}</h3>
+                  <p className="mt-3 min-h-[56px] text-sm leading-6 text-slate-100">{region.blurb}</p>
+                  <div className="mt-5 flex items-center justify-between border-t border-white/15 pt-4">
+                    <span className="text-sm font-semibold text-slate-200">{region.states.length} areas</span>
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-sky-950">
+                      View <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </div>
                 </div>
               </motion.button>
             ))}
@@ -370,226 +323,77 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REGION PANEL (small overlay) */}
-      {openRegion && (
-        <div
-          id="region-panel"
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-4 pointer-events-none"
-        >
-          {/* backdrop */}
-          <div
-            onClick={closeRegionPanel}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto"
-          />
+      <section id="about" className="bg-[linear-gradient(135deg,#082f49_0%,#075985_48%,#0f766e_100%)] px-4 py-16 text-white sm:px-6">
+        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1fr_0.8fr] md:items-center">
+          <div>
+            <div className="mb-4 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-sky-50">JG Camps & Resorts</div>
+            <h2 className="text-[clamp(2.25rem,5vw,4.25rem)] font-black leading-tight tracking-tight">Designed for travelers who want the trip handled well.</h2>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-sky-50/85">
+              We combine quick AI drafts with human planning for real-world logistics: route order, permits, stays, food, local experiences, transport, and support.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/about" className="rounded-full bg-white px-6 py-3 font-black text-sky-950">About Us</Link>
+              <button onClick={openContact} className="rounded-full border border-white/20 px-6 py-3 font-bold text-white">Get Consultation</button>
+            </div>
+          </div>
+          <div className="grid gap-4">
+            {["Family holidays", "Corporate offsites", "School and college camps", "Pilgrimage groups", "Wellness retreats"].map((item) => (
+              <div key={item} className="rounded-3xl border border-white/10 bg-white/5 p-5 text-lg font-bold">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {openRegion && (
+        <div className="fixed inset-0 z-[75] grid place-items-end bg-slate-950/60 p-4 backdrop-blur-sm md:place-items-center">
+          <button className="absolute inset-0 cursor-default" onClick={() => setOpenRegion(null)} aria-label="Close region panel" />
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.98 }}
-            transition={{ duration: 0.18 }}
-            className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
+            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-[2rem] bg-white shadow-2xl"
           >
-            <div className="flex items-start gap-4 p-5 border-b border-gray-100">
-              <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                <Image src={openRegion.image} alt={openRegion.title} width={160} height={160} className="object-cover" />
+            <div className="grid md:grid-cols-[300px_1fr]">
+              <div className="relative min-h-[220px]">
+                <Image src={openRegion.image} alt={openRegion.title} fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5 text-white">
+                  <div className="text-xs font-black uppercase tracking-[0.16em] text-amber-300">{openRegion.accent}</div>
+                  <h3 className="mt-2 text-3xl font-black">{openRegion.title}</h3>
+                </div>
               </div>
-              <div className="flex-1">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-bold">{openRegion.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1 max-w-md">{openRegion.blurb}</p>
-                  </div>
 
-                  <div className="text-right">
-                    <button
-                      onClick={closeRegionPanel}
-                      className="px-3 py-2 rounded-md text-sm border border-border hover:bg-muted"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-3 text-sm text-gray-700">
-                  <strong>Major states / areas:</strong>
-                </div>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {openRegion.states.map((s) => {
-                    const sSlug = getStateSlug(openRegion.key, s);
-
-                    // Use the region's configured href as base if present, otherwise fall back to /india/<region-key>
-                    // This ensures links from the panel point to the correct region subpath (e.g. /india/north/delhi).
-                    const base = openRegion.href ?? `/india/${openRegion.key}`;
-
-                    return (
-                      <Link
-                        key={s}
-                        href={`${base}/${sSlug}`}
-                        onClick={() => setTimeout(closeRegionPanel, 80)}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm hover:bg-gray-50"
-                      >
-                        {s}
-                      </Link>
-                    );
-                  })}
-
-                  {/* Additional quick link for Leh & Ladakh when North India panel is open */}
-                  {openRegion.key === "north" && (
+              <div className="p-6">
+                <p className="text-sm leading-6 text-slate-600">{openRegion.blurb}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {openRegion.states.map((state) => (
                     <Link
-                      href={`/india/north/${slugify("Leh & Ladakh")}`}
-                      onClick={() => setTimeout(closeRegionPanel, 80)}
-                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm hover:bg-gray-50"
+                      key={state}
+                      href={`${openRegion.href}/${getStateSlug(openRegion.key, state)}`}
+                      onClick={() => setOpenRegion(null)}
+                      className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-100"
                     >
-                      Leh &amp; Ladakh
+                      {state}
                     </Link>
-                  )}
+                  ))}
                 </div>
-
-                <div className="mt-6 flex gap-3">
-                  <Link
-                    href={openRegion.href || `/india/${openRegion.key}`}
-                    onClick={() => setTimeout(closeRegionPanel, 80)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-800 text-white font-semibold hover:opacity-95"
-                  >
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link href={openRegion.href} onClick={() => setOpenRegion(null)} className="rounded-full bg-emerald-900 px-5 py-3 font-black text-white">
                     Explore {openRegion.title}
                   </Link>
-
-                  <button
-                    onClick={() => {
-                      // open contact expert modal if user wants a custom plan for region
-                      window.dispatchEvent(new Event("open-contact-expert"));
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-800 text-emerald-800 font-medium hover:bg-emerald-50"
-                  >
-                    Request a Custom Plan
+                  <button onClick={openContact} className="rounded-full border border-emerald-900 px-5 py-3 font-bold text-emerald-950">
+                    Request Custom Plan
+                  </button>
+                  <button onClick={() => setOpenRegion(null)} className="rounded-full px-5 py-3 font-bold text-slate-500">
+                    Close
                   </button>
                 </div>
               </div>
             </div>
-
-            {/* bottom: small grid of extra links */}
-            <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-3">
-              <div className="text-sm text-gray-600">Need help deciding?</div>
-              <button
-                onClick={() => {
-                  window.dispatchEvent(new Event("open-contact-expert"));
-                }}
-                className="ml-auto rounded-full px-4 py-1 border border-border text-sm hover:bg-muted"
-              >
-                Contact Travel Expert
-              </button>
-            </div>
           </motion.div>
         </div>
       )}
-
-      {/* EXPERIENCES */}
-      <section id="explore" className="py-18 md:py-20 px-6 bg-card border-t border-border">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-10">Our Experiences</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="rounded-2xl border border-border shadow-sm p-6 bg-muted/40 hover:shadow-md transition">
-              <h3 className="text-xl font-semibold mb-2">Adventure Tourism</h3>
-              <p className="text-muted-foreground">
-                Trekking, camping, river rafting, and wildlife safaris — for those who seek thrill and nature.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border shadow-sm p-6 bg-muted/40 hover:shadow-md transition">
-              <h3 className="text-xl font-semibold mb-2">Wellness &amp; Spiritual Tourism</h3>
-              <p className="text-muted-foreground">
-                Find peace with curated retreats, yoga, Ayurveda, and rejuvenation programs for complete well-being.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border shadow-sm p-6 bg-muted/40 hover:shadow-md transition">
-              <h3 className="text-xl font-semibold mb-2">Holistic Health Tourism</h3>
-              <p className="text-muted-foreground">
-                Experience therapies, meditation, and personalized wellness packages in serene destinations.
-              </p>
-            </div>
-          </div>
-
-          {/* CTA STRIP */}
-          <div className="mt-12 rounded-3xl bg-primary text-primary-foreground p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow">
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold">Want a custom itinerary with bookings?</h3>
-              <p className="opacity-90 text-sm">
-                Share your dates and preferences — we’ll craft and confirm everything.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <a
-                href="#contact-expert"
-                onClick={handleOpenContact}
-                className="inline-flex items-center gap-2 rounded-2xl bg-white text-foreground px-5 py-3 font-semibold shadow hover:bg-muted"
-              >
-                Get in Touch
-              </a>
-
-              <button
-                onClick={handleLearnMore}
-                className="inline-flex items-center gap-2 rounded-2xl border border-primary-foreground/30 px-5 py-3 font-semibold hover:bg-primary/10"
-              >
-                Learn More
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT PREVIEW on HOME (id="about") */}
-      <section id="about" className="py-20 px-6 bg-gray-50 border-t border-border">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">About JG Camps &amp; Resorts</h2>
-          <p className="text-muted-foreground mb-12 max-w-3xl mx-auto text-center text-lg">
-            At JG Camps & Resorts we craft journeys for every traveler — from adrenaline seekers to families and corporate retreats.
-            Our itineraries are curated with local knowledge, vetted partners, and round-the-clock support.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm hover:shadow-md transition">
-              <h4 className="font-semibold text-lg mb-2">Curated Itineraries</h4>
-              <p className="text-sm text-muted-foreground">Hand-picked stays, unique experiences, and tailored plans designed for you.</p>
-            </div>
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm hover:shadow-md transition">
-              <h4 className="font-semibold text-lg mb-2">Safety & Support</h4>
-              <p className="text-sm text-muted-foreground">24/7 on-ground support, verified partners, and stress-free planning.</p>
-            </div>
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm hover:shadow-md transition">
-              <h4 className="font-semibold text-lg mb-2">Sustainable Travel</h4>
-              <p className="text-sm text-muted-foreground">Responsible tourism that benefits local communities and minimizes footprint.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-8">
-            <div>
-              <p className="text-3xl font-bold text-primary">10000000+</p>
-              <p className="text-sm text-muted-foreground">Trips Crafted</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-primary">20000+</p>
-              <p className="text-sm text-muted-foreground">Destinations</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-primary">95%</p>
-              <p className="text-sm text-muted-foreground">Happy Travelers</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-primary">24/7</p>
-              <p className="text-sm text-muted-foreground">Support</p>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Link
-              href="/about"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold shadow hover:opacity-90 transition"
-            >
-              Learn More About Us
-            </Link>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
