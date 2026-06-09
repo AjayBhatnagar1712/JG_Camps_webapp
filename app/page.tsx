@@ -91,6 +91,13 @@ const NORTH_DESTINATIONS: NorthDestination[] = [
   },
 ];
 
+const TRAVEL_GALLERY = [
+  { title: "Heritage Days", image: "/images/north-india/delhi.jpg" },
+  { title: "Himalayan Stays", image: "/images/north-india/himachal.jpg" },
+  { title: "Kashmir Lakes", image: "/images/north-india/jammu.jpg" },
+  { title: "Ladakh Roads", image: "/images/north-india/leh-ladakh.jpg" },
+];
+
 const SERVICE_CARDS: Region[] = [
   {
     key: "group-retreats",
@@ -298,32 +305,58 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-[1.05fr_1.95fr]">
-            <div className="relative min-h-[420px] overflow-hidden rounded-[1.75rem] bg-sky-950 p-6 text-white shadow-2xl shadow-sky-950/15">
-              <Image src="/images/regions/north-india.jpg" alt="North India tour routes" fill className="object-cover opacity-80" sizes="(max-width: 1024px) 100vw, 36vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-sky-950 via-sky-950/55 to-sky-950/10" />
-              <div className="relative z-10 flex h-full min-h-[372px] flex-col justify-end">
-                <div className="mb-4 inline-flex w-fit rounded-full bg-amber-200 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-950">
-                  9 customer routes
+          <div className="grid gap-5 lg:grid-cols-[0.92fr_2.08fr]">
+            <div className="grid gap-5 self-start">
+              <div className="overflow-hidden rounded-[1.5rem] border border-sky-100 bg-white p-4 shadow-2xl shadow-sky-950/8">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <div className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-sky-950">
+                      Travel Gallery
+                    </div>
+                    <h3 className="mt-3 text-2xl font-black text-slate-950">See the trip mood.</h3>
+                  </div>
+                  <span className="hidden text-sm font-bold text-slate-500 sm:inline">North India</span>
                 </div>
-                <h3 className="text-3xl font-black">North India Tour Packages</h3>
-                <p className="mt-3 max-w-sm text-sm leading-6 text-sky-50">
-                  Delhi, Punjab, Haryana, Uttarakhand, Himachal Pradesh, Jammu & Kashmir, Ladakh, Uttar Pradesh and Chandigarh.
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {NORTH_DESTINATIONS.slice(0, 6).map((destination) => (
-                    <Link
-                      key={destination.name}
-                      href={destination.href}
-                      className="rounded-full border border-white/20 bg-white/14 px-3 py-2 text-xs font-bold text-white backdrop-blur hover:bg-white/20"
+
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {TRAVEL_GALLERY.map((item, index) => (
+                    <div
+                      key={item.title}
+                      className={`relative overflow-hidden rounded-[1rem] bg-sky-100 ${index === 0 ? "col-span-2 h-44" : "h-28"}`}
                     >
-                      {destination.name}
-                    </Link>
+                      <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 18vw" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-sky-950/70 via-transparent to-transparent" />
+                      <div className="absolute bottom-3 left-3 rounded-full bg-white/92 px-3 py-1 text-xs font-black text-sky-950 shadow">
+                        {item.title}
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <button onClick={openContact} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-sky-950">
-                  Talk to a Planner <ArrowRight className="h-4 w-4" />
-                </button>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-sky-100 bg-sky-950 p-5 text-white shadow-2xl shadow-sky-950/12">
+                <div className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-amber-200">
+                  Planner
+                </div>
+                <h3 className="mt-3 text-2xl font-black">Get your route planned.</h3>
+                <p className="mt-3 text-sm leading-6 text-sky-50/85">
+                  Share dates, guests, budget and places you like. Our team will suggest the right route and travel flow.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {["Delhi", "Himachal", "Uttarakhand", "Kashmir", "Ladakh", "UP"].map((item) => (
+                    <span key={item} className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-bold text-sky-50">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  <button onClick={openPlanner} className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-black text-sky-950">
+                    Open Planner <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button onClick={openContact} className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-yellow-300 px-4 py-3 text-sm font-black text-sky-950">
+                    Get Quote <MessageCircle className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
 
