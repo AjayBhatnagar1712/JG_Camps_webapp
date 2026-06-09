@@ -110,27 +110,6 @@ const TRAVEL_GALLERY = [
   { title: "Ladakh Roads", image: "/images/north-india/leh-ladakh.jpg" },
 ];
 
-const CURATED_ROUTES = [
-  {
-    title: "Golden Heritage Circuit",
-    image: "/images/north-india/uttar-pradesh.jpg",
-    days: "5-7 days",
-    places: "Delhi, Agra, Mathura, Vrindavan, Varanasi",
-  },
-  {
-    title: "Himalayan Family Escape",
-    image: "/images/north-india/uttarakhand.jpg",
-    days: "6-8 days",
-    places: "Rishikesh, Mussoorie, Nainital, Corbett",
-  },
-  {
-    title: "Kashmir + Ladakh Premium",
-    image: "/images/north-india/leh-ladakh.jpg",
-    days: "8-10 days",
-    places: "Srinagar, Gulmarg, Leh, Nubra, Pangong",
-  },
-];
-
 const SERVICE_CARDS: Region[] = [
   {
     key: "group-retreats",
@@ -392,41 +371,6 @@ export default function Home() {
                 </motion.article>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <div className="text-xs font-black uppercase tracking-[0.16em] text-cyan-700">Curated routes</div>
-              <h2 className="mt-3 text-[clamp(2rem,4vw,3.8rem)] font-black leading-tight tracking-tight text-slate-950">Start with a proven route.</h2>
-            </div>
-            <button onClick={openContact} className="inline-flex w-fit items-center gap-2 rounded-lg bg-sky-950 px-5 py-3 text-sm font-black text-white">
-              Ask for route advice <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-3">
-            {CURATED_ROUTES.map((route) => (
-              <article key={route.title} className="overflow-hidden rounded-lg border border-sky-100 bg-white shadow-xl shadow-sky-950/6">
-                <div className="relative h-56">
-                  <Image src={route.image} alt={route.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/78 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <div className="inline-flex rounded-full bg-amber-200 px-3 py-1 text-xs font-black text-sky-950">{route.days}</div>
-                    <h3 className="mt-3 text-2xl font-black">{route.title}</h3>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <p className="text-sm leading-6 text-slate-600">{route.places}</p>
-                  <button onClick={openPlanner} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-sky-200 px-4 py-2.5 text-sm font-black text-sky-950 hover:bg-sky-50">
-                    Customize this route <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </article>
-            ))}
           </div>
         </div>
       </section>
