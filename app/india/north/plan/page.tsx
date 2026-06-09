@@ -179,7 +179,7 @@ Ensure cultural, scenic, and spiritual balance with travel-friendly pacing.`;
             {/* Trip Type */}
             {currentStep === 1 && (
               <Step title="What kind of trip?">
-                {["Adventure", "Cultural", "Family", "Spiritual", "Wellness", "Luxury"].map((t) => (
+                {["Adventure", "Cultural", "Family", "Spiritual", "Heritage", "Luxury"].map((t) => (
                   <Button key={t} variant={tripType === t ? "default" : "outline"} onClick={() => setTripType(t)}>
                     {t}
                   </Button>

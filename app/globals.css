@@ -80,66 +80,6 @@ body[data-travel-theme="north"] {
     linear-gradient(180deg, #f6fbff 0%, #ffffff 45%, #f8fafc 100%);
 }
 
-body[data-travel-theme="south"] {
-  --theme-sky: #06b6d4;
-  --theme-sea: #0d9488;
-  --theme-deep: #115e59;
-  --theme-soft: #e6fffb;
-  --theme-sand: #fde68a;
-  --theme-ink: #134e4a;
-  --theme-line: rgba(13, 148, 136, 0.30);
-  --theme-glow: rgba(45, 212, 191, 0.18);
-  --theme-aura:
-    radial-gradient(circle at 15% 0%, rgba(45, 212, 191, 0.22), transparent 34rem),
-    radial-gradient(circle at 88% 5%, rgba(253, 224, 71, 0.14), transparent 26rem),
-    linear-gradient(180deg, #ecfeff 0%, #ffffff 42%, #f0fdfa 100%);
-}
-
-body[data-travel-theme="east"] {
-  --theme-sky: #22c55e;
-  --theme-sea: #0284c7;
-  --theme-deep: #166534;
-  --theme-soft: #f0fdf4;
-  --theme-sand: #fef3c7;
-  --theme-ink: #14532d;
-  --theme-line: rgba(34, 197, 94, 0.26);
-  --theme-glow: rgba(74, 222, 128, 0.14);
-  --theme-aura:
-    radial-gradient(circle at 14% 0%, rgba(34, 197, 94, 0.14), transparent 30rem),
-    radial-gradient(circle at 86% 8%, rgba(14, 165, 233, 0.12), transparent 28rem),
-    linear-gradient(180deg, #f0fdf4 0%, #ffffff 46%, #f8fafc 100%);
-}
-
-body[data-travel-theme="west"] {
-  --theme-sky: #f59e0b;
-  --theme-sea: #0284c7;
-  --theme-deep: #92400e;
-  --theme-soft: #fff7ed;
-  --theme-sand: #fed7aa;
-  --theme-ink: #78350f;
-  --theme-line: rgba(245, 158, 11, 0.34);
-  --theme-glow: rgba(251, 191, 36, 0.20);
-  --theme-aura:
-    radial-gradient(circle at 12% 0%, rgba(251, 191, 36, 0.26), transparent 34rem),
-    radial-gradient(circle at 90% 6%, rgba(14, 165, 233, 0.12), transparent 28rem),
-    linear-gradient(180deg, #fff7ed 0%, #ffffff 45%, #fffbeb 100%);
-}
-
-body[data-travel-theme="northeast"] {
-  --theme-sky: #2dd4bf;
-  --theme-sea: #16a34a;
-  --theme-deep: #065f46;
-  --theme-soft: #ecfdf5;
-  --theme-sand: #ccfbf1;
-  --theme-ink: #064e3b;
-  --theme-line: rgba(20, 184, 166, 0.30);
-  --theme-glow: rgba(52, 211, 153, 0.18);
-  --theme-aura:
-    radial-gradient(circle at 12% 0%, rgba(45, 212, 191, 0.22), transparent 34rem),
-    radial-gradient(circle at 88% 8%, rgba(34, 197, 94, 0.14), transparent 28rem),
-    linear-gradient(180deg, #ecfdf5 0%, #ffffff 45%, #f0fdfa 100%);
-}
-
 body[data-travel-theme="central"] {
   --theme-sky: #84cc16;
   --theme-sea: #a16207;
@@ -198,21 +138,6 @@ body[data-travel-theme="international"] {
     radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.18), transparent 34rem),
     radial-gradient(circle at 88% 8%, rgba(59, 130, 246, 0.16), transparent 28rem),
     linear-gradient(180deg, #eff6ff 0%, #ffffff 45%, #f8fafc 100%);
-}
-
-body[data-travel-theme="wellness"] {
-  --theme-sky: #34d399;
-  --theme-sea: #14b8a6;
-  --theme-deep: #047857;
-  --theme-soft: #ecfdf5;
-  --theme-sand: #d9f99d;
-  --theme-ink: #064e3b;
-  --theme-line: rgba(20, 184, 166, 0.30);
-  --theme-glow: rgba(52, 211, 153, 0.18);
-  --theme-aura:
-    radial-gradient(circle at 12% 0%, rgba(52, 211, 153, 0.20), transparent 34rem),
-    radial-gradient(circle at 88% 8%, rgba(217, 249, 157, 0.16), transparent 28rem),
-    linear-gradient(180deg, #ecfdf5 0%, #ffffff 46%, #f8fafc 100%);
 }
 
 .dark {

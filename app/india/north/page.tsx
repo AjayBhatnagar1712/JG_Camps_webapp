@@ -142,7 +142,7 @@ export default function NorthPage() {
               transition={{ delay: 0.2 }}
               className="mt-4 text-lg sm:text-xl max-w-2xl text-emerald-100"
             >
-              From bustling Delhi to serene Kashmir — plan cultural, spiritual, wellness or adventure trips across northern India.
+              From bustling Delhi to serene Kashmir — plan cultural, spiritual, heritage or adventure trips across northern India.
             </motion.p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">

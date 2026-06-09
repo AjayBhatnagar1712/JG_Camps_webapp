@@ -6,15 +6,8 @@ import { CalendarPlus, ChevronDown, Menu, MessageCircle, X } from "lucide-react"
 
 const DESTINATIONS = [
   ["North India", "/india/north"],
-  ["South India", "/india/south"],
-  ["East India", "/india/east"],
-  ["West India", "/india/west"],
-  ["North-East India", "/india/northeast"],
-  ["Central India", "/india/central"],
-  ["International", "/international"],
   ["Group Retreats", "/group-retreats"],
   ["Spiritual Tourism", "/spiritual"],
-  ["Wellness & Health", "/wellness"],
 ] as const;
 
 export default function HeaderNav() {

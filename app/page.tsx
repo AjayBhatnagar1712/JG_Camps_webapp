@@ -4,7 +4,7 @@ import slugify from "@/lib/slugify";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, CalendarDays, CloudSun, Compass, MapPinned, MessageCircle, Sparkles, Umbrella, UsersRound } from "lucide-react";
+import { ArrowRight, CalendarDays, Compass, MapPinned, MessageCircle, Umbrella, UsersRound } from "lucide-react";
 import { useCallback, useState } from "react";
 
 type Region = {
@@ -17,61 +17,81 @@ type Region = {
   accent: string;
 };
 
-const REGIONS: Region[] = [
+type NorthDestination = {
+  name: string;
+  image: string;
+  blurb: string;
+  bestFor: string;
+  href: string;
+};
+
+const NORTH_DESTINATIONS: NorthDestination[] = [
   {
-    key: "north",
-    title: "North India",
-    image: "/images/regions/north-india.jpg",
-    blurb: "Himalayan drives, hill stations, spiritual routes, and heritage cities.",
-    states: ["Delhi", "Punjab", "Haryana", "Uttarakhand", "Himachal Pradesh", "Jammu & Kashmir", "Uttar Pradesh", "Chandigarh"],
-    href: "/india/north",
-    accent: "Mountain circuits",
+    name: "Delhi",
+    image: "/images/north-india/delhi.jpg",
+    blurb: "Monuments, food walks, markets, museums and easy arrival logistics.",
+    bestFor: "City break",
+    href: "/india/north/delhi",
   },
   {
-    key: "south",
-    title: "South India",
-    image: "/images/regions/south-india.jpg",
-    blurb: "Backwaters, temple towns, beaches, wellness retreats, and coastal food trails.",
-    states: ["Andhra Pradesh", "Telangana", "Karnataka", "Kerala", "Tamil Nadu", "Puducherry", "Lakshadweep"],
-    href: "/india/south",
-    accent: "Culture and coast",
+    name: "Himachal Pradesh",
+    image: "/images/north-india/himachal.jpg",
+    blurb: "Shimla, Manali, Dharamshala, mountain stays and scenic road trips.",
+    bestFor: "Hills",
+    href: "/india/north/himachal-pradesh",
   },
   {
-    key: "east",
-    title: "East India",
-    image: "/images/regions/east-india.jpg",
-    blurb: "Heritage towns, island escapes, temple routes, forests, and tribal culture.",
-    states: ["West Bengal", "Odisha", "Bihar", "Jharkhand", "Andaman & Nicobar Islands"],
-    href: "/india/east",
-    accent: "Heritage trails",
+    name: "Uttarakhand",
+    image: "/images/north-india/uttarakhand.jpg",
+    blurb: "Rishikesh, Haridwar, Nainital, Mussoorie and Himalayan gateways.",
+    bestFor: "Spiritual + adventure",
+    href: "/india/north/uttarakhand",
   },
   {
-    key: "west",
-    title: "West India",
-    image: "/images/regions/west-india.jpg",
-    blurb: "Desert forts, beach weekends, wildlife, food streets, and luxury breaks.",
-    states: ["Goa", "Rajasthan", "Gujarat", "Maharashtra", "Dadra and Nagar Haveli", "Daman and Diu"],
-    href: "/india/west",
-    accent: "Desert to beach",
+    name: "Jammu & Kashmir",
+    image: "/images/north-india/jammu.jpg",
+    blurb: "Srinagar, Gulmarg, Pahalgam, lakes, meadows and winter escapes.",
+    bestFor: "Premium leisure",
+    href: "/india/north/jammu-and-kashmir",
   },
   {
-    key: "northeast",
-    title: "North-East India",
-    image: "/images/regions/northeast-india.jpg",
-    blurb: "Cloud forests, living-root bridges, monasteries, valleys, and offbeat drives.",
-    states: ["Arunachal Pradesh", "Assam", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Sikkim", "Tripura"],
-    href: "/india/northeast",
-    accent: "Offbeat India",
+    name: "Leh & Ladakh",
+    image: "/images/north-india/leh-ladakh.jpg",
+    blurb: "High passes, monasteries, Pangong, Nubra and carefully paced altitude days.",
+    bestFor: "Road adventure",
+    href: "/india/north/leh-ladakh",
   },
   {
-    key: "central",
-    title: "Central India",
-    image: "/images/regions/central-india.jpg",
-    blurb: "Wildlife corridors, ancient temples, tribal hinterlands, and slow journeys.",
-    states: ["Madhya Pradesh", "Chhattisgarh"],
-    href: "/india/central",
-    accent: "Wildlife and heritage",
+    name: "Uttar Pradesh",
+    image: "/images/north-india/uttar-pradesh.jpg",
+    blurb: "Agra, Varanasi, Mathura, Vrindavan, Lucknow and heritage circuits.",
+    bestFor: "Heritage",
+    href: "/india/north/uttar-pradesh",
   },
+  {
+    name: "Punjab",
+    image: "/images/north-india/punjab.jpg",
+    blurb: "Amritsar, Golden Temple, Wagah Border, farms and local hospitality.",
+    bestFor: "Culture",
+    href: "/india/north/punjab",
+  },
+  {
+    name: "Haryana",
+    image: "/images/north-india/haryana.jpg",
+    blurb: "Kurukshetra, heritage stops, birding breaks and short ex-Delhi trips.",
+    bestFor: "Short trips",
+    href: "/india/north/haryana",
+  },
+  {
+    name: "Chandigarh",
+    image: "/images/north-india/chandigarh.jpg",
+    blurb: "Sukhna Lake, Rock Garden, clean city stays and Himachal gateway plans.",
+    bestFor: "Gateway",
+    href: "/india/north/chandigarh",
+  },
+];
+
+const SERVICE_CARDS: Region[] = [
   {
     key: "group-retreats",
     title: "Group Retreats",
@@ -85,48 +105,30 @@ const REGIONS: Region[] = [
     key: "spiritual-tourism",
     title: "Spiritual Tourism",
     image: "/images/themes/spiritual-tourism.jpg",
-    blurb: "Pilgrimage circuits, sacred stays, puja logistics, and restorative spiritual travel.",
+    blurb: "Pilgrimage circuits, sacred stays, puja logistics, and respectful spiritual travel.",
     states: [
       "Varanasi (Kashi)",
       "Char Dham Yatra",
       "Vaishno Devi",
-      "Rameshwaram",
-      "Puri (Jagannath)",
-      "Bodh Gaya",
       "Amarnath Cave",
-      "Shirdi (Sai Baba)",
-      "Kanyakumari",
       "Haridwar",
       "Rishikesh",
-      "Tirupati (Venkateswara)",
       "Amritsar (Golden Temple)",
       "Kedarnath",
       "Badrinath",
-      "Dwarka",
       "Mathura & Vrindavan",
       "Pushkar",
-      "Sabarimala",
-      "Madurai (Meenakshi Amman)",
       "Ajmer (Dargah Sharif)",
     ],
     href: "/spiritual",
     accent: "Sacred circuits",
   },
-  {
-    key: "wellness-health",
-    title: "Wellness & Health",
-    image: "/images/themes/wellness.jpg",
-    blurb: "Ayurveda, yoga, detox, healing getaways, and quiet retreats across India.",
-    states: ["Ayurveda Retreats", "Yoga & Detox", "Holistic Resorts", "Wellness Clinics"],
-    href: "/wellness",
-    accent: "Reset journeys",
-  },
 ];
 
 const SIGNATURES = [
-  { title: "Sea to sky routes", text: "Beaches, hill roads, forests, islands, temples, and cities planned as one journey.", icon: CloudSun },
-  { title: "Human-paced travel", text: "Balanced days, sensible drives, local experiences, stays, permits, and support.", icon: Compass },
-  { title: "Groups handled well", text: "Offsites, camps, family groups, pilgrimages, retreats, and custom plans.", icon: UsersRound },
+  { title: "Tell us your dates", text: "Share destination, group size, budget and starting city. We shape the route around your comfort.", icon: CalendarDays },
+  { title: "Get a clear plan", text: "Route order, stays, transport, experiences, permits and support are planned before you confirm.", icon: MapPinned },
+  { title: "Travel with backup", text: "A real team stays available for families, clients, groups and pilgrimage departures.", icon: UsersRound },
 ];
 
 export default function Home() {
@@ -140,6 +142,17 @@ export default function Home() {
   const openContact = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
     window.dispatchEvent(new Event("open-contact-expert"));
+  }, []);
+
+  const planDestination = useCallback((destination: NorthDestination) => {
+    window.dispatchEvent(
+      new CustomEvent("open-planner-with", {
+        detail: {
+          state: destination.name,
+          location: destination.name,
+        },
+      })
+    );
   }, []);
 
   function getStateSlug(regionKey: string, stateName: string) {
@@ -162,23 +175,14 @@ export default function Home() {
         "Varanasi (Kashi)": "kashi",
         "Char Dham Yatra": "char-dham",
         "Vaishno Devi": "vaishno-devi",
-        Rameshwaram: "rameswaram",
-        "Puri (Jagannath)": "puri",
-        "Bodh Gaya": "bodh-gaya",
         "Amarnath Cave": "amarnath",
-        "Shirdi (Sai Baba)": "shirdi",
-        Kanyakumari: "kanyakumari",
         Haridwar: "haridwar",
         Rishikesh: "rishikesh",
-        "Tirupati (Venkateswara)": "tirupati",
         "Amritsar (Golden Temple)": "amritsar",
         Kedarnath: "kedarnath",
         Badrinath: "badrinath",
-        Dwarka: "dwarka",
         "Mathura & Vrindavan": "mathura-vrindavan",
         Pushkar: "pushkar",
-        Sabarimala: "sabarimala",
-        "Madurai (Meenakshi Amman)": "madurai",
         "Ajmer (Dargah Sharif)": "ajmer",
       };
       return map[stateName] ?? slugify(stateName);
@@ -188,49 +192,48 @@ export default function Home() {
   }
 
   return (
-    <main className="bg-[linear-gradient(180deg,#e0f7ff_0%,#ffffff_28%,#f7fbff_100%)] text-slate-950">
+    <main className="bg-[linear-gradient(180deg,#eef7ff_0%,#ffffff_30%,#f8fbff_100%)] text-slate-950">
       <section className="relative min-h-[calc(100svh-66px)] overflow-hidden">
         <Image
-          src="/images/Goa/goa-hero.jpg"
-          alt="Sea, sky, and coastal travel"
+          src="/images/north-india/north-hero.jpg"
+          alt="North India mountain travel"
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,89,133,0.78),rgba(14,165,233,0.34)_48%,rgba(255,255,255,0.10)),linear-gradient(180deg,rgba(2,132,199,0.16),rgba(8,47,73,0.72))]" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#e0f7ff] to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,47,73,0.86),rgba(14,116,144,0.42)_52%,rgba(15,23,42,0.24)),linear-gradient(180deg,rgba(2,6,23,0.08),rgba(8,47,73,0.70))]" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#eef7ff] to-transparent" />
 
-        <div className="relative z-10 mx-auto grid min-h-[calc(100svh-66px)] max-w-7xl items-center gap-8 px-4 py-10 text-white sm:px-6 md:grid-cols-[1.08fr_0.92fr] md:py-14 lg:gap-12">
+        <div className="relative z-10 mx-auto grid min-h-[calc(100svh-66px)] max-w-7xl items-center gap-8 px-4 py-10 text-white sm:px-6 md:grid-cols-[1fr_420px] md:py-14 lg:gap-14">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }} className="max-w-3xl pt-4 md:pt-0">
             <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/30 bg-white/16 px-3 py-2 text-xs font-semibold text-sky-50 shadow-lg shadow-sky-950/10 backdrop-blur sm:px-4 sm:text-sm">
               <Umbrella className="h-4 w-4 flex-none text-amber-200" />
-              Sea, sky, forest, mountain and culture journeys
+              Private North India tours for families, groups and clients
             </div>
 
-            <h1 className="mt-5 max-w-4xl text-[clamp(2.75rem,7.4vw,6.15rem)] font-black leading-[0.94] tracking-tight text-balance drop-shadow-[0_10px_30px_rgba(7,47,73,0.35)]">
-              Journeys that feel like open skies.
+            <h1 className="mt-5 max-w-4xl text-[clamp(2.7rem,7vw,5.7rem)] font-black leading-[0.95] tracking-tight text-balance drop-shadow-[0_10px_30px_rgba(7,47,73,0.35)]">
+              Plan your North India trip without the stress.
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-sky-50 sm:text-lg md:text-xl md:leading-8">
-              Coastal breaks, mountain drives, retreats, pilgrimages, group camps and international holidays, planned with natural pacing and real support.
+              Tell us where you want to go. We will build the route, hotels, transport, sightseeing, permits and local support around your dates and budget.
             </p>
 
-            <div className="mt-7 flex flex-col gap-3 pb-16 sm:flex-row md:pb-0">
-              <button onClick={openPlanner} className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-yellow-300 px-6 py-4 font-black text-sky-950 shadow-2xl shadow-sky-950/25 hover:brightness-105">
-                Build an Itinerary <ArrowRight className="h-5 w-5" />
+            <div className="mt-7 flex flex-col gap-3 pb-12 sm:flex-row md:pb-0">
+              <button onClick={openContact} className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-200 to-yellow-300 px-6 py-4 font-black text-sky-950 shadow-2xl shadow-sky-950/25 hover:brightness-105">
+                Get a Custom Quote <MessageCircle className="h-5 w-5" />
               </button>
-              <button onClick={openContact} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/14 px-6 py-4 font-bold text-white shadow-xl shadow-sky-950/15 backdrop-blur hover:bg-white/20">
-                <MessageCircle className="h-5 w-5" />
-                Talk to an Expert
+              <button onClick={openPlanner} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/14 px-6 py-4 font-bold text-white shadow-xl shadow-sky-950/15 backdrop-blur hover:bg-white/20">
+                Plan My Trip <ArrowRight className="h-5 w-5" />
               </button>
             </div>
 
             <div className="mt-8 hidden max-w-2xl grid-cols-3 gap-2 sm:grid sm:gap-3">
               {[
-                ["20K+", "ideas"],
-                ["24/7", "support"],
-                ["100%", "custom"],
+                ["2 min", "quick enquiry"],
+                ["Private", "custom routes"],
+                ["Real", "travel support"],
               ].map(([value, label]) => (
                 <div key={label} className="rounded-2xl border border-white/20 bg-white/16 p-3 text-center shadow-lg shadow-sky-950/10 backdrop-blur sm:p-5">
                   <div className="text-2xl font-black text-amber-200 sm:text-3xl">{value}</div>
@@ -241,20 +244,22 @@ export default function Home() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.12 }} className="hidden md:block">
-            <div className="relative mx-auto aspect-[4/5] max-h-[620px] max-w-[470px]">
-              <div className="absolute left-0 top-10 h-[72%] w-[72%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/30">
-                <Image src="/images/south-india/lakshadweep.jpg" alt="Island water" fill className="object-cover" sizes="38vw" />
+            <div className="overflow-hidden rounded-[1.75rem] border border-white/25 bg-white/92 p-4 text-slate-950 shadow-2xl shadow-sky-950/25 backdrop-blur">
+              <div className="relative h-56 overflow-hidden rounded-[1.35rem]">
+                <Image src="/images/north-india/leh-ladakh.jpg" alt="Ladakh route" fill className="object-cover" sizes="420px" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <div className="text-xs font-black uppercase tracking-[0.16em] text-amber-200">Popular this season</div>
+                  <div className="mt-1 text-2xl font-black">Kashmir + Ladakh</div>
+                </div>
               </div>
-              <div className="absolute right-0 top-0 h-[46%] w-[55%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/25">
-                <Image src="/images/northeast-india/meghalaya.jpg" alt="Green valley" fill className="object-cover" sizes="28vw" />
-              </div>
-              <div className="absolute bottom-0 right-8 h-[40%] w-[58%] overflow-hidden rounded-[2rem] border border-white/25 shadow-2xl shadow-sky-950/25">
-                <Image src="/images/north-india/leh-ladakh.jpg" alt="Mountain sky" fill className="object-cover" sizes="28vw" />
-              </div>
-              <div className="absolute bottom-12 left-8 rounded-3xl border border-white/30 bg-white/85 p-5 text-sky-950 shadow-2xl shadow-sky-950/20 backdrop-blur">
-                <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-700">This season</div>
-                <div className="mt-1 text-xl font-black">Sea + Sky Escapes</div>
-                <div className="mt-1 text-sm text-slate-600">Goa, Lakshadweep, Kerala, Northeast</div>
+              <div className="grid gap-3 p-3">
+                {["Hotels matched to budget", "Private cab or group transport", "Sightseeing and permits handled"].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-2xl bg-sky-50 px-4 py-3 text-sm font-bold text-slate-800">
+                    <Compass className="h-4 w-4 text-cyan-700" />
+                    {item}
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -262,11 +267,11 @@ export default function Home() {
       </section>
 
       <section className="relative z-10 -mt-8 px-4 pb-10 sm:px-6 md:-mt-12">
-        <div className="mx-auto grid max-w-7xl gap-4 rounded-[2rem] border border-sky-100 bg-white/92 p-4 shadow-2xl shadow-sky-950/12 backdrop-blur md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-4 rounded-[1.75rem] border border-sky-100 bg-white/94 p-4 shadow-2xl shadow-sky-950/12 backdrop-blur md:grid-cols-3">
           {SIGNATURES.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="rounded-3xl bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5">
+              <div key={item.title} className="rounded-2xl bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5">
                 <Icon className="h-6 w-6 text-cyan-700" />
                 <h3 className="mt-4 text-lg font-black text-slate-950">{item.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
@@ -276,44 +281,130 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="explore" className="px-4 py-14 sm:px-6">
+      <section id="north-destinations" className="px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div className="mb-8 grid gap-5 md:grid-cols-[0.85fr_1.15fr] md:items-end">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-emerald-800">
-                <CalendarDays className="h-3.5 w-3.5" />
-                Explore
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-sky-900">
+                <MapPinned className="h-3.5 w-3.5" />
+                North India
               </div>
-              <h2 className="text-[clamp(2.25rem,5vw,4.5rem)] font-black leading-tight tracking-tight text-slate-950">Pick Your Journey</h2>
+              <h2 className="text-[clamp(2.15rem,4.6vw,4.35rem)] font-black leading-tight tracking-tight text-slate-950">
+                Choose your destination.
+              </h2>
             </div>
-            <p className="max-w-xl text-base leading-7 text-slate-600">
-              Choose a region or travel style, then jump into destinations, sample routes, and quick consultation.
+            <p className="max-w-2xl text-base leading-7 text-slate-600 md:justify-self-end">
+              Pick a destination below and we will turn it into a practical itinerary with stays, transport, sightseeing and support.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {REGIONS.map((region, index) => (
+          <div className="grid gap-5 lg:grid-cols-[1.05fr_1.95fr]">
+            <div className="relative min-h-[420px] overflow-hidden rounded-[1.75rem] bg-sky-950 p-6 text-white shadow-2xl shadow-sky-950/15">
+              <Image src="/images/regions/north-india.jpg" alt="North India tour routes" fill className="object-cover opacity-80" sizes="(max-width: 1024px) 100vw, 36vw" />
+              <div className="absolute inset-0 bg-gradient-to-t from-sky-950 via-sky-950/55 to-sky-950/10" />
+              <div className="relative z-10 flex h-full min-h-[372px] flex-col justify-end">
+                <div className="mb-4 inline-flex w-fit rounded-full bg-amber-200 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-950">
+                  9 customer routes
+                </div>
+                <h3 className="text-3xl font-black">North India Tour Packages</h3>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-sky-50">
+                  Delhi, Punjab, Haryana, Uttarakhand, Himachal Pradesh, Jammu & Kashmir, Ladakh, Uttar Pradesh and Chandigarh.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {NORTH_DESTINATIONS.slice(0, 6).map((destination) => (
+                    <Link
+                      key={destination.name}
+                      href={destination.href}
+                      className="rounded-full border border-white/20 bg-white/14 px-3 py-2 text-xs font-bold text-white backdrop-blur hover:bg-white/20"
+                    >
+                      {destination.name}
+                    </Link>
+                  ))}
+                </div>
+                <button onClick={openContact} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-sky-950">
+                  Talk to a Planner <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {NORTH_DESTINATIONS.map((destination, index) => (
+                <motion.article
+                  key={destination.name}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.35, delay: Math.min(index * 0.035, 0.18) }}
+                  className="overflow-hidden rounded-[1.35rem] border border-sky-100 bg-white shadow-xl shadow-sky-950/6"
+                >
+                  <Link href={destination.href} className="block">
+                    <div className="relative h-40">
+                      <Image src={destination.image} alt={destination.name} fill className="object-cover transition duration-500 hover:scale-105" sizes="(max-width: 768px) 100vw, 24vw" />
+                      <div className="absolute left-3 top-3 rounded-full bg-white/92 px-3 py-1 text-xs font-black text-sky-950 shadow">
+                        {destination.bestFor}
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="p-4">
+                    <h3 className="text-xl font-black text-slate-950">{destination.name}</h3>
+                    <p className="mt-2 min-h-[72px] text-sm leading-6 text-slate-600">{destination.blurb}</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <Link href={destination.href} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-sky-950 px-4 py-2.5 text-sm font-black text-white">
+                        View <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <button
+                        onClick={() => planDestination(destination)}
+                        className="inline-flex flex-1 items-center justify-center rounded-full border border-sky-200 px-4 py-2.5 text-sm font-bold text-sky-950 hover:bg-sky-50"
+                      >
+                        Plan
+                      </button>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="travel-services" className="px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
+                <CalendarDays className="h-3.5 w-3.5" />
+                Customer travel services
+              </div>
+              <h2 className="text-[clamp(2rem,4vw,3.7rem)] font-black leading-tight tracking-tight text-slate-950">Need something handled end to end?</h2>
+            </div>
+            <p className="max-w-xl text-base leading-7 text-slate-600">
+              Choose a service style and we will collect only the details needed to quote and plan your trip.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {SERVICE_CARDS.map((region, index) => (
               <motion.button
                 key={region.key}
-                initial={{ opacity: 0, y: 22 }}
+                initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.2) }}
+                transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.12) }}
                 onClick={() => setOpenRegion(region)}
-                className="group relative min-h-[330px] overflow-hidden rounded-[2rem] bg-sky-950 text-left shadow-2xl shadow-sky-950/10 sm:min-h-[360px]"
+                className="group relative min-h-[330px] overflow-hidden rounded-[1.75rem] bg-sky-950 text-left shadow-2xl shadow-sky-950/10"
               >
-                <Image src={region.image} alt={region.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" />
-                <div className="absolute inset-0 bg-gradient-to-t from-sky-950 via-sky-950/30 to-transparent" />
+                <Image src={region.image} alt={region.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-sky-950 via-sky-950/35 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 text-white">
                   <div className="mb-4 inline-flex rounded-full bg-amber-200 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-950">
                     {region.accent}
                   </div>
                   <h3 className="text-3xl font-black">{region.title}</h3>
-                  <p className="mt-3 min-h-[56px] text-sm leading-6 text-slate-100">{region.blurb}</p>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-slate-100">{region.blurb}</p>
                   <div className="mt-5 flex items-center justify-between border-t border-white/15 pt-4">
-                    <span className="text-sm font-semibold text-slate-200">{region.states.length} areas</span>
+                    <span className="text-sm font-semibold text-slate-200">{region.states.length} options</span>
                     <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-sky-950">
-                      View <ArrowRight className="h-4 w-4" />
+                      View Options <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
                 </div>
@@ -327,18 +418,18 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1fr_0.8fr] md:items-center">
           <div>
             <div className="mb-4 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-sky-50">JG Camps & Resorts</div>
-            <h2 className="text-[clamp(2.25rem,5vw,4.25rem)] font-black leading-tight tracking-tight">Designed for travelers who want the trip handled well.</h2>
+            <h2 className="text-[clamp(2.1rem,4.6vw,4rem)] font-black leading-tight tracking-tight">For customers who want the trip handled properly.</h2>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-sky-50/85">
-              We combine quick AI drafts with human planning for real-world logistics: route order, permits, stays, food, local experiences, transport, and support.
+              We turn your travel request into a practical North India plan with clear route order, stays, transport, food suggestions, local experiences and support.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/about" className="rounded-full bg-white px-6 py-3 font-black text-sky-950">About Us</Link>
-              <button onClick={openContact} className="rounded-full border border-white/20 px-6 py-3 font-bold text-white">Get Consultation</button>
+              <button onClick={openContact} className="rounded-full bg-white px-6 py-3 font-black text-sky-950">Get Consultation</button>
+              <Link href="/india/north" className="rounded-full border border-white/20 px-6 py-3 font-bold text-white">Explore North India</Link>
             </div>
           </div>
           <div className="grid gap-4">
-            {["Family holidays", "Corporate offsites", "School and college camps", "Pilgrimage groups", "Wellness retreats"].map((item) => (
-              <div key={item} className="rounded-3xl border border-white/10 bg-white/5 p-5 text-lg font-bold">
+            {["Family holidays", "Corporate offsites", "School and college camps", "Pilgrimage groups", "Himalayan adventure tours"].map((item) => (
+              <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-lg font-bold">
                 {item}
               </div>
             ))}
@@ -352,7 +443,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-[2rem] bg-white shadow-2xl"
+            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-[1.75rem] bg-white shadow-2xl"
           >
             <div className="grid md:grid-cols-[300px_1fr]">
               <div className="relative min-h-[220px]">

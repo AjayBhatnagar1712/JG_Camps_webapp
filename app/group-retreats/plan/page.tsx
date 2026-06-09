@@ -185,7 +185,7 @@ Please propose a practical route, nights per stop, and a sample daily programme.
               <div>
                 <h2 className="text-xl font-semibold mb-4">Activities / focus</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                  {["Team-building", "Workshops", "Adventure & Trek", "Wellness & Yoga", "Cultural Immersion", "Community Service"].map((a) => (
+                  {["Team-building", "Workshops", "Adventure & Trek", "Leadership Retreats", "Cultural Immersion", "Community Service"].map((a) => (
                     <label key={a} className="flex items-center gap-2 border rounded-lg px-3 py-2">
                       <input type="checkbox" checked={selectedActivities.includes(a)} onChange={() => toggleActivity(a)} />
                       <span>{a}</span>

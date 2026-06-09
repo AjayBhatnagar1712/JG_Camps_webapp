@@ -5,15 +5,10 @@ import { usePathname } from "next/navigation";
 
 function themeForPath(pathname: string) {
   if (pathname.startsWith("/india/north")) return "north";
-  if (pathname.startsWith("/india/south")) return "south";
-  if (pathname.startsWith("/india/east")) return "east";
-  if (pathname.startsWith("/india/west")) return "west";
-  if (pathname.startsWith("/india/northeast")) return "northeast";
   if (pathname.startsWith("/india/central")) return "central";
   if (pathname.startsWith("/spiritual")) return "spiritual";
   if (pathname.startsWith("/group-retreats")) return "groups";
   if (pathname.startsWith("/international")) return "international";
-  if (pathname.startsWith("/wellness")) return "wellness";
   if (pathname === "/") return "home";
   return "default";
 }

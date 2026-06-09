@@ -100,7 +100,7 @@ function inferThemeFromPlace(detail: { state?: string; city?: string; location?:
   if (/fort|palace|heritage|monument|gate|qutub|red fort|old goa|ajanta|ellora|jaipur|udaipur|jaisalmer|rajasthan|delhi/.test(text)) return "Heritage";
   if (/beach|island|coast|backwater|houseboat|goa|lakshadweep|andaman|kovalam|varkala|puducherry|daman|diu/.test(text)) return "Family";
   if (/trek|rafting|ski|wildlife|national park|safari|auli|corbett|spiti|ladakh|valley of flowers|meghalaya|arunachal/.test(text)) return "Adventure";
-  if (/ayurveda|wellness|yoga|retreat|spa/.test(text)) return "Wellness";
+  if (/ayurveda|yoga|retreat|spa/.test(text)) return "Spiritual";
   return "Family";
 }
 
@@ -509,7 +509,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
               <div className="grid grid-cols-2 gap-3">
                 <input className="rounded-xl border border-border px-3 py-2 text-sm" placeholder="Budget (₹/mid/premium)" value={budget} onChange={(e) => setBudget(e.target.value)} />
                 <select className="rounded-xl border border-border px-3 py-2 text-sm bg-background" value={theme} onChange={(e) => setTheme(e.target.value)}>
-                  <option>Adventure</option><option>Family</option><option>Honeymoon</option><option>Wellness</option><option>Heritage</option><option>Budget Backpacking</option><option>Luxury</option>
+                  <option>Adventure</option><option>Family</option><option>Honeymoon</option><option>Spiritual</option><option>Heritage</option><option>Budget Backpacking</option><option>Luxury</option>
                 </select>
               </div>
 

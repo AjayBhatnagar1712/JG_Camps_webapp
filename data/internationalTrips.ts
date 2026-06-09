@@ -118,7 +118,7 @@ export const INTERNATIONAL_TRIPS: InternationalTrip[] = [
     season: "Nov-Apr",
     image: "/images/International/maldives.jpg",
     description: "Turquoise lagoons, snorkeling, spa time, private dinners, and calm premium escape planning.",
-    highlights: ["Lagoon stay", "Snorkeling", "Sunset cruise", "Spa and wellness time"],
+    highlights: ["Lagoon stay", "Snorkeling", "Sunset cruise", "Slow leisure time"],
     pace: ["Minimal transfers", "Rest-first design", "Honeymoon and family variants"],
   },
 ];

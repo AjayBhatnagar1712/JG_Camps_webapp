@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "JG Camps & Resorts",
-  description: "Curated journeys, camps, retreats, and AI-assisted itineraries across India and abroad.",
+  description: "Curated North India journeys, camps, retreats, and AI-assisted itineraries.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -47,8 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 JG Camps & Resorts
               </div>
               <p className="mt-4 max-w-md text-sm leading-6 text-sky-50/80">
-                Smart travel planning for India and abroad with curated routes, group retreats, spiritual circuits,
-                wellness escapes, and quick AI-assisted itinerary drafts.
+                Smart travel planning for North India with curated routes, group retreats, spiritual circuits,
+                Himalayan escapes, and quick AI-assisted itinerary drafts.
               </p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-sky-50">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Verified partners</span>
