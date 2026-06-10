@@ -332,6 +332,14 @@ body[data-travel-theme="international"] {
     opacity: 0.55;
   }
 
+  body[data-travel-theme] main main.cinematic-home > section:not(:first-child)::before {
+    content: none;
+  }
+
+  body[data-travel-theme] main main.cinematic-home {
+    background: #020712;
+  }
+
   body[data-travel-theme] main main > section.max-w-4xl.mx-auto.p-6 {
     margin-top: -1.75rem;
     margin-bottom: 3rem;
