@@ -41,9 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <main className="min-h-screen">{children}</main>
 
-        <footer className="border-t border-cyan-900 bg-sky-950 text-white">
-          <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 md:grid-cols-4">
-            <div className="md:col-span-2">
+        <footer className="border-t border-white/10 bg-[#031526] text-white">
+          <div className="mx-auto grid max-w-7xl gap-7 px-6 py-8 md:grid-cols-[1.4fr_1fr_1fr]">
+            <div>
               <div className="flex items-center gap-3 font-black text-lg">
                 <span className="relative h-12 w-14 overflow-hidden rounded-xl bg-white p-1">
                   <Image src="/images/brand/journey-gate-mark.png" alt="Journey Gate logo" fill className="object-contain p-1" sizes="56px" />
@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Cinematic travel planning for mountain escapes, sacred city circuits, group retreats,
                 handpicked stays, and quick expert-refined itinerary drafts.
               </p>
-              <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-sky-50">
+              <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-sky-50">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Verified partners</span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Custom routes</span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">On-ground support</span>
@@ -63,18 +63,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div>
               <h4 className="font-bold">Why Travel With Us</h4>
-              <ul className="mt-4 grid gap-3 text-sm text-sky-50/80">
-                <li>Custom itineraries for families, groups, and solo travelers</li>
-                <li>AI-powered drafts refined by travel experts</li>
-                <li>Support for stays, transport, permits, and local experiences</li>
-                <li>Fast consultation through phone, email, and WhatsApp</li>
+              <ul className="mt-3 grid gap-2 text-sm text-sky-50/80">
+                <li>Custom routes for families and groups</li>
+                <li>Expert-refined itinerary drafts</li>
+                <li>Support for stays, transport and permits</li>
               </ul>
             </div>
 
             <FooterLinks />
           </div>
 
-          <div className="border-t border-white/10 py-4 text-center text-xs text-sky-50/60">
+          <div className="border-t border-white/10 py-3 text-center text-xs text-sky-50/60">
             Copyright {new Date().getFullYear()} Journey Gate. All rights reserved.
           </div>
         </footer>

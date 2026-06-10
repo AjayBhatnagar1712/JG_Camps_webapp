@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Compass, Hotel, MapPinned, MessageCircle, Route, ShieldCheck, Sparkles } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 type Journey = {
   title: string;
@@ -68,14 +68,6 @@ export default function Home() {
   });
   const currentJourney = JOURNEYS[activeJourney];
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveJourney((current) => (current + 1) % JOURNEYS.length);
-    }, 7600);
-
-    return () => window.clearInterval(timer);
-  }, []);
-
   const playCue = useCallback((title: string, detail: string) => {
     setActionText(title);
     setSceneCue((cue) => ({
@@ -115,40 +107,16 @@ export default function Home() {
   }, [playCue]);
 
   return (
-    <main className="cinematic-home relative bg-[#020712] text-white">
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020712]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`backdrop-${currentJourney.image}`}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.03 }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
-            <Image src={currentJourney.image} alt="" fill priority className="cinematic-drift object-cover opacity-45" sizes="100vw" />
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(125,211,252,0.24),transparent_28rem),radial-gradient(circle_at_82%_72%,rgba(253,230,138,0.14),transparent_24rem),linear-gradient(180deg,rgba(2,7,18,0.74),#020712_86%)]" />
-        <div className="cinematic-reel absolute inset-0 opacity-45" />
-        <div className="film-grain absolute inset-0 opacity-[0.08]" />
+    <main className="cinematic-home relative overflow-hidden bg-[#020712] text-white">
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(125,211,252,0.16),transparent_26rem),radial-gradient(circle_at_82%_34%,rgba(253,230,138,0.10),transparent_24rem),linear-gradient(180deg,#020712_0%,#061524_42%,#020712_100%)]">
+        <div className="absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:72px_72px]" />
       </div>
 
       <section className="relative min-h-[calc(100svh-76px)] overflow-hidden">
         <Image src="/images/north-india/north-hero.jpg" alt="Cinematic Journey Gate route" fill priority className="cinematic-drift object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,7,18,0.94)_0%,rgba(2,24,44,0.72)_43%,rgba(2,7,18,0.18)_100%),linear-gradient(180deg,rgba(2,7,18,0.12)_0%,rgba(2,7,18,0.88)_100%)]" />
-        <motion.div
-          aria-hidden
-          animate={{ opacity: [0.28, 0.44, 0.28], scale: [1, 1.08, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-[12%] top-[18%] h-64 w-64 rounded-full bg-cyan-300/20 blur-3xl"
-        />
-        <motion.div
-          aria-hidden
-          animate={{ opacity: [0.18, 0.34, 0.18], x: [0, 28, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full bg-amber-200/18 blur-3xl"
-        />
+        <div aria-hidden className="absolute left-[12%] top-[18%] h-64 w-64 rounded-full bg-cyan-300/18 blur-3xl" />
+        <div aria-hidden className="absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full bg-amber-200/14 blur-3xl" />
 
         <div className="relative z-10 mx-auto grid min-h-[calc(100svh-76px)] max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_380px]">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-4xl">
@@ -230,8 +198,8 @@ export default function Home() {
               {JOURNEYS.map((journey, index) => (
                 <button
                   key={journey.title}
-              onMouseEnter={() => previewJourney(journey, index)}
-              onFocus={() => previewJourney(journey, index)}
+                  onMouseEnter={() => previewJourney(journey, index)}
+                  onFocus={() => previewJourney(journey, index)}
                   onClick={() => planJourney(journey)}
                   className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm font-black transition ${
                     activeJourney === index ? "border-amber-200 bg-amber-200 text-slate-950" : "border-white/10 bg-white/7 text-white hover:bg-white/12"
@@ -264,19 +232,8 @@ export default function Home() {
       </section>
 
       <section id="north-destinations" className="relative overflow-hidden px-4 py-16 sm:px-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentJourney.image}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.22 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.55 }}
-            className="absolute inset-0"
-          >
-            <Image src={currentJourney.image} alt="" fill className="object-cover" sizes="100vw" />
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#020712_0%,rgba(6,23,36,0.94)_48%,#020712_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,7,18,0.98)_0%,rgba(6,23,36,0.96)_48%,#020712_100%)]" />
+        <div className="absolute left-0 top-10 h-px w-full bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent" />
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -378,13 +335,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-14 sm:px-6">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 border-t border-white/10 pt-10 md:flex-row md:items-end">
-          <div>
-            <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Special planning</div>
-            <h2 className="mt-3 max-w-2xl text-3xl font-black tracking-tight md:text-5xl">
-              Groups and pilgrimages, handled quietly.
-            </h2>
+      <section className="relative px-4 py-10 sm:px-6">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#020712,rgba(7,21,34,0.96))]" />
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-5 rounded-lg border border-white/12 bg-white/[0.06] p-5 shadow-2xl shadow-black/20 backdrop-blur md:grid-cols-[1fr_auto] md:items-center">
+          <div className="max-w-2xl">
+            <div className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Concierge desk</div>
+            <h2 className="mt-2 text-2xl font-black tracking-tight md:text-4xl">Quiet planning for complex trips.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              Family groups, college tours, corporate retreats and sacred routes get the same calm route control.
+            </p>
+            <div className="mt-4 grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-300 sm:grid-cols-3">
+              <span className="rounded-md border border-white/10 bg-black/18 px-3 py-2">Groups</span>
+              <span className="rounded-md border border-white/10 bg-black/18 px-3 py-2">Pilgrimages</span>
+              <span className="rounded-md border border-white/10 bg-black/18 px-3 py-2">Custom routes</span>
+            </div>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
