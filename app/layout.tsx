@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "Journey Gate",
-  description: "Expert-planned North India journeys, camps, retreats, and custom itineraries.",
+  description: "Expert-planned Himalayan journeys, camps, retreats, and custom itineraries.",
   icons: {
     icon: "/images/brand/journey-gate-icon.png",
     apple: "/images/brand/journey-gate-icon.png",
@@ -51,8 +51,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Journey Gate
               </div>
               <p className="mt-4 max-w-md text-sm leading-6 text-sky-50/80">
-                Smart travel planning for North India with curated routes, group retreats, spiritual circuits,
-                Himalayan escapes, and quick AI-assisted itinerary drafts.
+                Cinematic travel planning for mountain escapes, sacred city circuits, group retreats,
+                handpicked stays, and quick expert-refined itinerary drafts.
               </p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-sky-50">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Verified partners</span>

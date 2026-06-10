@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { CalendarPlus, ChevronDown, Menu, MessageCircle, X } from "lucide-react";
 
 const DESTINATIONS = [
-  ["North India", "/india/north"],
+  ["Himalayan Belt", "/india/north"],
   ["Group Retreats", "/group-retreats"],
   ["Spiritual Tourism", "/spiritual"],
 ] as const;

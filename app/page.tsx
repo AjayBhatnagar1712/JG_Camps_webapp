@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Compass, Hotel, MapPinned, MessageCircle, Route, ShieldCheck, Sparkles } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Journey = {
   title: string;
@@ -60,23 +60,45 @@ const PROMISES = [
 
 export default function Home() {
   const [activeJourney, setActiveJourney] = useState(0);
-  const [actionText, setActionText] = useState("Awaiting your scene");
+  const [actionText, setActionText] = useState("Opening scene ready");
+  const [sceneCue, setSceneCue] = useState({
+    id: 0,
+    title: "Opening scene",
+    detail: "Choose a route and the page shifts with you.",
+  });
   const currentJourney = JOURNEYS[activeJourney];
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveJourney((current) => (current + 1) % JOURNEYS.length);
+    }, 7600);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const playCue = useCallback((title: string, detail: string) => {
+    setActionText(title);
+    setSceneCue((cue) => ({
+      id: cue.id + 1,
+      title,
+      detail,
+    }));
+  }, []);
 
   const openPlanner = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
-    setActionText("Opening your planner");
+    playCue("Planner scene loading", "Dates, guests and comfort level are ready for your first route draft.");
     window.dispatchEvent(new Event("open-planner"));
-  }, []);
+  }, [playCue]);
 
   const openContact = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
-    setActionText("Connecting you to an expert");
+    playCue("Expert call prepared", "A travel specialist will help turn the route into a precise plan.");
     window.dispatchEvent(new Event("open-contact-expert"));
-  }, []);
+  }, [playCue]);
 
   const planJourney = useCallback((journey: Journey) => {
-    setActionText(`${journey.title} scene selected`);
+    playCue(`${journey.title} selected`, journey.line);
     window.dispatchEvent(
       new CustomEvent("open-planner-with", {
         detail: {
@@ -85,12 +107,35 @@ export default function Home() {
         },
       })
     );
-  }, []);
+  }, [playCue]);
+
+  const previewJourney = useCallback((journey: Journey, index: number) => {
+    setActiveJourney(index);
+    playCue(`${journey.title} preview`, journey.line);
+  }, [playCue]);
 
   return (
-    <main className="cinematic-home bg-[#020712] text-white">
+    <main className="cinematic-home relative bg-[#020712] text-white">
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020712]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`backdrop-${currentJourney.image}`}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.03 }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+            className="absolute inset-0"
+          >
+            <Image src={currentJourney.image} alt="" fill priority className="cinematic-drift object-cover opacity-45" sizes="100vw" />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(125,211,252,0.24),transparent_28rem),radial-gradient(circle_at_82%_72%,rgba(253,230,138,0.14),transparent_24rem),linear-gradient(180deg,rgba(2,7,18,0.74),#020712_86%)]" />
+        <div className="cinematic-reel absolute inset-0 opacity-45" />
+        <div className="film-grain absolute inset-0 opacity-[0.08]" />
+      </div>
+
       <section className="relative min-h-[calc(100svh-76px)] overflow-hidden">
-        <Image src="/images/north-india/north-hero.jpg" alt="Cinematic North India journey" fill priority className="cinematic-drift object-cover" sizes="100vw" />
+        <Image src="/images/north-india/north-hero.jpg" alt="Cinematic Journey Gate route" fill priority className="cinematic-drift object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,7,18,0.94)_0%,rgba(2,24,44,0.72)_43%,rgba(2,7,18,0.18)_100%),linear-gradient(180deg,rgba(2,7,18,0.12)_0%,rgba(2,7,18,0.88)_100%)]" />
         <motion.div
           aria-hidden
@@ -113,7 +158,7 @@ export default function Home() {
             </div>
 
             <h1 className="mt-6 max-w-4xl text-[clamp(3.2rem,8vw,7.2rem)] font-black leading-[0.88] tracking-tight text-balance">
-              North India, planned like a private film.
+              Mountain roads. Sacred cities. A journey that unfolds like cinema.
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
@@ -138,6 +183,21 @@ export default function Home() {
               <span className="h-2 w-2 rounded-full bg-amber-200 shadow-[0_0_18px_rgba(253,230,138,0.8)]" />
               {actionText}
             </motion.div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={sceneCue.id}
+                initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -12, filter: "blur(8px)" }}
+                transition={{ duration: 0.45 }}
+                className="mt-5 max-w-xl border-l-2 border-amber-200/80 pl-4"
+              >
+                <div className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Live cue</div>
+                <div className="mt-1 text-xl font-black text-white">{sceneCue.title}</div>
+                <p className="mt-1 text-sm leading-6 text-slate-300">{sceneCue.detail}</p>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
           <motion.aside
@@ -170,8 +230,8 @@ export default function Home() {
               {JOURNEYS.map((journey, index) => (
                 <button
                   key={journey.title}
-                  onMouseEnter={() => setActiveJourney(index)}
-                  onFocus={() => setActiveJourney(index)}
+              onMouseEnter={() => previewJourney(journey, index)}
+              onFocus={() => previewJourney(journey, index)}
                   onClick={() => planJourney(journey)}
                   className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm font-black transition ${
                     activeJourney === index ? "border-amber-200 bg-amber-200 text-slate-950" : "border-white/10 bg-white/7 text-white hover:bg-white/12"
@@ -222,7 +282,7 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cyan-200">
                 <MapPinned className="h-4 w-4" />
-                Signature North India
+                Signature Himalayan belt
               </div>
               <h2 className="mt-4 max-w-3xl text-[clamp(2.4rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
                 Five journeys. Infinite ways to make them yours.
@@ -242,8 +302,8 @@ export default function Home() {
                 viewport={{ once: true, amount: 0.25 }}
                 transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.2) }}
                 whileHover={{ y: -10, scale: 1.015 }}
-                onMouseEnter={() => setActiveJourney(index)}
-                onFocus={() => setActiveJourney(index)}
+                onMouseEnter={() => previewJourney(journey, index)}
+                onFocus={() => previewJourney(journey, index)}
                 className={`group relative min-h-[420px] overflow-hidden rounded-lg border bg-slate-900 shadow-2xl shadow-black/20 transition-colors ${
                   activeJourney === index ? "border-amber-200/80" : "border-white/10"
                 }`}
@@ -255,7 +315,11 @@ export default function Home() {
                   <h3 className="text-2xl font-black">{journey.title}</h3>
                   <p className="mt-2 min-h-[64px] text-sm leading-6 text-slate-200">{journey.line}</p>
                   <div className="mt-5 flex gap-2">
-                    <Link href={journey.href} className="cinematic-action inline-flex flex-1 items-center justify-center rounded-lg bg-white px-3 py-2.5 text-sm font-black text-slate-950">
+                    <Link
+                      href={journey.href}
+                      onClick={() => playCue(`${journey.title} route opening`, "Loading the detailed destination scene.")}
+                      className="cinematic-action inline-flex flex-1 items-center justify-center rounded-lg bg-white px-3 py-2.5 text-sm font-black text-slate-950"
+                    >
                       View
                     </Link>
                     <button onClick={() => planJourney(journey)} className="cinematic-action inline-flex flex-1 items-center justify-center rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm font-black text-white backdrop-blur">
@@ -323,10 +387,18 @@ export default function Home() {
             </h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/group-retreats" className="cinematic-action inline-flex items-center justify-center gap-2 rounded-lg border border-white/14 bg-white/8 px-5 py-3 text-sm font-black text-white hover:bg-white/14">
+            <Link
+              href="/group-retreats"
+              onClick={() => playCue("Group scene opening", "College, corporate and family movements are ready to shape.")}
+              className="cinematic-action inline-flex items-center justify-center gap-2 rounded-lg border border-white/14 bg-white/8 px-5 py-3 text-sm font-black text-white hover:bg-white/14"
+            >
               Group Retreats <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/spiritual" className="cinematic-action inline-flex items-center justify-center gap-2 rounded-lg border border-white/14 bg-white/8 px-5 py-3 text-sm font-black text-white hover:bg-white/14">
+            <Link
+              href="/spiritual"
+              onClick={() => playCue("Pilgrimage scene opening", "Sacred routes, stays and transport flow are coming into view.")}
+              className="cinematic-action inline-flex items-center justify-center gap-2 rounded-lg border border-white/14 bg-white/8 px-5 py-3 text-sm font-black text-white hover:bg-white/14"
+            >
               Spiritual Tourism <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
