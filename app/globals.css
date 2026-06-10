@@ -340,6 +340,60 @@ body[data-travel-theme="international"] {
     background: #020712;
   }
 
+  .cinematic-home .cinematic-action {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .cinematic-home .cinematic-action::before {
+    content: "";
+    position: absolute;
+    inset: -45% auto -45% -70%;
+    z-index: 0;
+    width: 52%;
+    pointer-events: none;
+    transform: skewX(-18deg);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+    transition: left 520ms ease;
+  }
+
+  .cinematic-home .cinematic-action:hover::before {
+    left: 125%;
+  }
+
+  .cinematic-home .cinematic-action:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .cinematic-home :where(section) {
+    scroll-margin-top: 92px;
+  }
+
+  .cinematic-drift {
+    animation: cinematic-drift 18s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+
+  @keyframes cinematic-drift {
+    from {
+      transform: scale(1.02) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.09) translate3d(-1.6%, -1%, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cinematic-drift {
+      animation: none;
+    }
+
+    .cinematic-home .cinematic-action::before {
+      transition: none;
+    }
+  }
+
   body[data-travel-theme] main main > section.max-w-4xl.mx-auto.p-6 {
     margin-top: -1.75rem;
     margin-bottom: 3rem;
