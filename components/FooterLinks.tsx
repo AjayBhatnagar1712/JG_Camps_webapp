@@ -35,7 +35,7 @@ export default function FooterLinks() {
         </li>
         <li>
           <Link href="/about" className="hover:text-amber-300">
-            About JG Camps
+            About Journey Gate
           </Link>
         </li>
       </ul>

@@ -97,14 +97,14 @@ export default function NorthIndiaPlanTrip() {
     const stateList = selectedStates.join(", ") || "North Indian states";
     const destinationList = allSpots.join(", ") || "North Indian highlights";
 
-    const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**, specializing in North India.
+    const systemPrompt = `You are a professional travel planner for **Journey Gate**, specializing in North India.
 Rules:
 - Do NOT mention or recommend any specific hotel, resort, or stay property by name.
-- Instead, say: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
+- Instead, say: "For stay bookings and accommodation options, contact Journey Gate at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a clean Markdown itinerary with "Day 1", "Day 2", etc.
 - Mention approximate travel times, 2–3 activity highlights, and café or local food ideas.
 - Include short cost guidance (Economy / Mid / Premium) but avoid naming hotels.
-- End with a short summary encouraging users to contact JG Camps & Resorts for bookings.`;
+- End with a short summary encouraging users to contact Journey Gate for bookings.`;
 
     const userPrompt = `Plan a ${days}-day ${tripType || "North India"} itinerary.
 States: ${stateList}
@@ -138,7 +138,7 @@ Ensure cultural, scenic, and spiritual balance with travel-friendly pacing.`;
         <h1 className="text-4xl font-extrabold text-gray-900">Build Your North India Itinerary</h1>
         <p className="text-lg text-gray-600 mt-3">
           Generate a customized AI-powered travel plan — covering Delhi, Himachal, Uttarakhand, Punjab & more.  
-          No hotel ads — only curated guidance and verified JG Camps & Resorts info.
+          No hotel ads — only curated guidance and verified Journey Gate info.
         </p>
       </div>
 

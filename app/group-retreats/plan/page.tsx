@@ -83,15 +83,15 @@ export default function GroupRetreatsPlan() {
     const locs = selectedLocations.join(", ") || "locations as discussed";
     const acts = [...selectedActivities, ...(customActivity.trim() ? [customActivity.trim()] : [])].join(", ") || "standard group activities";
 
-    const systemPrompt = `You are a professional travel planner for JG Camps & Resorts specialising in group retreats and programs.
+    const systemPrompt = `You are a professional travel planner for Journey Gate specialising in group retreats and programs.
 Rules:
 - DO NOT mention or recommend any hotel, resort, Airbnb, or stay property by name.
 - If you would otherwise recommend a property, instead say:
-  "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
+  "For stay bookings and accommodation options, contact Journey Gate at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a clear Markdown itinerary with Day 1 / Day 2 / etc (show nights per location).
 - For each day include: travel time (approx), 1–3 activity highlights, and one food/meal suggestion.
 - Include a short cost guidance for groups (Economy / Mid / Premium).
-- End the output with a one-line summary encouraging the user to contact JG Camps & Resorts for bookings.
+- End the output with a one-line summary encouraging the user to contact Journey Gate for bookings.
 - Keep the itinerary concise and formatted for display on the web (use bullet lists).`;
 
     const userPrompt = `Plan a ${nights}-night group ${tripType || "retreat"} for ~${groupSize} participants.

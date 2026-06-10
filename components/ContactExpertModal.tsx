@@ -91,7 +91,7 @@ export default function ContactExpertModal({ open, onClose }: Props) {
                 <div className="text-sm text-slate-600">8595167227</div>
               </a>
               <a
-                href={waLink("Hi! I would like to plan a trip with JG Camps & Resorts.")}
+                href={waLink("Hi! I would like to plan a trip with Journey Gate.")}
                 target="_blank"
                 onClick={() => logLead({ channel: "whatsapp", name, phone, note, page: "contact-modal" })}
                 className="rounded-2xl border border-amber-200 bg-amber-50 p-4 hover:bg-amber-100"

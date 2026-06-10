@@ -10,7 +10,7 @@ import ItineraryDisplay from "@/components/ItineraryDisplay";
  * Generates AI itineraries using Gemini via /api/gemini
  * Rules:
  * - Never name hotels/resorts directly.
- * - Always refer users to JG Camps & Resorts for bookings.
+ * - Always refer users to Journey Gate for bookings.
  */
 
 const steps = ["Duration", "Trip Type", "State", "Cities / Famous Spots", "Budget", "Review"];
@@ -94,14 +94,14 @@ export default function CentralIndiaPlanTrip() {
     const stateList = selectedStates.join(", ") || "Central Indian states";
     const destinationList = allSpots.join(", ") || "Central Indian highlights";
 
-    const systemPrompt = `You are a professional travel planner for **JG Camps & Resorts**, specializing in Central India.
+    const systemPrompt = `You are a professional travel planner for **Journey Gate**, specializing in Central India.
 Rules:
 - DO NOT mention or recommend any hotel, resort, or property by name.
-- Instead, write: "For stay bookings and accommodation options, contact JG Camps & Resorts at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
+- Instead, write: "For stay bookings and accommodation options, contact Journey Gate at 📞 8595167227 / 8076874156 or ✉️ jgadven@gmail.com."
 - Produce a well-structured Markdown itinerary ("Day 1", "Day 2", etc.)
 - Include 2–3 attractions per day, brief travel times, and local food experiences.
 - Mention cost tiers (Economy / Mid / Premium) with approximate INR ranges.
-- End with a short line encouraging users to contact JG Camps & Resorts for bookings.`;
+- End with a short line encouraging users to contact Journey Gate for bookings.`;
 
     const userPrompt = `Plan a ${days}-day ${tripType || "Central India"} itinerary.
 States: ${stateList}

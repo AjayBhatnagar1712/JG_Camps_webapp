@@ -264,7 +264,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-16 sm:px-6">
+      <section id="north-destinations" className="px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>

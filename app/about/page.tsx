@@ -11,10 +11,10 @@ export default function AboutPage() {
   return (
     <>
       <Head>
-        <title>About Us — JG Camps &amp; Resorts</title>
+        <title>About Us - Journey Gate</title>
         <meta
           name="description"
-          content="About JG Camps & Resorts — our story, values, and founder."
+          content="About Journey Gate — our story, values, and founder."
         />
       </Head>
 
@@ -197,7 +197,7 @@ export default function AboutPage() {
             <div className="flex items-center justify-center gap-4">
               {/* Updated: navigate to home + categories anchor */}
               <Link
-                href="/#categories"
+                href="/#north-destinations"
                 className="px-6 py-3 rounded-2xl border border-gray-300 hover:bg-gray-50 transition"
               >
                 Explore Destinations

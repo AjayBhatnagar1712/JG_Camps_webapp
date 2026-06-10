@@ -88,9 +88,9 @@ export default function SpiritualPlanPage() {
     const days = parseInt(duration) || 5;
     const places = [...selectedPlaces, ...(customPlace.trim() ? [customPlace.trim()] : [])];
     const placeList = places.join(", ") || tripType || "spiritual highlights";
-    const systemPrompt = `You are a professional travel planner for JG Camps & Resorts. Produce a useful, travel-friendly, and culturally respectful itinerary for spiritual pilgrimages in India.
+    const systemPrompt = `You are a professional travel planner for Journey Gate. Produce a useful, travel-friendly, and culturally respectful itinerary for spiritual pilgrimages in India.
 Rules:
-- Do NOT recommend specific hotels by name; instead say "contact JG Camps & Resorts for accommodation options".
+- Do NOT recommend specific hotels by name; instead say "contact Journey Gate for accommodation options".
 - Provide Day-by-day headings (Day 1, Day 2...), approximate travel times, 2-3 activity highlights each day, and small notes on rituals/attire/permits when relevant.
 - Provide short cost guidance (Economy / Mid / Premium), avoid luxury brand names.
 - End with a short CTA encouraging contact for bookings and puja arrangements.`;

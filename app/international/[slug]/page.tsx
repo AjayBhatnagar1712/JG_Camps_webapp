@@ -76,7 +76,7 @@ export default async function InternationalTripPage({ params }: { params: Promis
         <aside className="h-fit rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-xl shadow-amber-950/10">
           <h2 className="text-2xl font-black text-slate-950">Plan This Trip</h2>
           <p className="mt-3 text-sm leading-6 text-slate-700">
-            Share traveler count, dates, comfort level, and must-do experiences. JG Camps & Resorts will fine-tune the route and booking plan.
+            Share traveler count, dates, comfort level, and must-do experiences. Journey Gate will fine-tune the route and booking plan.
           </p>
           <div className="mt-6 grid gap-3">
             <a href="tel:+918076874156" className="rounded-full bg-emerald-800 px-5 py-3 text-center font-bold text-white">

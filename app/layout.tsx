@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
-import { Compass } from "lucide-react";
 import "./globals.css";
 import ChatWidget from "@/components/ChatWidget";
 import FooterLinks from "@/components/FooterLinks";
@@ -13,8 +13,12 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "JG Camps & Resorts",
-  description: "Curated North India journeys, camps, retreats, and AI-assisted itineraries.",
+  title: "Journey Gate",
+  description: "Expert-planned North India journeys, camps, retreats, and custom itineraries.",
+  icons: {
+    icon: "/images/brand/journey-gate-icon.png",
+    apple: "/images/brand/journey-gate-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,10 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="sticky top-0 z-50 border-b border-white/15 bg-sky-950/80 text-white shadow-xl shadow-sky-950/15 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
             <Link href="/" className="flex min-w-0 items-center gap-3 font-black tracking-tight">
-              <span className="grid h-10 w-10 flex-none place-items-center rounded-2xl bg-gradient-to-br from-sky-200 via-cyan-100 to-amber-200 text-sky-950 shadow-lg shadow-sky-950/20">
-                <Compass className="h-5 w-5" />
+              <span className="relative h-12 w-14 flex-none overflow-hidden rounded-xl bg-white p-1 shadow-lg shadow-sky-950/20">
+                <Image src="/images/brand/journey-gate-mark.png" alt="Journey Gate logo" fill className="object-contain p-1" sizes="56px" priority />
               </span>
-              <span className="truncate text-base md:text-lg">JG Camps & Resorts</span>
+              <span className="truncate text-base md:text-lg">Journey Gate</span>
             </Link>
 
             <HeaderNav />
@@ -41,10 +45,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 md:grid-cols-4">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 font-black text-lg">
-                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-sky-200 via-cyan-100 to-amber-200 text-sky-950">
-                  <Compass className="h-5 w-5" />
+                <span className="relative h-12 w-14 overflow-hidden rounded-xl bg-white p-1">
+                  <Image src="/images/brand/journey-gate-mark.png" alt="Journey Gate logo" fill className="object-contain p-1" sizes="56px" />
                 </span>
-                JG Camps & Resorts
+                Journey Gate
               </div>
               <p className="mt-4 max-w-md text-sm leading-6 text-sky-50/80">
                 Smart travel planning for North India with curated routes, group retreats, spiritual circuits,
@@ -71,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           <div className="border-t border-white/10 py-4 text-center text-xs text-sky-50/60">
-            Copyright {new Date().getFullYear()} JG Camps & Resorts. All rights reserved.
+            Copyright {new Date().getFullYear()} Journey Gate. All rights reserved.
           </div>
         </footer>
 

@@ -20,15 +20,15 @@ type Msg = {
 };
 
 const CONTACT_LINE =
-  "For stays, transport, permits, and bookings, contact JG Camps & Resorts at 8595167227 / 8076874156 or jgadven@gmail.com.";
+  "For stays, transport, permits, and bookings, contact Journey Gate at 8595167227 / 8076874156 or jgadven@gmail.com.";
 
 const SYSTEM_PROMPT = `
-You are Travel Assistant, the official conversational guide for JG Camps & Resorts.
+You are Travel Assistant, the official conversational guide for Journey Gate.
 Rules:
 - Be professional, warm, and concise. Do not say you are an AI.
 - Give fast, practical travel guidance with route order, best season, budget, and daily highlights when useful.
 - Do not mention or recommend named hotels, resorts, Airbnbs, or stay properties.
-- Include the JG Camps contact line at most once.
+- Include the Journey Gate contact line at most once.
 - Whenever useful, include a fenced JSON block with this schema:
 {
   "summary": "single-line suggestion",
@@ -74,7 +74,7 @@ export default function ChatWidget() {
     {
       id: "welcome",
       role: "assistant",
-      text: "Hi, I am your JG Camps & Resorts travel assistant. Ask for itineraries, best time to visit, routes, budgets, or group trip ideas.",
+      text: "Hi, I am your Journey Gate travel assistant. Ask for itineraries, best time to visit, routes, budgets, or group trip ideas.",
       at: new Date().toISOString(),
       structured: null,
     },

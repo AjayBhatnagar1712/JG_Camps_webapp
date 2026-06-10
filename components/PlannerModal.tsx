@@ -248,7 +248,7 @@ export default function PlannerModal({ open: controlledOpen, onClose }: Props) {
   function buildSystemPrompt(expectedDays: number, expectedNights?: number) {
     const fenceHint = "Wrap the JSON in a fenced block labeled json (```json ... ```).";
     return [
-      "You are Travel Assistant for JG Camps & Resorts.",
+      "You are Travel Assistant for Journey Gate.",
       "Return TWO things in your reply:",
       "1) A very concise, traveler-friendly Markdown itinerary using 'Day 1', 'Day 2', etc.",
       `2) Immediately after the markdown, include a valid JSON object and ${fenceHint}`,
