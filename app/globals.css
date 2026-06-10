@@ -390,6 +390,11 @@ body[data-travel-theme="international"] {
     transform-style: preserve-3d;
   }
 
+  .home-3d-stage {
+    perspective: 1300px;
+    transform-style: preserve-3d;
+  }
+
   .ladakh-3d-card {
     transform: rotateX(4deg) rotateY(1.5deg) translateZ(0);
     transform-origin: center top;
@@ -405,8 +410,29 @@ body[data-travel-theme="international"] {
     transform: rotateX(0deg) rotateY(0deg) translateY(-6px) scale(1.01);
   }
 
+  .home-3d-card {
+    transform: rotateX(5deg) translateZ(0);
+    transform-origin: center top;
+    transition: transform 280ms ease, border-color 220ms ease, filter 220ms ease;
+    will-change: transform;
+  }
+
+  .home-3d-card:nth-child(odd) {
+    transform: rotateX(5deg) rotateY(2deg) translateZ(0);
+  }
+
+  .home-3d-card:nth-child(even) {
+    transform: rotateX(5deg) rotateY(-2deg) translateZ(0);
+  }
+
+  .home-3d-card:hover {
+    filter: saturate(1.06);
+    transform: rotateX(0deg) rotateY(0deg) translateY(-8px) scale(1.012);
+  }
+
   @supports (animation-timeline: view()) {
-    .ladakh-3d-card {
+    .ladakh-3d-card,
+    .home-3d-card {
       animation: ladakh-card-rise both linear;
       animation-timeline: view();
       animation-range: entry 0% cover 34%;
@@ -438,7 +464,8 @@ body[data-travel-theme="international"] {
       animation: none;
     }
 
-    .ladakh-3d-card {
+    .ladakh-3d-card,
+    .home-3d-card {
       animation: none;
       transform: none;
       transition: none;

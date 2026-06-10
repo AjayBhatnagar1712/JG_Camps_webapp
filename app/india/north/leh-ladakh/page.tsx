@@ -17,10 +17,21 @@ import {
 const DATA = {
   name: "Leh & Ladakh",
   image: "/images/north-india/leh-ladakh/leh-hero.jpg",
-  imageAlt: "/images/north-india/leh-ladakh.jpg",
   bestSeason: "May - Sep",
   highlights:
     "High passes, blue lakes, monastery mornings and desert valleys, planned with altitude-safe pacing.",
+};
+
+const SCENE_IMAGES = {
+  leh: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Indus_Valley_near_Leh.jpg/1280px-Indus_Valley_near_Leh.jpg",
+  thiksey:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Thiksey_Monastery%2C_Ladakh_01.jpg/1280px-Thiksey_Monastery%2C_Ladakh_01.jpg",
+  nubra:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nubra_Valley_%2828321828540%29.jpg/1280px-Nubra_Valley_%2828321828540%29.jpg",
+  pangong:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Pangong_Tso_%2828527629251%29.jpg/1280px-Pangong_Tso_%2828527629251%29.jpg",
+  moriri: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Tso_Moriri_-_2.jpg/1280px-Tso_Moriri_-_2.jpg",
+  lamayuru: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Lamayuru-Gompa-02.jpg",
 };
 
 const GLANCE = [
@@ -51,42 +62,42 @@ const SCENES = [
   {
     title: "Leh acclimatisation",
     location: "Leh Town & Leh Bazaar",
-    image: DATA.image,
+    image: SCENE_IMAGES.leh,
     tag: "Soft landing",
     text: "Cafes, old market lanes, palace views and easy evenings before the altitude rises.",
   },
   {
     title: "Monastery circuit",
     location: "Hemis Monastery",
-    image: DATA.image,
+    image: SCENE_IMAGES.thiksey,
     tag: "Culture",
     text: "Hemis, Thiksey, Shey and Alchi with calm pacing and respectful visit windows.",
   },
   {
     title: "Nubra Valley",
     location: "Nubra Valley (Diskit, Hunder)",
-    image: DATA.imageAlt,
+    image: SCENE_IMAGES.nubra,
     tag: "Desert valley",
     text: "Khardung La, Diskit monastery, Hunder dunes and warmer valley stays.",
   },
   {
     title: "Pangong Tso",
     location: "Pangong Tso (Spangmik, Lukung)",
-    image: DATA.imageAlt,
+    image: SCENE_IMAGES.pangong,
     tag: "Blue lake",
     text: "A cinematic lake day planned around road time, permits, weather and comfort.",
   },
   {
     title: "Tso Moriri",
     location: "Tso Moriri (Korzok)",
-    image: DATA.image,
+    image: SCENE_IMAGES.moriri,
     tag: "Remote",
     text: "Quieter, farther and more delicate. Best for slower travelers with flexible dates.",
   },
   {
     title: "Lamayuru Moonland",
     location: "Lamayuru (Moonland)",
-    image: DATA.imageAlt,
+    image: SCENE_IMAGES.lamayuru,
     tag: "Road scene",
     text: "Ancient monastery, lunar rock formations and one of the region's most dramatic drives.",
   },

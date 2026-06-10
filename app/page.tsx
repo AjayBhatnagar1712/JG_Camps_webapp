@@ -250,18 +250,13 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-5">
+          <div className="home-3d-stage grid gap-4 lg:grid-cols-5">
             {JOURNEYS.map((journey, index) => (
-              <motion.article
+              <article
                 key={journey.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.2) }}
-                whileHover={{ y: -10, scale: 1.015 }}
                 onMouseEnter={() => previewJourney(journey, index)}
                 onFocus={() => previewJourney(journey, index)}
-                className={`group relative min-h-[420px] overflow-hidden rounded-lg border bg-slate-900 shadow-2xl shadow-black/20 transition-colors ${
+                className={`home-3d-card group relative min-h-[420px] overflow-hidden rounded-lg border bg-slate-900 shadow-2xl shadow-black/20 transition-colors ${
                   activeJourney === index ? "border-amber-200/80" : "border-white/10"
                 }`}
               >
@@ -284,7 +279,7 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-              </motion.article>
+              </article>
             ))}
           </div>
         </div>
