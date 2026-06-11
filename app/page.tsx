@@ -16,39 +16,67 @@ type Journey = {
 
 const JOURNEYS: Journey[] = [
   {
-    title: "Ladakh",
-    image: "/images/north-india/leh-ladakh.jpg",
-    href: "/india/north/leh-ladakh",
-    tag: "High roads",
-    line: "Altitude-safe pacing, Pangong, Nubra and monastery days.",
+    title: "Delhi",
+    image: "/images/north-india/delhi.jpg",
+    href: "/india/north/delhi",
+    tag: "City break",
+    line: "Monuments, markets, museums, food walks and easy arrival logistics.",
   },
   {
-    title: "Kashmir",
-    image: "/images/north-india/jammu.jpg",
-    href: "/india/north/jammu-and-kashmir",
-    tag: "Premium leisure",
-    line: "Srinagar, Gulmarg and Pahalgam with smooth transfers.",
-  },
-  {
-    title: "Himachal",
+    title: "Himachal Pradesh",
     image: "/images/north-india/himachal.jpg",
     href: "/india/north/himachal-pradesh",
     tag: "Mountain stays",
-    line: "Shimla, Manali and Dharamshala without rushed drive days.",
+    line: "Shimla, Manali, Dharamshala and scenic hill routes without rushed drive days.",
   },
   {
     title: "Uttarakhand",
     image: "/images/north-india/uttarakhand.jpg",
     href: "/india/north/uttarakhand",
     tag: "River + hills",
-    line: "Rishikesh, Haridwar, Mussoorie and Kumaon escapes.",
+    line: "Rishikesh, Haridwar, Nainital, Mussoorie and quiet Kumaon escapes.",
   },
   {
-    title: "Delhi to Varanasi",
+    title: "Jammu & Kashmir",
+    image: "/images/north-india/jammu.jpg",
+    href: "/india/north/jammu-and-kashmir",
+    tag: "Premium leisure",
+    line: "Srinagar, Gulmarg, Pahalgam, valleys, lakes and smooth transfers.",
+  },
+  {
+    title: "Leh & Ladakh",
+    image: "/images/north-india/leh-ladakh.jpg",
+    href: "/india/north/leh-ladakh",
+    tag: "High roads",
+    line: "Altitude-safe pacing, Pangong, Nubra and monastery days.",
+  },
+  {
+    title: "Uttar Pradesh",
     image: "/images/north-india/uttar-pradesh.jpg",
     href: "/india/north/uttar-pradesh",
     tag: "Heritage",
-    line: "Agra, Mathura, Vrindavan, Lucknow and Kashi circuits.",
+    line: "Agra, Varanasi, Mathura, Vrindavan, Lucknow and heritage circuits.",
+  },
+  {
+    title: "Punjab",
+    image: "/images/north-india/punjab.jpg",
+    href: "/india/north/punjab",
+    tag: "Culture",
+    line: "Amritsar, Golden Temple, Wagah Border, farms and local hospitality.",
+  },
+  {
+    title: "Haryana",
+    image: "/images/north-india/haryana.jpg",
+    href: "/india/north/haryana",
+    tag: "Short trips",
+    line: "Kurukshetra, heritage stops, countryside breaks and easy ex-Delhi plans.",
+  },
+  {
+    title: "Chandigarh",
+    image: "/images/north-india/chandigarh.jpg",
+    href: "/india/north/chandigarh",
+    tag: "Gateway",
+    line: "Sukhna Lake, Rock Garden, clean city stays and Himachal gateway plans.",
   },
 ];
 
@@ -194,7 +222,7 @@ export default function Home() {
                 <p className="mt-2 text-sm leading-6 text-slate-200">{currentJourney.line}</p>
               </div>
             </div>
-            <div className="mt-3 grid gap-2">
+            <div className="mt-3 grid max-h-[320px] gap-2 overflow-y-auto pr-1">
               {JOURNEYS.map((journey, index) => (
                 <button
                   key={journey.title}
@@ -239,10 +267,10 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cyan-200">
                 <MapPinned className="h-4 w-4" />
-                Signature Himalayan belt
+                Northern travel states & UTs
               </div>
               <h2 className="mt-4 max-w-3xl text-[clamp(2.4rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
-                Five journeys. Infinite ways to make them yours.
+                Every northern travel card, shaped for real itineraries.
               </h2>
             </div>
             <button onClick={openPlanner} className="cinematic-action inline-flex w-fit items-center gap-2 rounded-lg border border-white/16 bg-white/8 px-5 py-3 text-sm font-black text-white backdrop-blur hover:bg-white/14">
@@ -250,7 +278,7 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="home-3d-stage grid gap-4 lg:grid-cols-5">
+          <div className="home-3d-stage grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {JOURNEYS.map((journey, index) => (
               <article
                 key={journey.title}
@@ -260,7 +288,7 @@ export default function Home() {
                   activeJourney === index ? "border-amber-200/80" : "border-white/10"
                 }`}
               >
-                <Image src={journey.image} alt={journey.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(max-width: 1024px) 100vw, 20vw" />
+                <Image src={journey.image} alt={journey.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/38 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <div className="mb-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-black text-slate-950">{journey.tag}</div>
