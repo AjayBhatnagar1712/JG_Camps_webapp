@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Compass, Hotel, MapPinned, MessageCircle, Route, ShieldCheck, Sparkles } from "lucide-react";
 import { useCallback, useState } from "react";
 
@@ -129,10 +128,9 @@ export default function Home() {
     );
   }, [playCue]);
 
-  const previewJourney = useCallback((journey: Journey, index: number) => {
-    setActiveJourney(index);
-    playCue(`${journey.title} preview`, journey.line);
-  }, [playCue]);
+  const previewJourney = useCallback((index: number) => {
+    setActiveJourney((current) => (current === index ? current : index));
+  }, []);
 
   return (
     <main className="cinematic-home relative overflow-hidden bg-[#020712] text-white">
@@ -143,11 +141,11 @@ export default function Home() {
       <section className="relative min-h-[calc(100svh-76px)] overflow-hidden">
         <Image src="/images/north-india/north-hero.jpg" alt="Cinematic Journey Gate route" fill priority className="cinematic-drift object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,7,18,0.94)_0%,rgba(2,24,44,0.72)_43%,rgba(2,7,18,0.18)_100%),linear-gradient(180deg,rgba(2,7,18,0.12)_0%,rgba(2,7,18,0.88)_100%)]" />
-        <div aria-hidden className="absolute left-[12%] top-[18%] h-64 w-64 rounded-full bg-cyan-300/18 blur-3xl" />
-        <div aria-hidden className="absolute bottom-[12%] right-[10%] h-80 w-80 rounded-full bg-amber-200/14 blur-3xl" />
+        <div aria-hidden className="absolute left-[12%] top-[18%] h-52 w-52 rounded-full bg-cyan-300/12 blur-xl" />
+        <div aria-hidden className="absolute bottom-[12%] right-[10%] h-60 w-60 rounded-full bg-amber-200/10 blur-xl" />
 
         <div className="relative z-10 mx-auto grid min-h-[calc(100svh-76px)] max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_380px]">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-4xl">
+          <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100 backdrop-blur">
               <Compass className="h-4 w-4 text-amber-200" />
               Journey Gate Private Travel
@@ -170,51 +168,21 @@ export default function Home() {
               </button>
             </div>
 
-            <motion.div
-              key={actionText}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-300 backdrop-blur"
-            >
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-300 backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-amber-200 shadow-[0_0_18px_rgba(253,230,138,0.8)]" />
               {actionText}
-            </motion.div>
+            </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={sceneCue.id}
-                initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -12, filter: "blur(8px)" }}
-                transition={{ duration: 0.45 }}
-                className="mt-5 max-w-xl border-l-2 border-amber-200/80 pl-4"
-              >
-                <div className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Live cue</div>
-                <div className="mt-1 text-xl font-black text-white">{sceneCue.title}</div>
-                <p className="mt-1 text-sm leading-6 text-slate-300">{sceneCue.detail}</p>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
+            <div className="mt-5 max-w-xl border-l-2 border-amber-200/80 pl-4">
+              <div className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Live cue</div>
+              <div className="mt-1 text-xl font-black text-white">{sceneCue.title}</div>
+              <p className="mt-1 text-sm leading-6 text-slate-300">{sceneCue.detail}</p>
+            </div>
+          </div>
 
-          <motion.aside
-            initial={{ opacity: 0, y: 22, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.12 }}
-            className="hidden overflow-hidden rounded-lg border border-white/14 bg-white/10 p-3 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block"
-          >
+          <aside className="hidden overflow-hidden rounded-lg border border-white/14 bg-white/10 p-3 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block">
             <div className="relative h-72 overflow-hidden rounded-md">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentJourney.image}
-                  initial={{ opacity: 0, scale: 1.08 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.55 }}
-                  className="absolute inset-0"
-                >
-                  <Image src={currentJourney.image} alt={currentJourney.title} fill className="object-cover" sizes="380px" />
-                </motion.div>
-              </AnimatePresence>
+              <Image key={currentJourney.image} src={currentJourney.image} alt={currentJourney.title} fill className="object-cover" sizes="380px" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/18 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">Now playing</div>
@@ -226,8 +194,8 @@ export default function Home() {
               {JOURNEYS.map((journey, index) => (
                 <button
                   key={journey.title}
-                  onMouseEnter={() => previewJourney(journey, index)}
-                  onFocus={() => previewJourney(journey, index)}
+                  onMouseEnter={() => previewJourney(index)}
+                  onFocus={() => previewJourney(index)}
                   onClick={() => planJourney(journey)}
                   className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm font-black transition ${
                     activeJourney === index ? "border-amber-200 bg-amber-200 text-slate-950" : "border-white/10 bg-white/7 text-white hover:bg-white/12"
@@ -238,21 +206,20 @@ export default function Home() {
                 </button>
               ))}
             </div>
-          </motion.aside>
+          </aside>
 
           <div className="grid max-w-3xl gap-3 sm:grid-cols-3 lg:col-span-2">
             {PROMISES.map((item) => {
               const Icon = item.icon;
               return (
-                <motion.div
+                <div
                   key={item.title}
-                  whileHover={{ y: -6, scale: 1.02 }}
                   className="rounded-lg border border-white/12 bg-white/8 p-4 backdrop-blur"
                 >
                   <Icon className="h-5 w-5 text-amber-200" />
                   <div className="mt-3 text-sm font-black">{item.title}</div>
                   <p className="mt-1 text-xs leading-5 text-slate-300">{item.text}</p>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -282,8 +249,8 @@ export default function Home() {
             {JOURNEYS.map((journey, index) => (
               <article
                 key={journey.title}
-                onMouseEnter={() => previewJourney(journey, index)}
-                onFocus={() => previewJourney(journey, index)}
+                onMouseEnter={() => previewJourney(index)}
+                onFocus={() => previewJourney(index)}
                 className={`home-3d-card group relative min-h-[420px] overflow-hidden rounded-lg border bg-slate-900 shadow-2xl shadow-black/20 transition-colors ${
                   activeJourney === index ? "border-amber-200/80" : "border-white/10"
                 }`}
